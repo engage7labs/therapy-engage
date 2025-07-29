@@ -7,15 +7,29 @@ terraform {
     }
   }
 }
+
 provider "azurerm" {
-  features = {}
+  features {}
 }
+
+# ❶ RG raiz
+resource "azurerm_resource_group" "rg" {
+  name     = "rg-therapy-${var.tags.environment}"
+  location = var.location
+  tags     = var.tags
+}
+
 module "networking" {
-  source = "./modules/networking"
+  source           = "./modules/networking"
+  location         = var.location
+  resource_group   = azurerm_resource_group.rg.name
   vnet_cidr        = var.vnet_cidr
   aks_subnet_cidr  = var.aks_subnet_cidr
   db_subnet_cidr   = var.db_subnet_cidr
   tags             = var.tags
+}
+output "portal_public_ip" {
+  value = module.networking.portal_public_ip
 }
 module "aks" {
   source            = "./modules/aks"

@@ -1,5 +1,38 @@
 image:
   repository: ghcr.io/therapyengageorg/backend
-  tag: latest
-service:
-  port: 80
+  tag: v1.0.1  # Use uma versão específica ao invés de 'latest'
+  pullSecrets:
+    - name: ghcr-secret
+
+# Configurações adicionais recomendadas
+replicaCount: 1
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+# Health checks (ajuste conforme sua aplicação)
+livenessProbe:
+  httpGet:
+    path: /graphql
+    port: 3000
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /graphql
+    port: 3000
+  initialDelaySeconds: 10
+  periodSeconds: 5
+
+# Variáveis de ambiente se necessário
+env:
+  - name: NODE_ENV
+    value: "production"
+  - name: PORT
+    value: "3000"

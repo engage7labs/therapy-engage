@@ -1,32 +1,4 @@
-name: Terraform Plan (dev)
-
 on:
   push:
-    paths: [ 'infra/**' ]
-    branches: [ dev ]
-  pull_request:
-    paths: [ 'infra/**' ]
-    branches: [ dev ]
-
-jobs:
-  plan:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.7.4
-
-      - name: Init
-        run: terraform -chdir=infra init
-
-      - name: Validate
-        run: terraform -chdir=infra validate
-
-      - name: Plan (dev-eu-ie)
-        run: |
-          terraform -chdir=infra plan \
-            -var-file=infra/environments/dev-eu-ie.tfvars \
-            -no-color
+    branches: [ dev ]   # mantém dev
+  pull_request: []      # remove PR gatilho
