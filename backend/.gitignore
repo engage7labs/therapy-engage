@@ -1,0 +1,5 @@
+# backend/.gitignore
+node_modules/
+dist/
+*.log
+.env

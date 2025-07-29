@@ -1,0 +1,6 @@
+# mobile/.gitignore
+build/
+.dart_tool/
+.idea/
+.packages
+pubspec.lock
