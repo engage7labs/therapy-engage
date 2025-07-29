@@ -1,10 +1,4 @@
-variable "name_prefix" {
-  description = "Resource name prefix for networking module"
-  type        = string
-}
-
-variable "tags" {
-  description = "Tags to apply to resources"
-  type        = map(string)
-  default     = {}
-}
+variable "vnet_cidr"       { type = string }
+variable "aks_subnet_cidr" { type = string }
+variable "db_subnet_cidr"  { type = string }
+variable "tags"            { type = map(string) }

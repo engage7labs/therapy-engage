@@ -1,0 +1,18 @@
+{
+  "name": "therapy-engage-gateway",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "nest start",
+    "start:dev": "nest start --watch",
+    "build": "nest build"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/graphql": "^12.0.0",
+    "graphql": "^16.8.1",
+    "apollo-server-express": "^3.10.4",
+    "reflect-metadata": "^0.1.13",
+    "rimraf": "^5.0.0"
+  }
+}

@@ -1,0 +1,5 @@
+image:
+  repository: ghcr.io/therapyengageorg/backend
+  tag: latest
+service:
+  port: 80

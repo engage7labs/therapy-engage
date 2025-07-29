@@ -1,10 +1,6 @@
-variable "name_prefix" {
-  description = "Resource name prefix for aks module"
-  type        = string
-}
-
-variable "tags" {
-  description = "Tags to apply to resources"
-  type        = map(string)
-  default     = {}
-}
+variable "resource_group" { type = string }
+variable "location"       { type = string }
+variable "vnet_subnet_id" { type = string }
+variable "node_size"      { type = string }
+variable "node_count"     { type = number }
+variable "tags"           { type = map(string) }
