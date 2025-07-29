@@ -1,0 +1,32 @@
+name: Backend CI
+on:
+  push:
+    paths: [ 'backend/**' ]
+    branches: [ dev ]
+  pull_request:
+    paths: [ 'backend/**' ]
+    branches: [ dev ]
+
+jobs:
+  test-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        working-directory: backend/apps/gateway
+        run: npm ci
+
+      - name: Unit tests (none yet)
+        working-directory: backend/apps/gateway
+        run: echo ">> TODO add jest" 
+
+      - name: Build
+        working-directory: backend/apps/gateway
+        run: npm run build

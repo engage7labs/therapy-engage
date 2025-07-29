@@ -1,0 +1,29 @@
+name: Docker Build & Push
+
+on:
+  push:
+    paths: [ 'backend/**', 'charts/backend-app/**' ]
+    branches: [ dev ]
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build & push
+        run: |
+          IMAGE=ghcr.io/${{ github.repository_owner }}/backend:dev-${{ github.sha }}
+          docker build -t $IMAGE backend/apps/gateway
+          docker push $IMAGE
