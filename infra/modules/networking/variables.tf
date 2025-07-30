@@ -35,8 +35,16 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+# IPs públicos fixos
 variable "site_public_ip_name" {
   description = "Nome do IP fixo para o portal Web/Ingress"
   type        = string
   default     = "pip-portal"
+}
+
+variable "backend_public_ip_name" {
+  description = "Nome do IP fixo para a API backend"
+  type        = string
+  default     = "pip-backend"
 }
