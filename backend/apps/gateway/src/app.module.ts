@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
-import { AppResolver } from './app.resolver';
+import { AppResolver, HealthController } from './app.resolver';
 
 @Module({
   imports: [
@@ -14,6 +14,7 @@ import { AppResolver } from './app.resolver';
       playground: true,
     }),
   ],
+  controllers: [HealthController],
   providers: [AppResolver],
 })
 export class AppModule {}

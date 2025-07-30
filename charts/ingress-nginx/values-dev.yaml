@@ -1,0 +1,4 @@
+# charts/ingress-nginx/values-dev.yaml  (exemplo)
+controller:
+  service:
+    loadBalancerIP: 134.149.41.178   # IP estático reservado
