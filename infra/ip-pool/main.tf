@@ -8,29 +8,29 @@ terraform {
     resource_group_name  = "rg-tfstate"
     storage_account_name = "sttfdev"
     container_name       = "tfstate"
-    key                  = "ip-pool.tfstate"   # independent file
+    key                  = "ip-pool.tfstate" # independent file
   }
 }
 
-provider "azurerm" { 
-  features {} 
+provider "azurerm" {
+  features {}
 }
 
-variable "location" { 
-  type = string 
+variable "location" {
+  type    = string
   default = "northeurope"
 }
 
-variable "resource_group" { 
-  type = string 
+variable "resource_group" {
+  type    = string
   default = "rg-therapy-dev"
 }
 
-variable "tags" { 
-  type = map(string) 
+variable "tags" {
+  type = map(string)
   default = {
     environment = "dev"
-    project = "therapy-engage"
+    project     = "therapy-engage"
   }
 }
 
@@ -44,8 +44,8 @@ resource "azurerm_public_ip" "backend" {
 
   tags = merge(var.tags, { role = "backend-ingress" })
 
-  lifecycle { 
-    prevent_destroy = true   # <<< survives destroy
+  lifecycle {
+    prevent_destroy = true # <<< survives destroy
   }
 }
 
@@ -59,15 +59,15 @@ resource "azurerm_public_ip" "portal" {
 
   tags = merge(var.tags, { role = "portal-ingress" })
 
-  lifecycle { 
-    prevent_destroy = true   # <<< survives destroy
+  lifecycle {
+    prevent_destroy = true # <<< survives destroy
   }
 }
 
-output "backend_ip" { 
-  value = azurerm_public_ip.backend.ip_address 
+output "backend_ip" {
+  value = azurerm_public_ip.backend.ip_address
 }
 
-output "portal_ip" { 
-  value = azurerm_public_ip.portal.ip_address 
+output "portal_ip" {
+  value = azurerm_public_ip.portal.ip_address
 }

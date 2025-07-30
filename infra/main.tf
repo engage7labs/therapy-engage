@@ -25,7 +25,7 @@ variable "expected_environment" {
 
 locals {
   environment = var.tags.environment
-  
+
   # Validation check
   environment_mismatch = var.expected_environment != "" && var.expected_environment != local.environment
 }
@@ -33,7 +33,7 @@ locals {
 # Safety check to prevent wrong environment deployments
 resource "null_resource" "environment_check" {
   count = local.environment_mismatch ? 1 : 0
-  
+
   provisioner "local-exec" {
     command = "echo 'ERROR: Expected environment ${var.expected_environment} but got ${local.environment}' && exit 1"
   }
@@ -63,11 +63,11 @@ output "portal_public_ip" {
 # Note: Backend IP (4.207.239.129) is managed by AKS LoadBalancer
 
 module "aks" {
-  source            = "./modules/aks"
-  resource_group    = azurerm_resource_group.rg.name
-  location          = var.location
-  vnet_subnet_id    = module.networking.aks_subnet_id
-  node_size         = var.node_size
-  node_count        = var.node_count
-  tags              = var.tags
+  source         = "./modules/aks"
+  resource_group = azurerm_resource_group.rg.name
+  location       = var.location
+  vnet_subnet_id = module.networking.aks_subnet_id
+  node_size      = var.node_size
+  node_count     = var.node_count
+  tags           = var.tags
 }

@@ -3,7 +3,7 @@ resource "azurerm_virtual_network" "vnet" {
   address_space       = [var.vnet_cidr]
   location            = var.location
   resource_group_name = var.resource_group
-  tags = var.tags
+  tags                = var.tags
 }
 
 resource "azurerm_subnet" "aks" {
@@ -22,7 +22,7 @@ resource "azurerm_subnet" "db" {
 
 # IP público para o portal web
 resource "azurerm_public_ip" "portal" {
-  name                = var.site_public_ip_name  # Mantém o nome original
+  name                = var.site_public_ip_name # Mantém o nome original
   location            = var.location
   resource_group_name = var.resource_group
   allocation_method   = "Static"
@@ -30,6 +30,6 @@ resource "azurerm_public_ip" "portal" {
   tags                = merge(var.tags, { role = "portal-ingress" })
 
   lifecycle {
-    prevent_destroy = true  # Protege contra destroy acidental
+    prevent_destroy = true # Protege contra destroy acidental
   }
 }
