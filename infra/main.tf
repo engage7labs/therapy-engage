@@ -5,6 +5,14 @@ terraform {
       source  = "hashicorp/azurerm"
       version = ">= 3.0"
     }
+    helm = {
+      source  = "hashicorp/helm"
+      version = ">= 2.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.0"
+    }
   }
 }
 
@@ -15,6 +23,9 @@ provider "azurerm" {
   features {}
   # subscription_id is read from ARM_SUBSCRIPTION_ID env var automatically
 }
+
+# Note: Helm and Kubernetes providers configured after AKS is created
+# This will be configured during apply phase
 
 # Environment validation - ensures we're in the right environment
 variable "expected_environment" {
@@ -61,6 +72,7 @@ output "portal_public_ip" {
 }
 
 # Note: Backend IP (4.207.239.129) is managed by AKS LoadBalancer
+# Ingress URLs will be configured via kubectl
 
 module "aks" {
   source         = "./modules/aks"
@@ -70,4 +82,18 @@ module "aks" {
   node_size      = var.node_size
   node_count     = var.node_count
   tags           = var.tags
+}
+
+module "ingress" {
+  source = "./modules/ingress"
+
+  resource_group        = azurerm_resource_group.rg.name
+  backend_public_ip     = "4.207.239.129"
+  kubernetes_cluster_id = module.aks.kube_config
+  api_domain            = "therapyengage-api.azurewebsites.net"
+  portal_domain         = "therapyengage-portal.azurewebsites.net"
+  ssl_email             = "x24130664@student.ncirl.ie"
+
+  # Disable portal ingress until portal is deployed
+  enable_portal_ingress = false
 }
