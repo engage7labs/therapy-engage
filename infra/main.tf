@@ -71,8 +71,20 @@ output "portal_public_ip" {
   value = module.networking.portal_public_ip
 }
 
-# Note: Backend IP (4.207.239.129) is managed by AKS LoadBalancer
-# Ingress URLs will be configured via kubectl
+output "api_domain" {
+  value = module.app_service.api_domain
+}
+
+output "portal_domain" {
+  value = module.app_service.portal_domain
+}
+
+output "api_url" {
+  value = module.app_service.api_url
+}
+
+# Note: Backend IP (20.13.251.223) is managed by AKS LoadBalancer
+# App Service domains will redirect to AKS Ingress
 
 module "aks" {
   source         = "./modules/aks"
@@ -84,16 +96,12 @@ module "aks" {
   tags           = var.tags
 }
 
-module "ingress" {
-  source = "./modules/ingress"
+module "app_service" {
+  source = "./modules/app_service"
 
-  resource_group        = azurerm_resource_group.rg.name
-  backend_public_ip     = "4.207.239.129"
-  kubernetes_cluster_id = module.aks.kube_config
-  api_domain            = "therapyengage-api.azurewebsites.net"
-  portal_domain         = "therapyengage-portal.azurewebsites.net"
-  ssl_email             = "x24130664@student.ncirl.ie"
-
-  # Disable portal ingress until portal is deployed
-  enable_portal_ingress = false
+  location       = var.location
+  resource_group = azurerm_resource_group.rg.name
+  environment    = var.tags.environment
+  aks_ingress_ip = "20.13.251.223"
+  tags           = var.tags
 }
