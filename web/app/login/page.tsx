@@ -14,10 +14,10 @@ interface LoginCredentials {
 
 const mockUsers: LoginCredentials[] = [
   {
-    username: 'dr.delete',
+    username: 'dr.smith',
     password: 'therapist123',
     role: 'therapist',
-    name: 'Dr. Zé Deleta',
+    name: 'Dr. John Smith',
     redirectPath: '/dashboard'
   },
   {
@@ -198,6 +198,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-// Force rebuild - fix redirect cache issue
-// Updated: 2025-08-05 11:30
