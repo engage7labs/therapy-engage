@@ -11,6 +11,8 @@ spec:
       app: web-portal
   template:
     metadata:
+      annotations:
+        timestamp: "{{ now | unixEpoch }}"
       labels:
         app: web-portal
     spec:
