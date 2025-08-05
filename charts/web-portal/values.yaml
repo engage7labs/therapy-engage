@@ -56,3 +56,7 @@ ingress:
         - 20.82.234.39.sslip.io
 # Force pipeline trigger - client portal deployment
 # Updated: 2025-08-05
+
+# Force ingress recreation - remove manual conflicts
+# Trigger: 2025-08-05-10:00
+forceRecreate: true
