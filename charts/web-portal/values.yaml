@@ -46,11 +46,12 @@ ingress:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
   hosts:
-    - host: 134.149.41.178.sslip.io
-      paths:
-        - path: /
-          pathType: Prefix
-  tls:
-    - secretName: web-portal-tls
-      hosts:
-        - 134.149.41.178.sslip.io
+hosts:
+  - host: 20.82.234.39.sslip.io
+    paths:
+      - path: /
+        pathType: Prefix
+tls:
+  - secretName: shared-therapy-tls
+    hosts:
+      - 20.82.234.39.sslip.io

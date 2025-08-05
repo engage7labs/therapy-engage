@@ -36,3 +36,25 @@ env:
     value: "production"
   - name: PORT
     value: "3000"
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+  hosts:
+    - host: 20.82.234.39.sslip.io
+      paths:
+        - path: /api(/|$)(.*)
+          pathType: Prefix
+  tls:
+    - secretName: shared-therapy-tls
+      hosts:
+        - 20.82.234.39.sslip.io
