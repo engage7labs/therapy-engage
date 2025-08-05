@@ -54,3 +54,5 @@ ingress:
     - secretName: shared-therapy-tls
       hosts:
         - 20.82.234.39.sslip.io
+# Force pipeline trigger - client portal deployment
+# Updated: 2025-08-05
