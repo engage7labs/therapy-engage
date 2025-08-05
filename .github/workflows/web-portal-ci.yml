@@ -3,10 +3,10 @@ name: Web Portal CI/CD
 on:
   push:
     branches: [dev, main]
-    paths: ['web/**']
+    paths: ['web/**', 'charts/web-portal/**']
   pull_request:
     branches: [dev, main]
-    paths: ['web/**']
+    paths: ['web/**', 'charts/web-portal/**']
   workflow_dispatch:
 
 env:
