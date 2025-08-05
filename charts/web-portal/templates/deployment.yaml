@@ -1,18 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: backend-app
+  name: web-portal
   labels:
-    app: backend-app
+    app: web-portal
 spec:
   replicas: {{ .Values.replicaCount | default 1 }}
   selector:
     matchLabels:
-      app: backend-app
+      app: web-portal
   template:
     metadata:
       labels:
-        app: backend-app
+        app: web-portal
     spec:
       {{- with .Values.image.pullSecrets }}
       imagePullSecrets:
