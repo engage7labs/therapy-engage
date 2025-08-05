@@ -104,7 +104,7 @@ jobs:
       if: github.ref == 'refs/heads/dev'
       run: |
         # Update HELM values with new image tag
-        IMAGE_TAG=$(echo ${{ steps.meta.outputs.tags }} | cut -d' ' -f1 | cut -d':' -f2)
+        IMAGE_TAG=$(echo "${{ steps.meta.outputs.tags }}" | head -n1 | cut -d':' -f2)
         
         # Create web-portal HELM chart if doesn't exist
         if [ ! -d "charts/web-portal" ]; then
