@@ -1,5 +1,4 @@
 name: Terraform Plan
-
 on:
   push:
     branches: [dev]
@@ -12,14 +11,23 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
+        
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.6.6
-
+          terraform_version: 1.7.0
+          
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
       - name: Terraform Init
         run: terraform init
-
+        working-directory: infra
+        
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -var-file=environments/dev-eu-ie.tfvars -var="expected_environment=dev"
+        working-directory: infra
+        env:
+          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
