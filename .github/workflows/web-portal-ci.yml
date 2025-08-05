@@ -70,13 +70,6 @@ jobs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
 
-    - name: Setup Azure CLI
-      uses: azure/cli@v2
-      if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
-      with:
-        inlineScript: |
-          echo "Azure CLI setup complete"
-
     - name: Azure Login
       uses: azure/login@v2
       if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
@@ -103,26 +96,32 @@ jobs:
     - name: Deploy to AKS (DEV)
       if: github.ref == 'refs/heads/dev'
       run: |
-        # Update HELM values with new image tag
-        IMAGE_TAG=$(echo "${{ steps.meta.outputs.tags }}" | head -n1 | cut -d':' -f2)
+        # Extract image tag from metadata
+        IMAGE_TAG=$(echo "${{ steps.meta.outputs.tags }}" | head -n1 | sed 's/.*://')
+        
+        # Set shell variables for proper expansion
+        REPOSITORY="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+        
+        echo "Using image: ${REPOSITORY}:${IMAGE_TAG}"
         
         # Create web-portal HELM chart if doesn't exist
         if [ ! -d "charts/web-portal" ]; then
           cp -r charts/backend-app charts/web-portal
           
-            # Create proper Chart.yaml
-            cat > charts/web-portal/Chart.yaml << EOF
-          apiVersion: v2
-          name: web-portal
-          description: Therapy Engage Web Portal
-          type: application
-          version: 0.1.0
-          appVersion: "1.0.0"
-          EOF
+          # Create proper Chart.yaml
+          cat > charts/web-portal/Chart.yaml << EOF
+        apiVersion: v2
+        name: web-portal
+        description: Therapy Engage Web Portal
+        type: application
+        version: 0.1.0
+        appVersion: "1.0.0"
+        EOF
+        
           # Update values.yaml for web portal
           cat > charts/web-portal/values.yaml << EOF
         image:
-          repository: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          repository: ${REPOSITORY}
           tag: ${IMAGE_TAG}
           pullSecrets:
             - name: ghcr-secret
@@ -165,6 +164,7 @@ jobs:
         
         # Deploy using HELM
         helm upgrade --install web-portal ./charts/web-portal \
+          --set image.repository=${REPOSITORY} \
           --set image.tag=${IMAGE_TAG} \
           --wait --timeout=5m
 
@@ -193,7 +193,7 @@ jobs:
                 pathType: Prefix
                 backend:
                   service:
-                    name: web-portal
+                    name: web-portal-service
                     port:
                       number: 80
         EOF
@@ -204,7 +204,7 @@ jobs:
       if: github.ref == 'refs/heads/dev'
       run: |
         kubectl rollout status deployment/web-portal --timeout=300s
-        kubectl get pods -l app.kubernetes.io/name=web-portal
+        kubectl get pods -l app=web-portal
         echo "🚀 Web Portal deployed successfully!"
         echo "📱 Portal URL: https://134.149.41.178.sslip.io"
 
