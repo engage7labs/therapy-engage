@@ -166,6 +166,7 @@ jobs:
         helm upgrade --install web-portal ./charts/web-portal \
           --set image.repository=${REPOSITORY} \
           --set image.tag=${IMAGE_TAG} \
+          --set image.pullSecrets[0].name=ghcr-secret \
           --wait --timeout=5m
 
     - name: Create/Update Ingress
