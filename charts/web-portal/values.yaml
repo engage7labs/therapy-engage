@@ -60,3 +60,6 @@ ingress:
 # Force ingress recreation - remove manual conflicts
 # Trigger: 2025-08-05-10:00
 forceRecreate: true
+
+# Force recreation after manual deletion
+# Timestamp: 2025-08-05-10:15
