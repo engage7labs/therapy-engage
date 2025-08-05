@@ -71,17 +71,17 @@ jobs:
         labels: ${{ steps.meta.outputs.labels }}
 
     - name: Setup Azure CLI
-      uses: azure/setup-cli@v1
+      uses: azure/CLI@v2
       if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
 
     - name: Azure Login
-      uses: azure/login@v1
+      uses: azure/login@v2
       if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Setup kubectl
-      uses: azure/setup-kubectl@v3
+      uses: azure/setup-kubectl@v4
       if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
       with:
         version: 'latest'
@@ -92,7 +92,7 @@ jobs:
         az aks get-credentials --resource-group rg-therapy-dev --name aks-therapy --overwrite-existing
 
     - name: Setup Helm
-      uses: azure/setup-helm@v3
+      uses: azure/setup-helm@v4
       if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
       with:
         version: 'latest'
