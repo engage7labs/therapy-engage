@@ -30,4 +30,4 @@ jobs:
         run: terraform plan -var-file=environments/dev-eu-ie.tfvars -var="expected_environment=dev"
         working-directory: infra
         env:
-          ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+          ARM_SUBSCRIPTION_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
