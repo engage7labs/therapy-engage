@@ -198,3 +198,6 @@ export default function LoginPage() {
     </div>
   );
 }
+
+// Force rebuild - fix redirect cache issue
+// Updated: 2025-08-05 11:30
