@@ -1,47 +1,285 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import "tw-animate-css";
 
 @layer base {
-  html {
-    font-family: 'Inter', system-ui, sans-serif;
-  }
-  
-  body {
-    @apply text-gray-900 antialiased;
+  * {
+    @apply border-border;
   }
 }
 
-@layer components {
-  /* Custom component styles */
-  .btn-primary {
-    @apply bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors;
-  }
+:root {
+  /* Medical Blue - Primary brand color for healthcare trust */
+  --background: oklch(0.98 0.01 240);
+  --foreground: oklch(0.15 0.02 240);
+
+  /* Card backgrounds with subtle medical tone */
+  --card: oklch(0.96 0.01 240);
+  --card-foreground: oklch(0.15 0.02 240);
+  --popover: oklch(0.98 0.01 240);
+  --popover-foreground: oklch(0.15 0.02 240);
+
+  /* Primary Medical Blue for key actions */
+  --primary: oklch(0.55 0.15 250);
+  --primary-foreground: oklch(0.98 0.01 240);
   
-  .btn-secondary {
-    @apply bg-gray-200 text-gray-900 px-4 py-2 rounded-lg font-medium hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors;
-  }
+  /* Therapeutic Green for secondary actions */
+  --secondary: oklch(0.92 0.05 160);
+  --secondary-foreground: oklch(0.15 0.02 240);
   
-  .card {
-    @apply bg-white shadow-sm border border-gray-200 rounded-lg overflow-hidden;
-  }
+  /* Clinical accent for highlights */
+  --accent: oklch(0.88 0.08 160);
+  --accent-foreground: oklch(0.15 0.02 240);
   
-  .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
-  }
+  /* Clinical Alert Red for critical attention */
+  --destructive: oklch(0.6 0.18 25);
+  --destructive-foreground: oklch(0.98 0.01 240);
+
+  /* Professional neutral tones */
+  --muted: oklch(0.85 0.02 240);
+  --muted-foreground: oklch(0.45 0.03 240);
+  --border: oklch(0.85 0.02 240);
+  --input: oklch(0.85 0.02 240);
+  --ring: oklch(0.55 0.15 250);
+
+  /* Clinical-appropriate radius */
+  --radius: 0.5rem;
 }
 
-@layer utilities {
-  /* Custom utility classes for mental health UI */
-  .gradient-therapy {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  }
+/* Dark theme variables */
+.dark {
+  /* Dark Medical theme with clinical professionalism */
+  --background: oklch(0.08 0.01 240);
+  --foreground: oklch(0.92 0.01 240);
+
+  /* Dark card backgrounds maintaining medical hierarchy */
+  --card: oklch(0.12 0.01 240);
+  --card-foreground: oklch(0.92 0.01 240);
+  --popover: oklch(0.08 0.01 240);
+  --popover-foreground: oklch(0.92 0.01 240);
+
+  /* Medical Blue adjusted for dark theme accessibility */
+  --primary: oklch(0.65 0.18 250);
+  --primary-foreground: oklch(0.08 0.01 240);
   
-  .text-therapy-primary {
-    @apply text-blue-600;
-  }
+  /* Therapeutic Green for dark theme */
+  --secondary: oklch(0.2 0.05 160);
+  --secondary-foreground: oklch(0.92 0.01 240);
   
-  .bg-therapy-light {
-    @apply bg-blue-50;
-  }
+  /* Clinical accent for dark theme */
+  --accent: oklch(0.25 0.08 160);
+  --accent-foreground: oklch(0.92 0.01 240);
+  
+  /* Critical Alert Red for dark theme visibility */
+  --destructive: oklch(0.65 0.2 25);
+  --destructive-foreground: oklch(0.08 0.01 240);
+
+  /* Dark professional neutral tones */
+  --muted: oklch(0.18 0.02 240);
+  --muted-foreground: oklch(0.6 0.03 240);
+  --border: oklch(0.18 0.02 240);
+  --input: oklch(0.18 0.02 240);
+  --ring: oklch(0.65 0.18 250);
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: calc(var(--radius) * 0.5);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) * 1.5);
+  --radius-xl: calc(var(--radius) * 2);
+  --radius-2xl: calc(var(--radius) * 3);
+  --radius-full: 9999px;
+}
+
+/* Clinical-specific typography and spacing */
+body {
+  font-family: var(--font-inter), var(--font-noto-sans), var(--font-noto-sans-arabic), system-ui, -apple-system, sans-serif;
+  font-feature-settings: 'tnum' 1; /* Tabular numbers for clinical data */
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Smooth theme transitions for all elements */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* International typography support */
+[dir="rtl"] {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] .flex {
+  flex-direction: row-reverse;
+}
+
+/* Language-specific font stacks */
+:lang(ar) {
+  font-family: var(--font-noto-sans-arabic), var(--font-inter), system-ui, -apple-system, sans-serif;
+}
+
+:lang(zh) {
+  font-family: 'Noto Sans CJK SC', var(--font-inter), system-ui, -apple-system, sans-serif;
+}
+
+:lang(ja) {
+  font-family: 'Noto Sans CJK JP', var(--font-inter), system-ui, -apple-system, sans-serif;
+}
+
+/* Professional clinical data tables */
+.clinical-data {
+  @apply font-mono text-sm tabular-nums;
+}
+
+/* Therapy session focus states */
+.session-active {
+  @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
+}
+
+/* Alert priority levels for clinical attention */
+.alert-critical {
+  @apply bg-destructive/10 border-destructive text-destructive-foreground;
+}
+
+.alert-warning {
+  @apply bg-orange-50 border-orange-300 text-orange-800;
+}
+
+/* Dark theme alert adjustments */
+.dark .alert-warning {
+  @apply bg-orange-950/50 border-orange-800 text-orange-200;
+}
+
+.alert-info {
+  @apply bg-blue-50 border-blue-300 text-blue-800;
+}
+
+/* Dark theme alert adjustments */
+.dark .alert-info {
+  @apply bg-blue-950/50 border-blue-800 text-blue-200;
+}
+
+/* Theme-specific enhancements */
+.dark {
+  /* Enhanced scrollbar for dark theme */
+  scrollbar-color: oklch(0.3 0.02 240) oklch(0.12 0.01 240);
+}
+
+.dark ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: oklch(0.12 0.01 240);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: oklch(0.3 0.02 240);
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.35 0.02 240);
+}
+
+/* Language indicator animations */
+.language-indicator {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+.language-indicator:hover {
+  @apply scale-105 brightness-110;
+}
+
+/* Theme toggle animations */
+.theme-toggle {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+.theme-toggle:hover {
+  @apply scale-110 rotate-12;
+}
+
+/* Dark theme specific medical styling */
+.dark .medical-card {
+  @apply bg-card/80 backdrop-blur-sm border-border/50;
+}
+
+.dark .clinical-emphasis {
+  @apply text-primary-foreground bg-primary/20 border-primary/30;
+}
+
+/* Enhanced focus states for accessibility */
+.dark button:focus-visible,
+.dark input:focus-visible,
+.dark select:focus-visible {
+  @apply ring-2 ring-primary ring-offset-2 ring-offset-background;
+}
+
+/* Tooltip enhancements */
+.tooltip-enhanced {
+  @apply animate-in fade-in-0 zoom-in-95 duration-200;
+}
+
+.tooltip-enhanced[data-state="closed"] {
+  @apply animate-out fade-out-0 zoom-out-95 duration-150;
+}
+
+/* Logout button specific hover effects */
+.logout-button {
+  @apply transition-all duration-200 ease-in-out;
+}
+
+.logout-button:hover {
+  @apply shadow-lg transform scale-105;
+  filter: drop-shadow(0 4px 8px rgba(220, 38, 38, 0.2));
+}
+
+.logout-icon {
+  @apply transition-transform duration-200 ease-in-out;
+}
+
+.logout-button:hover .logout-icon {
+  @apply rotate-12;
+}
+
+/* Dark theme logout button adjustments */
+.dark .logout-button:hover {
+  filter: drop-shadow(0 4px 8px rgba(239, 68, 68, 0.3));
+}
+
+/* Success/error states for dark theme */
+.dark .success-indicator {
+  @apply text-green-400 bg-green-950/30 border-green-800;
+}
+
+.dark .error-indicator {
+  @apply text-red-400 bg-red-950/30 border-red-800;
+}
+
+/* Language-specific number formatting */
+:lang(ar) .clinical-data {
+  font-variant-numeric: tabular-nums;
+  direction: ltr; /* Numbers always LTR */
+  unicode-bidi: embed;
 }

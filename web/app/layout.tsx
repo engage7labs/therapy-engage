@@ -1,17 +1,41 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Noto_Sans, Noto_Sans_Arabic } from 'next/font/google'
+import { TooltipProvider } from '@/components/ui/tooltip'
+import { AuthProvider } from '@/contexts/auth-context'
+import { ThemeProvider } from '@/contexts/theme-context'
 import './globals.css'
-import { ApolloWrapper } from '@/components/apollo-wrapper'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ 
+  subsets: ['latin'],
+  variable: '--font-inter',
+  display: 'swap'
+})
+
+const notoSans = Noto_Sans({ 
+  subsets: ['latin'],
+  variable: '--font-noto-sans',
+  display: 'swap'
+})
+
+const notoSansArabic = Noto_Sans_Arabic({ 
+  subsets: ['arabic'],
+  variable: '--font-noto-sans-arabic',
+  display: 'swap'
+})
 
 export const metadata: Metadata = {
-  title: 'Therapy Engage Portal',
-  description: 'Mental health platform for therapists and clients',
-  keywords: ['therapy', 'mental health', 'psychology', 'teletherapy'],
-  authors: [{ name: 'Therapy Engage Platform' }],
+  title: 'Therapy Engage - International Consent Platform',
+  description: 'Cloud-native mental health platform for psychology clinics globally',
+  keywords: 'therapy, mental health, psychology, GDPR, LGPD, consent management',
+  authors: [{ name: 'Rodrigo Marques Teixeira', url: 'https://github.com/TherapyEngageOrg' }],
+  creator: 'Therapy Engage Platform',
+  publisher: 'National College of Ireland - MSc Project',
+  robots: 'noindex, nofollow', // Development environment
   viewport: 'width=device-width, initial-scale=1',
-  robots: 'noindex, nofollow', // Development only
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
+    { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' }
+  ]
 }
 
 export default function RootLayout({
@@ -20,13 +44,19 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="h-full">
-      <body className={`${inter.className} h-full bg-gray-50`}>
-        <ApolloWrapper>
-          <div className="min-h-full">
-            {children}
-          </div>
-        </ApolloWrapper>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+      </head>
+      <body className={`${inter.variable} ${notoSans.variable} ${notoSansArabic.variable} font-sans antialiased`}>
+        <TooltipProvider delayDuration={300}>
+          <ThemeProvider>
+            <AuthProvider>
+              {children}
+            </AuthProvider>
+          </ThemeProvider>
+        </TooltipProvider>
       </body>
     </html>
   )
