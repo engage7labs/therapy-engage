@@ -22,26 +22,8 @@ jobs:
       id-token: write
 
     steps:
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v4
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-        cache-dependency-path: web/package-lock.json
-
-    - name: Install dependencies
-      working-directory: ./web
-      run: npm ci
-
-    - name: Build Next.js application
-      working-directory: ./web
-      run: npm run build
-      env:
-        NEXT_PUBLIC_GRAPHQL_ENDPOINT: https://20.82.234.39.sslip.io/graphql
-        NEXT_PUBLIC_APP_URL: https://134.149.41.178.sslip.io
 
     - name: Log in to Container Registry
       uses: docker/login-action@v3
@@ -65,19 +47,18 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: ./web
-        file: ./web/Dockerfile
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
 
     - name: Azure Login
-      uses: azure/login@v2
+      uses: azure/login@v1
       if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Setup kubectl
-      uses: azure/setup-kubectl@v4
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v3
       if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
       with:
         version: 'latest'
@@ -85,9 +66,9 @@ jobs:
     - name: Get AKS credentials
       if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
       run: |
-        az aks get-credentials --resource-group rg-therapy-dev --name aks-therapy --overwrite-existing
+        az aks get-credentials --resource-group rg-therapy-engage-dev-eu-ie --name aks-therapy-engage-dev-eu-ie
 
-    - name: Setup Helm
+    - name: Set up Helm
       uses: azure/setup-helm@v4
       if: github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main'
       with:
@@ -98,16 +79,14 @@ jobs:
       run: |
         # Extract image tag from metadata
         IMAGE_TAG=$(echo "${{ steps.meta.outputs.tags }}" | head -n1 | sed 's/.*://')
-        
         # Set shell variables for proper expansion
         REPOSITORY="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
-        
         echo "Using image: ${REPOSITORY}:${IMAGE_TAG}"
         
         # Create web-portal HELM chart if doesn't exist
         if [ ! -d "charts/web-portal" ]; then
+          echo "Creating web-portal chart from template..."
           cp -r charts/backend-app charts/web-portal
-          
           # Create proper Chart.yaml
           cat > charts/web-portal/Chart.yaml << EOF
         apiVersion: v2
@@ -117,105 +96,26 @@ jobs:
         version: 0.1.0
         appVersion: "1.0.0"
         EOF
-        
-          # Update values.yaml for web portal
-          cat > charts/web-portal/values.yaml << EOF
-        image:
-          repository: ${REPOSITORY}
-          tag: ${IMAGE_TAG}
-          pullSecrets:
-            - name: ghcr-secret
-        
-        replicaCount: 1
-        
-        resources:
-          requests:
-            memory: "128Mi"
-            cpu: "100m"
-          limits:
-            memory: "512Mi"
-            cpu: "500m"
-        
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 3000
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 3000
-          initialDelaySeconds: 10
-          periodSeconds: 5
-        
-        env:
-          - name: NODE_ENV
-            value: "production"
-          - name: PORT
-            value: "3000"
-          - name: NEXT_PUBLIC_GRAPHQL_ENDPOINT
-            value: "https://20.82.234.39.sslip.io/graphql"
-          - name: NEXT_PUBLIC_APP_URL
-            value: "https://134.149.41.178.sslip.io"
-        EOF
         fi
         
-        # Deploy using HELM
+        # Deploy using HELM with values.yaml + image override
         helm upgrade --install web-portal ./charts/web-portal \
           --set image.repository=${REPOSITORY} \
           --set image.tag=${IMAGE_TAG} \
-          --set image.pullSecrets[0].name=ghcr-secret \
           --wait --timeout=5m
 
-    - name: Create/Update Ingress
-      if: github.ref == 'refs/heads/dev'
-      run: |
-        cat > web-portal-ingress.yaml << EOF
-        apiVersion: networking.k8s.io/v1
-        kind: Ingress
-        metadata:
-          name: web-portal-ingress
-          annotations:
-            cert-manager.io/cluster-issuer: letsencrypt-prod
-            nginx.ingress.kubernetes.io/ssl-redirect: "true"
-        spec:
-          ingressClassName: nginx
-          tls:
-          - hosts:
-            - 134.149.41.178.sslip.io
-            secretName: web-portal-tls
-          rules:
-          - host: 134.149.41.178.sslip.io
-            http:
-              paths:
-              - path: /
-                pathType: Prefix
-                backend:
-                  service:
-                    name: web-portal-service
-                    port:
-                      number: 80
-        EOF
-        
-        kubectl apply -f web-portal-ingress.yaml
-
-    - name: Verify deployment
-      if: github.ref == 'refs/heads/dev'
-      run: |
-        kubectl rollout status deployment/web-portal --timeout=300s
-        kubectl get pods -l app=web-portal
-        echo "🚀 Web Portal deployed successfully!"
-        echo "📱 Portal URL: https://134.149.41.178.sslip.io"
-
-    - name: Deployment Summary
-      if: always()
+    - name: Verify Deployment
+      if: success() && (github.ref == 'refs/heads/dev' || github.ref == 'refs/heads/main')
       run: |
         echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
-        echo "- **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Branch:** ${GITHUB_REF#refs/heads/}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Commit:** $GITHUB_SHA" >> $GITHUB_STEP_SUMMARY
         echo "- **Image:** ${{ steps.meta.outputs.tags }}" >> $GITHUB_STEP_SUMMARY
-        if [ "${{ github.ref }}" == "refs/heads/dev" ]; then
-          echo "- **Portal URL:** https://134.149.41.178.sslip.io" >> $GITHUB_STEP_SUMMARY
+        if [ "${GITHUB_REF}" == "refs/heads/dev" ]; then
+          echo "- **Portal URL:** https://20.82.234.39.sslip.io" >> $GITHUB_STEP_SUMMARY
         fi
+        
+        # Check deployment status
+        kubectl get pods -l app=web-portal
+        kubectl get svc web-portal
+        kubectl get ingress web-portal-ingress
