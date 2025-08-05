@@ -200,6 +200,53 @@ resource "azurerm_key_vault" "main" {
 
 ---
 
+## 🚫 Infrastructure Cleanup - App Service Removal
+
+### 12. Remove Unused App Service Module
+**Current:** App Service creating unnecessary azurewebsites.net domains  
+**Issue:** Portal will be hosted on AKS, not App Service  
+**Target:** Remove app_service module completely  
+
+**Files to modify:**
+```hcl
+# infra/main.tf - REMOVE these blocks:
+module "app_service" {
+  source = "./modules/app_service"
+  # ... entire block to be removed
+}
+
+# Remove outputs:
+output "api_domain" { ... }
+output "portal_domain" { ... }
+output "api_url" { ... }
+```
+
+**Files to DELETE:**
+- `infra/modules/app_service/main.tf`
+- `infra/modules/app_service/outputs.tf`  
+- `infra/modules/app_service/variables.tf`
+- Entire `infra/modules/app_service/` directory
+
+**Reasoning:**
+- ✅ Portal will run as **containerized Next.js in AKS**
+- ✅ Ingress NGINX will handle routing directly
+- ✅ No need for App Service proxy/redirect
+- ✅ **Cost savings**: Remove F1 App Service Plan
+- ✅ **Simpler architecture**: Direct AKS hosting
+
+**Implementation:**
+1. Remove app_service module from main.tf
+2. Delete app_service directory  
+3. Update any references to app_service outputs
+4. Test terraform plan (should remove 3 resources)
+5. Apply to cleanup Azure resources
+
+**Priority:** Medium (after Frontend Power Sprint)  
+**Timeline:** Sprint 3 or during IaC cleanup phase  
+**Savings:** ~$10-15/month App Service Plan cost
+
+---
+
 ## 📋 Low Priority - Nice to Have
 
 ### 9. GitOps with ArgoCD

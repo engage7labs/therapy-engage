@@ -1,6 +1,6 @@
 image:
   repository: ghcr.io/therapyengageorg/backend
-  tag: v1.0.6  # Nova versão com health endpoint
+  tag: v1.0.8  # GraphQL CORS fix
   pullSecrets:
     - name: ghcr-secret
 

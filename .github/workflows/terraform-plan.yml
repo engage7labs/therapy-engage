@@ -1,4 +1,11 @@
 on:
   push:
-    branches: [ dev ]   # mantém dev
-  pull_request: []      # remove PR gatilho
+    branches: [dev]
+  pull_request: []
+
+# FALTA ESTA LINHA:
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    steps:
+    # ... resto do workflow

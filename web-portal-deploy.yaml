@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-portal
+  template:
+    metadata:
+      labels:
+        app: web-portal
+    spec:
+      containers:
+      - name: web-portal
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        env:
+        - name: NEXT_PUBLIC_GRAPHQL_ENDPOINT
+          value: "http://backend-app-service/graphql"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-portal-service
+spec:
+  selector:
+    app: web-portal
+  ports:
+  - port: 80
+    targetPort: 80

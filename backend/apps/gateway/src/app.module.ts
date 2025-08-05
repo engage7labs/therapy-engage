@@ -12,6 +12,7 @@ import { AppResolver, HealthController } from './app.resolver';
       csrfPrevention: false,
       introspection: true,
       playground: true,
+      // Remove CORS here - it's handled by main.ts app.enableCors()
     }),
   ],
   controllers: [HealthController],
