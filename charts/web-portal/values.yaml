@@ -63,3 +63,7 @@ forceRecreate: true
 
 # Force recreation after manual deletion
 # Timestamp: 2025-08-05-10:15
+
+# Force pod restart - clear Next.js cache
+# Restart trigger: 2025-08-05-11:35
+restartTimestamp: "2025-08-05T11:35:00Z"
