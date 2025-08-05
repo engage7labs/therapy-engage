@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '../hooks/use-kv'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { AuthProvider, useAuth } from './contexts/auth-context'
 import { ThemeProvider } from './contexts/theme-context'

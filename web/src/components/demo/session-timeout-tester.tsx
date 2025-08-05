@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
 import { Separator } from '@/components/ui/separator'
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '../hooks/use-kv'
 import { useAuth } from '@/contexts/auth-context'
 import { useSessionTimeout, useActivityTracker } from '@/hooks/use-session-timeout'
 import { 

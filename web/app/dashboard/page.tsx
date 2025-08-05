@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '../hooks/use-kv'
 import { useAuth } from '@/contexts/auth-context'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
 import { StatsOverview } from '@/components/dashboard/stats-overview'

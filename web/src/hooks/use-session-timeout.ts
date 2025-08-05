@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '../hooks/use-kv'
 import { useAuth } from '@/contexts/auth-context'
 
 interface UseSessionTimeoutOptions {

@@ -1,11 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Experimental features
-  experimental: {
-    ppr: false, // Partial Prerendering - keep disabled for now
-    reactCompiler: false // React Compiler - experimental
-  },
-  
+
   // Image optimization
   images: {
     domains: ['localhost'],

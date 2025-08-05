@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '../hooks/use-kv'
 import { useWebRTCRecording } from '@/hooks/use-webrtc-recording'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'

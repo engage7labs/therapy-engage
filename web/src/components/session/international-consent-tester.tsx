@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '../hooks/use-kv'
 import { useInternationalization } from '@/hooks/use-internationalization'
 import { LanguageSelector } from '@/components/i18n/language-selector'
 import { MultilingualConsentForm } from '@/components/i18n/multilingual-consent-form'

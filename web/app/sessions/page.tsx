@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/auth-context'
 import { SessionManager } from '@/components/session/session-manager'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
 import { redirect } from 'next/navigation'
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '../hooks/use-kv'
 
 export default function SessionsPageRoute() {
   const { user, isAuthenticated } = useAuth()

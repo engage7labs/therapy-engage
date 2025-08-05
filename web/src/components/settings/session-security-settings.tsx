@@ -7,7 +7,7 @@ import { Switch } from '@/components/ui/switch'
 import { Separator } from '@/components/ui/separator'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '../hooks/use-kv'
 import { useAuth } from '@/contexts/auth-context'
 import { useSessionTimeout, useSessionSecurity } from '@/hooks/use-session-timeout'
 import { 

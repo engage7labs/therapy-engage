@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/auth-context'
 import { SettingsPage } from '@/components/settings/settings-page'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
 import { redirect } from 'next/navigation'
-import { useKV } from '@github/spark/hooks'
+import { useKV } from '../hooks/use-kv'
 
 export default function SettingsPageRoute() {
   const { user, isAuthenticated } = useAuth()
