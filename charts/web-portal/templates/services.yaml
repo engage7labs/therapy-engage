@@ -1,15 +1,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "web-portal.fullname" . }}-service
+  name: web-portal-service
   labels:
-    app: backend-app
+    app: web-portal
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: 80
       targetPort: 3000
       protocol: TCP
-      name: http
   selector:
-    app: backend-app
+    app: web-portal

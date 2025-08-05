@@ -19,7 +19,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-        - name: backend
+        - name: web-portal
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}"
           ports:
             - containerPort: 3000
