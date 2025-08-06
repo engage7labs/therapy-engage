@@ -2,20 +2,21 @@
 
 import { useAuth } from '@/hooks/use-auth'
 import { LoginPage } from '@/components/auth/login-page'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 export default function HomePage() {
   const { user, isAuthenticated } = useAuth()
+  const router = useRouter()
 
   useEffect(() => {
     // Redirect based on authentication and role
     if (isAuthenticated && user?.role === 'therapist') {
-      redirect('/dashboard')
+      router.replace('/dashboard')
     } else if (isAuthenticated && user?.role === 'patient') {
-      redirect('/client-portal')
+      router.replace('/client-portal')
     }
-  }, [isAuthenticated, user])
+  }, [isAuthenticated, user, router])
 
   // Show login page if not authenticated
   if (!isAuthenticated) {
