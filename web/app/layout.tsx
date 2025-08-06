@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter, Noto_Sans, Noto_Sans_Arabic } from 'next/font/google'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { AuthProvider } from '@/contexts/auth-context'
@@ -24,14 +24,18 @@ const notoSansArabic = Noto_Sans_Arabic({
 })
 
 export const metadata: Metadata = {
-  title: 'Therapy Engage - International Consent Platform',
-  description: 'Cloud-native mental health platform for psychology clinics globally',
-  keywords: 'therapy, mental health, psychology, GDPR, LGPD, consent management',
+  title: 'Therapy Engage Platform',
+  description: 'Secure therapy platform with video calling, session recording, and comprehensive patient management for mental health professionals.',
+  keywords: ['therapy', 'mental health', 'video calling', 'patient management', 'secure platform'],
   authors: [{ name: 'Rodrigo Marques Teixeira', url: 'https://github.com/TherapyEngageOrg' }],
   creator: 'Therapy Engage Platform',
   publisher: 'National College of Ireland - MSc Project',
   robots: 'noindex, nofollow', // Development environment
-  viewport: 'width=device-width, initial-scale=1',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
     { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' }

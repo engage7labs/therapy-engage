@@ -11,7 +11,7 @@ interface ThemeContextType {
   t: (key: string) => string
 }
 
-const ThemeContext = createContext<ThemeContextType | null>(null)
+export const ThemeContext = createContext<ThemeContextType | null>(null)
 
 // Translation keys with support for EN, PT, ES
 const translations = {
