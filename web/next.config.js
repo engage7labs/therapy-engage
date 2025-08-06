@@ -60,6 +60,11 @@ const nextConfig = {
   // Output configuration for static deployment
   output: 'standalone',
   
+  // Experimental configuration to handle auth pages
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
+  
   // Enable React strict mode for development
   reactStrictMode: true,
   
