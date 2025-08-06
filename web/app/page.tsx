@@ -1,8 +1,7 @@
 'use client'
 
-import { useAuth } from '@/contexts/auth-context'
+import { useAuth } from '@/hooks/use-auth'
 import { LoginPage } from '@/components/auth/login-page'
-import { SessionTimeoutManager } from '@/components/auth/session-timeout-manager'
 import { redirect } from 'next/navigation'
 import { useEffect } from 'react'
 

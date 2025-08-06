@@ -34,7 +34,7 @@ interface AuthContextType {
   extendSession: (minutes?: number) => void
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
+export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 // Mock users database
 const MOCK_USERS: Record<string, { password: string; user: User }> = {
