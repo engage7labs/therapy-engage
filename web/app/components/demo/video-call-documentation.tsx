@@ -1,21 +1,20 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
 import { 
   Video,
   Phone,
-  Record,
+  Circle,
   Brain,
   Shield,
   CheckCircle,
-  Warning,
+  AlertTriangle,
   Info,
   Monitor,
   Users,
   Clock,
   Heart,
   Calendar
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 export function VideoCallDocumentation() {
   const features = [
@@ -25,7 +24,7 @@ export function VideoCallDocumentation() {
       description: "High-definition video calls with adaptive quality based on connection"
     },
     {
-      icon: <Record className="h-5 w-5 text-red-500" />,
+      icon: <Circle className="h-5 w-5 text-red-500" />,
       title: "Session Recording",
       description: "Automatic recording of therapy sessions for later review and analysis"
     },
@@ -66,7 +65,7 @@ export function VideoCallDocumentation() {
       color: "text-yellow-600",
       bgColor: "bg-yellow-50", 
       borderColor: "border-yellow-200",
-      icon: <Warning className="h-4 w-4" />,
+      icon: <AlertTriangle className="h-4 w-4" />,
       description: "Patients requiring closer monitoring",
       features: ["Enhanced monitoring", "Automatic recording", "AI mood tracking"]
     },
@@ -141,8 +140,8 @@ export function VideoCallDocumentation() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature, index) => (
-              <div key={index} className="flex items-start gap-3 p-4 rounded-lg border">
+            {features.map((feature) => (
+              <div key={feature.title} className="flex items-start gap-3 p-4 rounded-lg border">
                 <div className="p-2 bg-gray-50 rounded-lg flex-shrink-0">
                   {feature.icon}
                 </div>
@@ -168,8 +167,8 @@ export function VideoCallDocumentation() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {riskLevels.map((risk, index) => (
-              <div key={index} className={`p-4 rounded-lg border ${risk.borderColor} ${risk.bgColor}`}>
+            {riskLevels.map((risk) => (
+              <div key={risk.level} className={`p-4 rounded-lg border ${risk.borderColor} ${risk.bgColor}`}>
                 <div className="flex items-center gap-2 mb-2">
                   <div className={risk.color}>
                     {risk.icon}
@@ -178,8 +177,8 @@ export function VideoCallDocumentation() {
                 </div>
                 <p className="text-sm text-gray-700 mb-3">{risk.description}</p>
                 <div className="flex flex-wrap gap-2">
-                  {risk.features.map((feature, idx) => (
-                    <Badge key={idx} variant="outline" className="text-xs">
+                  {risk.features.map((feature) => (
+                    <Badge key={feature} variant="outline" className="text-xs">
                       {feature}
                     </Badge>
                   ))}
@@ -200,8 +199,8 @@ export function VideoCallDocumentation() {
         </CardHeader>
         <CardContent>
           <div className="grid gap-3 md:grid-cols-2">
-            {callTypes.map((session, index) => (
-              <div key={index} className="flex items-start gap-3 p-3 rounded-lg border">
+            {callTypes.map((session) => (
+              <div key={session.type} className="flex items-start gap-3 p-3 rounded-lg border">
                 <div className="p-2 bg-primary/10 rounded-lg flex-shrink-0">
                   <Clock className="h-4 w-4 text-primary" />
                 </div>

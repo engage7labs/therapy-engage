@@ -3,23 +3,19 @@ import { Button } from '@/components/ui/button'
 import { EmergencyContactManager } from './emergency-contact-manager'
 import { 
   Plus,
-  Calendar,
-  FileText,
   Phone,
-  VideoCamera,
-  Users,
+  Video,
   Play,
   TestTube,
   Shield,
-  ClipboardText,
+  Clipboard,
   Globe,
-  Siren,
-  MessageCircle
-} from '@phosphor-icons/react'
+  Siren
+} from 'lucide-react'
 
 interface QuickActionsProps {
-  onNavigate?: (view: string) => void
-  patients?: any[] // Add patients prop for emergency contact manager
+  readonly onNavigate?: (view: string) => void
+  readonly patients?: any[] // Add patients prop for emergency contact manager
 }
 
 export function QuickActions({ onNavigate, patients = [] }: QuickActionsProps) {
@@ -32,7 +28,7 @@ export function QuickActions({ onNavigate, patients = [] }: QuickActionsProps) {
       variant: 'default' as const
     },
     {
-      icon: <ClipboardText className="h-4 w-4" />,
+      icon: <Clipboard className="h-4 w-4" />,
       label: 'Consent Management',
       description: 'View and manage patient consents',
       action: () => onNavigate?.('consent-management'),
@@ -53,7 +49,7 @@ export function QuickActions({ onNavigate, patients = [] }: QuickActionsProps) {
       variant: 'outline' as const
     },
     {
-      icon: <VideoCamera className="h-4 w-4" />,
+      icon: <Video className="h-4 w-4" />,
       label: 'Start Video Call',
       description: 'Connect with patients via video',
       action: () => onNavigate?.('video-calls'),
@@ -100,9 +96,9 @@ export function QuickActions({ onNavigate, patients = [] }: QuickActionsProps) {
           }}
         />
         
-        {quickActions.map((action, index) => (
+        {quickActions.map((action) => (
           <Button
-            key={index}
+            key={action.label}
             variant={action.variant}
             className="w-full justify-start h-auto p-3"
             onClick={action.action}

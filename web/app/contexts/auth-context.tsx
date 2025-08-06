@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 
 export interface User {
   id: string

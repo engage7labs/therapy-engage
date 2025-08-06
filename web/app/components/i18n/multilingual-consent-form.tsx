@@ -1,10 +1,8 @@
-import { useState, useEffect } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { useInternationalization } from '@/hooks/use-internationalization'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
-import { Separator } from '@/components/ui/separator'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
@@ -13,21 +11,20 @@ import { toast } from 'sonner'
 import { 
   FileText, 
   Shield, 
-  Clock, 
   CheckCircle, 
   AlertTriangle,
   Globe,
   Signature,
   Eye,
   Download
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 interface MultilingualConsentFormProps {
-  sessionId: string
-  patientId: string
-  patientName: string
-  therapistId: string
-  onConsentCompleted?: (consentData: any) => void
+  readonly sessionId: string
+  readonly patientId: string
+  readonly patientName: string
+  readonly therapistId: string
+  readonly onConsentCompleted?: (consentData: any) => void
 }
 
 interface ConsentState {
@@ -45,7 +42,7 @@ export function MultilingualConsentForm({
   therapistId,
   onConsentCompleted
 }: MultilingualConsentFormProps) {
-  const { currentLocale, consentTranslation, translateWithAI, isRTL } = useInternationalization()
+  const { currentLocale, consentTranslation, isRTL } = useInternationalization()
   
   // Persist consent state
   const [consentState, setConsentState] = useKV<ConsentState>(`consent-${sessionId}-${patientId}`, {
@@ -54,10 +51,6 @@ export function MultilingualConsentForm({
     finalConsent: false,
     localeAtConsent: currentLocale.code
   })
-
-  const [isTranslating, setIsTranslating] = useState(false)
-  const [currentStep, setCurrentStep] = useState(0)
-  const [showSignature, setShowSignature] = useState(false)
 
   const requiredSections = [
     'description',
@@ -75,44 +68,23 @@ export function MultilingualConsentForm({
   const progressPercentage = (readSections / totalSections) * 100
 
   const markSectionRead = (sectionId: string) => {
-    setConsentState(prev => ({
-      ...prev,
-      sectionsRead: new Set([...prev.sectionsRead, sectionId])
-    }))
-  }
-
-  const toggleSectionAgreement = (sectionId: string, agreed: boolean) => {
-    setConsentState(prev => {
-      const newAgreed = new Set(prev.sectionsAgreed)
-      if (agreed) {
-        newAgreed.add(sectionId)
-      } else {
-        newAgreed.delete(sectionId)
-      }
-      return {
-        ...prev,
-        sectionsAgreed: newAgreed
-      }
+    setConsentState({
+      ...consentState,
+      sectionsRead: new Set(Array.from(consentState.sectionsRead).concat(sectionId))
     })
   }
 
-  const translateSection = async (sectionKey: string, content: string | string[]) => {
-    setIsTranslating(true)
-    try {
-      if (Array.isArray(content)) {
-        const translations = await Promise.all(
-          content.map(item => translateWithAI(item, currentLocale.code))
-        )
-        return translations
-      } else {
-        return await translateWithAI(content, currentLocale.code)
-      }
-    } catch (error) {
-      toast.error('Translation failed. Showing original content.')
-      return content
-    } finally {
-      setIsTranslating(false)
+  const toggleSectionAgreement = (sectionId: string, agreed: boolean) => {
+    const newAgreed = new Set(consentState.sectionsAgreed)
+    if (agreed) {
+      newAgreed.add(sectionId)
+    } else {
+      newAgreed.delete(sectionId)
     }
+    setConsentState({
+      ...consentState,
+      sectionsAgreed: newAgreed
+    })
   }
 
   const handleFinalSignature = async () => {
@@ -185,7 +157,7 @@ export function MultilingualConsentForm({
               {Array.isArray(content) ? (
                 <ul className={`space-y-2 ${isRTL ? 'list-disc list-inside' : 'list-disc ml-4'}`}>
                   {content.map((item, index) => (
-                    <li key={index}>{item}</li>
+                    <li key={`${sectionKey}-item-${index}`}>{item}</li>
                   ))}
                 </ul>
               ) : (
@@ -338,7 +310,7 @@ export function MultilingualConsentForm({
             <Alert>
               <Shield className="h-4 w-4" />
               <AlertDescription>
-                By clicking "Sign Consent", you confirm that you have read, understood, and agree to all sections above. 
+                By clicking &quot;Sign Consent&quot;, you confirm that you have read, understood, and agree to all sections above. 
                 This creates a legally binding consent under {currentLocale.jurisdiction} law.
               </AlertDescription>
             </Alert>

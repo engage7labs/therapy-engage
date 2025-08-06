@@ -1,17 +1,13 @@
-import { useState } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { 
   Video, 
-  Activity,
-  AlertCircle,
-  Clock,
-  Users
-} from '@phosphor-icons/react'
+  Activity
+} from 'lucide-react'
 
 interface MiniSessionStatusProps {
-  onExpand?: () => void
+  readonly onExpand?: () => void
 }
 
 export function MiniSessionStatus({ onExpand }: MiniSessionStatusProps) {
@@ -47,7 +43,7 @@ export function MiniSessionStatus({ onExpand }: MiniSessionStatusProps) {
   ])
 
   const activeSessionsCount = sessionActivities.filter(s => s.status === 'active').length
-  const criticalSessionsCount = sessionActivities.filter(s => s.riskLevel === 'critical' || s.status === 'critical').length
+  const criticalSessionsCount = sessionActivities.filter(s => s.riskLevel === 'high').length
   const waitingSessionsCount = sessionActivities.filter(s => s.status === 'waiting').length
 
   // Show pulsing indicator if there are critical sessions

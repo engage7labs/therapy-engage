@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { 
   Bell, 
-  BellRinging, 
+  BellRing, 
   AlertTriangle,
   CheckCircle,
-  Volume,
+  Volume2,
   VolumeX
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 interface CompactSessionStatusProps {
   onOpenAlerts?: () => void
@@ -42,8 +42,8 @@ export function CompactSessionStatus({ onOpenAlerts }: CompactSessionStatusProps
   const getStatusIcon = () => {
     if (unacknowledgedAlerts.length > 0) {
       return alertSettings.enabled ? 
-        <BellRinging className="w-4 h-4 text-red-600 animate-pulse" /> :
-        <BellRinging className="w-4 h-4 text-red-400" />
+        <BellRing className="w-4 h-4 text-red-600 animate-pulse" /> :
+        <BellRing className="w-4 h-4 text-red-400" />
     }
     
     if (criticalSessionsCount > 0) {
@@ -85,7 +85,7 @@ export function CompactSessionStatus({ onOpenAlerts }: CompactSessionStatusProps
       {/* Audio Status Indicator */}
       <div className="flex items-center gap-1">
         {alertSettings.enabled ? (
-          <Volume className="w-3 h-3 text-green-600" />
+          <Volume2 className="w-3 h-3 text-green-600" />
         ) : (
           <VolumeX className="w-3 h-3 text-muted-foreground" />
         )}

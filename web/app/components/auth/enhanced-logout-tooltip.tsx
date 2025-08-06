@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
-import { LogOut, Shield, Clock, Info } from '@phosphor-icons/react'
+import { LogOut, Shield, Clock, Info } from 'lucide-react'
 import { useTheme } from '../../contexts/theme-context'
 
 interface EnhancedLogoutTooltipProps {
@@ -35,9 +35,7 @@ export function EnhancedLogoutTooltip({
         >
           <LogOut 
             size={20} 
-            className="logout-icon"
-            weight={isHovered ? "fill" : "regular"}
-          />
+            className="logout-icon" />
         </Button>
       </TooltipTrigger>
       

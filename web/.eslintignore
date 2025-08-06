@@ -1,0 +1,7 @@
+# node_modules
+# .next
+# dist
+# app/components/legacy/
+node_modules
+.next
+dist

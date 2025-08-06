@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useCallback } from 'react'
+import { useKV } from '@/hooks/use-kv'
 import { 
   SUPPORTED_LOCALES, 
   detectUserLocale, 
@@ -45,23 +45,10 @@ export function useInternationalization(): UseInternationalizationReturn {
       const locale = getLocaleByCode(targetLocale)
       if (!locale) return text
 
-      const prompt = spark.llmPrompt`
-        Translate the following mental health/therapy consent text to ${locale.nativeName} (${locale.code}).
-        
-        CRITICAL REQUIREMENTS:
-        1. Maintain clinical accuracy and legal terminology
-        2. Respect cultural context for ${locale.region} region
-        3. Use ${locale.culturalContext.formalityLevel} tone appropriate for therapeutic consent
-        4. Preserve all legal obligations and patient rights
-        5. Ensure translation is appropriate for ${locale.jurisdiction} jurisdiction
-        
-        Original text: ${text}
-        
-        Return only the translated text, maintaining the same structure and meaning.
-      `
-
-      const translation = await spark.llm(prompt, 'gpt-4o')
-      return translation.trim()
+      // ###desabilitado_mvp### const prompt = "Template desabilitado para MVP"
+      // ###desabilitado_mvp### const translation = await spark.llm(prompt, 'gpt-4o')
+      // ###desabilitado_mvp### return translation.trim()
+      return text // MVP: retorna texto original sem tradução
     } catch (error) {
       console.error('Translation failed:', error)
       return text // Fallback to original text

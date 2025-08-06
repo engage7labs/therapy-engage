@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -10,9 +10,9 @@ import {
   CheckCircle,
   FileText,
   Clock
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { PatientConsentForm } from './patient-consent-form'
-import { SessionRecorder } from './session-recorder'
+// import { SessionRecorder } from './session-recorder' // ###desabilitado_mvp###
 import { toast } from 'sonner'
 
 interface SecureSessionRecorderProps {
@@ -48,7 +48,8 @@ interface ConsentData {
   dataProcessingLocations: string[]
   withdrawalAcknowledged: boolean
   clinicalJustification: string
-  status?: 'active' | 'revoked'
+  status?: 'active' | 'revoked' | 'expired'
+  revokedAt?: string
 }
 
 type SessionStage = 'pre-session' | 'consent-review' | 'recording-authorized' | 'session-active' | 'session-complete'
@@ -152,8 +153,8 @@ export function SecureSessionRecorder({
         }
       }
 
-      const existingAudit = await spark.kv.get<any[]>('audit-trail') || []
-      await spark.kv.set('audit-trail', [...existingAudit, auditEntry])
+      // ###desabilitado_mvp### const existingAudit = await spark.kv.get<any[]>('audit-trail') || []
+      // ###desabilitado_mvp### await spark.kv.set('audit-trail', [...existingAudit, auditEntry])
 
       toast.success('Session authorized - ready to begin recording')
 
@@ -194,8 +195,8 @@ export function SecureSessionRecorder({
         }
       }
 
-      const existingAudit = await spark.kv.get<any[]>('audit-trail') || []
-      await spark.kv.set('audit-trail', [...existingAudit, auditEntry])
+      // ###desabilitado_mvp### const existingAudit = await spark.kv.get<any[]>('audit-trail') || []
+      // ###desabilitado_mvp### await spark.kv.set('audit-trail', [...existingAudit, auditEntry])
 
       toast.info('Session will proceed without recording capabilities')
 
@@ -216,11 +217,10 @@ export function SecureSessionRecorder({
     setSessionStage('session-active')
     
     // Update metadata
-    setSessionMetadata(prev => ({
-      ...prev,
-      status: 'active',
-      startedAt: new Date().toISOString()
-    }))
+    setSessionMetadata({
+      ...sessionMetadata,
+      status: 'active'
+    })
   }
 
   const handleSessionEnd = async (sessionData: any) => {
@@ -254,8 +254,8 @@ export function SecureSessionRecorder({
         }
       }
 
-      const existingAudit = await spark.kv.get<any[]>('audit-trail') || []
-      await spark.kv.set('audit-trail', [...existingAudit, auditEntry])
+      // ###desabilitado_mvp### const existingAudit = await spark.kv.get<any[]>('audit-trail') || []
+      // ###desabilitado_mvp### await spark.kv.set('audit-trail', [...existingAudit, auditEntry])
 
       if (onSessionComplete) {
         onSessionComplete({
@@ -488,11 +488,14 @@ export function SecureSessionRecorder({
     }
 
     return (
-      <SessionRecorder
-        sessionId={sessionId}
-        patientName={patientName}
-        onSessionEnd={handleSessionEnd}
-      />
+      <Card>
+        <CardContent className="p-6">
+          <div className="text-center text-muted-foreground">
+            <p>###desabilitado_mvp### Session Recorder</p>
+            <p className="text-sm mt-2">Recording functionality disabled for MVP</p>
+          </div>
+        </CardContent>
+      </Card>
     )
   }
 
@@ -515,10 +518,7 @@ export function SecureSessionRecorder({
             <div>
               <p className="text-sm font-medium">Session Duration</p>
               <p className="text-sm text-muted-foreground">
-                {sessionMetadata.duration ? 
-                  `${Math.floor(sessionMetadata.duration / 60)} minutes` : 
-                  'Not recorded'
-                }
+                Not recorded
               </p>
             </div>
             <div>

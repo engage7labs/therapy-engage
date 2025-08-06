@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -14,12 +14,12 @@ import {
   Brain,
   ChevronRight,
   TestTube,
-  Warning,
+  AlertTriangle,
   CheckCircle,
   Info,
-  FirstAid
-} from '@phosphor-icons/react'
-import { SessionRecorder } from './session-recorder'
+  Plus
+} from 'lucide-react'
+// import { SessionRecorder } from './session-recorder' // ###desabilitado_mvp###
 import { WebRTCSessionRecorder } from './webrtc-session-recorder'
 import { SessionInsights } from './session-insights'
 import { TestScenarios } from './test-scenarios'
@@ -30,7 +30,7 @@ interface SessionManagerProps {
 }
 
 export function SessionManager({ patientId, patientName }: SessionManagerProps) {
-  const [activeView, setActiveView] = useState<'list' | 'recorder' | 'webrtc-recorder' | 'insights' | 'scenarios' | 'documentation'>('list')
+  const [activeView, setActiveView] = useState<'list' | 'recorder' | 'webrtc-recorder' | 'insights' | 'scenarios'>('list')
   const [selectedSessionId, setSelectedSessionId] = useState<string | null>(null)
   const [scenarioFilter, setScenarioFilter] = useState<'all' | string>('all')
   const [riskFilter, setRiskFilter] = useState<'all' | string>('all')
@@ -233,10 +233,10 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
   const getScenarioIcon = (scenario: string) => {
     switch (scenario) {
       case 'positive-progress': return <CheckCircle className="h-3 w-3" />
-      case 'crisis-intervention': return <FirstAid className="h-3 w-3" />
+      case 'crisis-intervention': return <Plus className="h-3 w-3" />
       case 'mixed-progress': return <Info className="h-3 w-3" />
       case 'medication-adjustment': return <TestTube className="h-3 w-3" />
-      case 'relapse-prevention': return <Warning className="h-3 w-3" />
+      case 'relapse-prevention': return <AlertTriangle className="h-3 w-3" />
       default: return <Info className="h-3 w-3" />
     }
   }
@@ -257,8 +257,8 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
     .filter(session => scenarioFilter === 'all' || session.scenario === scenarioFilter)
     .filter(session => riskFilter === 'all' || session.riskLevel === riskFilter)
 
-  const uniqueScenarios = [...new Set(sessions.map(s => s.scenario).filter(Boolean))]
-  const uniqueRiskLevels = [...new Set(sessions.map(s => s.riskLevel).filter(Boolean))]
+  const uniqueScenarios = Array.from(new Set(sessions.map(s => s.scenario).filter(Boolean)))
+  const uniqueRiskLevels = Array.from(new Set(sessions.map(s => s.riskLevel).filter((level): level is string => level !== null && level !== undefined && level !== '')))
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -282,20 +282,7 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
   }
 
   const onSessionEnd = (sessionData: any) => {
-    // Update session list with completed session data
-    setSessions(prev => prev.map(session => 
-      session.id === sessionData.id 
-        ? { 
-            ...session, 
-            status: 'completed',
-            duration: Math.floor(sessionData.duration / 60),
-            hasRecording: true,
-            hasTranscript: false, // Will be updated when transcription completes
-            hasInsights: false    // Will be updated when AI analysis completes
-          }
-        : session
-    ))
-    
+    // ###desabilitado_mvp### - Session update functionality disabled for MVP
     // Return to session list
     setActiveView('list')
     setSelectedSessionId(null)
@@ -336,11 +323,14 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
             demoMode={false}
           />
         ) : (
-          <SessionRecorder 
-            sessionId={selectedSessionId}
-            patientName={session?.patientName || 'Unknown Patient'}
-            onSessionEnd={onSessionEnd}
-          />
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-center text-muted-foreground">
+                <p>###desabilitado_mvp### Session Recorder</p>
+                <p className="text-sm mt-2">Recording functionality disabled for MVP</p>
+              </div>
+            </CardContent>
+          </Card>
         )}
       </div>
     )
@@ -370,28 +360,29 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
     )
   }
 
-  if (activeView === 'documentation') {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-4">
-          <Button 
-            variant="ghost" 
-            onClick={() => setActiveView('list')}
-            className="flex items-center gap-2"
-          >
-            ← Back to Sessions
-          </Button>
-          <div>
-            <h2 className="text-2xl font-bold">Test Scenarios Documentation</h2>
-            <p className="text-muted-foreground">
-              Comprehensive documentation of all therapy session test scenarios
-            </p>
-          </div>
-        </div>
-        <TestScenarios />
-      </div>
-    )
-  }
+  // ###desabilitado_mvp### Documentation view disabled for MVP
+  // if (activeView === 'documentation') {
+  //   return (
+  //     <div className="space-y-6">
+  //       <div className="flex items-center gap-4">
+  //         <Button 
+  //           variant="ghost" 
+  //           onClick={() => setActiveView('list')}
+  //           className="flex items-center gap-2"
+  //         >
+  //           ← Back to Sessions
+  //         </Button>
+  //         <div>
+  //           <h2 className="text-2xl font-bold">Test Scenarios Documentation</h2>
+  //           <p className="text-muted-foreground">
+  //             Comprehensive documentation of all therapy session test scenarios
+  //           </p>
+  //         </div>
+  //       </div>
+  //       <TestScenarios />
+  //     </div>
+  //   )
+  // }
 
   return (
     <div className="space-y-6">
@@ -412,6 +403,7 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
             <TestTube className="h-4 w-4" />
             Test Scenarios
           </Button>
+          {/* ###desabilitado_mvp### Documentation button disabled for MVP
           <Button 
             variant={activeView === 'documentation' ? 'default' : 'outline'}
             onClick={() => setActiveView('documentation')}
@@ -420,6 +412,7 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
             <Info className="h-4 w-4" />
             Documentation
           </Button>
+          */}
         </div>
       </div>
 
@@ -446,7 +439,7 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
               
               <div className="p-4 bg-yellow-50 rounded-lg">
                 <div className="flex items-center gap-2 text-yellow-700">
-                  <Warning className="h-5 w-5" />
+                  <AlertTriangle className="h-5 w-5" />
                   <span className="font-semibold">Moderate Risk</span>
                 </div>
                 <p className="text-2xl font-bold mt-2">{sessions.filter(s => s.riskLevel === 'moderate').length}</p>
@@ -455,7 +448,7 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
               
               <div className="p-4 bg-red-50 rounded-lg">
                 <div className="flex items-center gap-2 text-red-700">
-                  <FirstAid className="h-5 w-5" />
+                  <Plus className="h-5 w-5" />
                   <span className="font-semibold">High Risk</span>
                 </div>
                 <p className="text-2xl font-bold mt-2">{sessions.filter(s => s.riskLevel === 'high').length}</p>
@@ -490,7 +483,7 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
                         {scenarioSessions.length} session{scenarioSessions.length !== 1 ? 's' : ''}
                       </p>
                       <div className="mt-2 text-xs text-muted-foreground">
-                        Risk levels: {[...new Set(scenarioSessions.map(s => s.riskLevel).filter(Boolean))].join(', ')}
+                        Risk levels: {Array.from(new Set(scenarioSessions.map(s => s.riskLevel).filter(Boolean))).join(', ')}
                       </div>
                     </div>
                   )

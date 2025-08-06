@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
@@ -17,7 +17,7 @@ import {
   Clock, 
   Send,
   CheckCircle
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 interface Patient {
   id: string
@@ -40,8 +40,8 @@ interface EmergencyContact {
 }
 
 interface EmergencyWhatsAppContactProps {
-  patients: Patient[]
-  onContactInitiated?: (contactId: string) => void
+  readonly patients: Patient[]
+  readonly onContactInitiated?: (contactId: string) => void
 }
 
 export function EmergencyWhatsAppContact({ patients, onContactInitiated }: EmergencyWhatsAppContactProps) {
@@ -96,19 +96,18 @@ export function EmergencyWhatsAppContact({ patients, onContactInitiated }: Emerg
       }
 
       // Add to emergency contacts log
-      setEmergencyContacts(current => [newContact, ...current])
+      setEmergencyContacts([newContact, ...emergencyContacts])
 
       // Simulate WhatsApp API call
       await simulateWhatsAppSend(selectedPatient, formattedMessage)
 
       // Update contact status
-      setEmergencyContacts(current => 
-        current.map(contact => 
-          contact.id === contactId 
-            ? { ...contact, status: 'sent' as const }
-            : contact
-        )
+      const updatedContacts = emergencyContacts.map(contact => 
+        contact.id === contactId 
+          ? { ...contact, status: 'sent' as const }
+          : contact
       )
+      setEmergencyContacts(updatedContacts)
 
       toast.success(`Mensagem de emergência enviada para ${selectedPatient.name}`, {
         description: 'WhatsApp entregue com sucesso'
@@ -120,6 +119,7 @@ export function EmergencyWhatsAppContact({ patients, onContactInitiated }: Emerg
       setSelectedPatient(null)
 
     } catch (error) {
+      console.error('Failed to send emergency WhatsApp:', error)
       toast.error('Erro ao enviar mensagem de emergência', {
         description: 'Tente novamente ou use método alternativo'
       })

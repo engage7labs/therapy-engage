@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -7,13 +7,12 @@ import {
   Video, 
   VideoOff, 
   Clock, 
-  Users, 
   Activity,
   AlertCircle,
   CheckCircle,
   Pause,
   MoreHorizontal
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 interface SessionActivity {
   id: string
@@ -28,13 +27,11 @@ interface SessionActivity {
 }
 
 interface SessionActivityStatusProps {
-  onJoinSession?: (sessionId: string) => void
-  onViewDetails?: (sessionId: string) => void
-  onTriggerAlert?: (sessionId: string, patientName: string, message: string) => void
+  readonly onJoinSession?: (sessionId: string) => void
+  readonly onViewDetails?: (sessionId: string) => void
 }
 
-export function SessionActivityStatus({ onJoinSession, onViewDetails, onTriggerAlert }: SessionActivityStatusProps) {
-  const [currentTime, setCurrentTime] = useState(new Date())
+export function SessionActivityStatus({ onJoinSession, onViewDetails }: SessionActivityStatusProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   // Mock current session activities - in real app this would come from real-time data
@@ -77,7 +74,7 @@ export function SessionActivityStatus({ onJoinSession, onViewDetails, onTriggerA
   // Update current time every minute for duration calculations
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentTime(new Date())
+      // Timer for duration calculations - could be used for real-time updates
     }, 60000)
     return () => clearInterval(timer)
   }, [])
@@ -134,7 +131,7 @@ export function SessionActivityStatus({ onJoinSession, onViewDetails, onTriggerA
   }
 
   const activeSessionsCount = sessionActivities.filter(s => s.status === 'active').length
-  const criticalSessionsCount = sessionActivities.filter(s => s.riskLevel === 'critical' || s.status === 'critical' || s.requiresImmediate).length
+  const criticalSessionsCount = sessionActivities.filter(s => s.riskLevel === 'critical' || s.requiresImmediate).length
   const immediateAttentionCount = sessionActivities.filter(s => s.requiresImmediate).length
 
   return (
@@ -250,16 +247,6 @@ export function SessionActivityStatus({ onJoinSession, onViewDetails, onTriggerA
                       className="h-6 text-xs px-2"
                     >
                       Join
-                    </Button>
-                  )}
-                  {activity.status === 'waiting' && !activity.requiresImmediate && (
-                    <Button
-                      variant="default"
-                      size="sm" 
-                      onClick={() => onJoinSession?.(activity.id)}
-                      className="h-6 text-xs px-2"
-                    >
-                      Start
                     </Button>
                   )}
                   <Button

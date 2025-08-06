@@ -1,12 +1,8 @@
 import { useState } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -17,16 +13,12 @@ import {
   Clock, 
   CheckCircle, 
   AlertTriangle,
-  Heart,
   Brain,
-  Eye,
   Phone,
-  Mail,
   MapPin,
-  Calendar,
   Download,
   Printer
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 interface BrazilianPatient {
   id: string
@@ -82,7 +74,7 @@ export function BrazilianConsentTester() {
   const [consentStatus, setConsentStatus] = useState<'pending' | 'collecting' | 'completed' | 'rejected'>('pending')
   
   // Persistent storage for Brazilian patients with LGPD compliance
-  const [brazilianPatients, setBrazilianPatients] = useKV<BrazilianPatient[]>("brazilian-patients", [
+  const [brazilianPatients] = useKV<BrazilianPatient[]>("brazilian-patients", [
     {
       id: "br-001",
       nome: "Ana Maria Silva Santos",
@@ -237,7 +229,7 @@ export function BrazilianConsentTester() {
         withdrawalMethod: 'email ou presencial'
       }
       
-      setConsentRecords((current) => [newRecord, ...current])
+      setConsentRecords([newRecord, ...consentRecords])
       setConsentStatus('completed')
     }, 2000)
   }
@@ -419,7 +411,7 @@ Assinatura do Profissional
             <Alert>
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription>
-                Selecione um paciente na aba "Pacientes" para iniciar o processo de consentimento.
+                Selecione um paciente na aba &quot;Pacientes&quot; para iniciar o processo de consentimento.
               </AlertDescription>
             </Alert>
           )}

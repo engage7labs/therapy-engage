@@ -3,11 +3,11 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { 
   Brain,
-  TrendUp,
-  Warning,
+  TrendingUp,
+  AlertTriangle,
   Target,
   Clock
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 interface Insight {
   id: string
@@ -20,16 +20,16 @@ interface Insight {
 }
 
 interface RecentInsightsProps {
-  insights: Insight[]
+  readonly insights: Insight[]
 }
 
 export function RecentInsights({ insights }: RecentInsightsProps) {
   const getInsightIcon = (type: string) => {
     switch (type) {
       case 'mood-improvement': 
-        return <TrendUp className="h-4 w-4 text-green-600" />
+        return <TrendingUp className="h-4 w-4 text-green-600" />
       case 'risk-alert': 
-        return <Warning className="h-4 w-4 text-red-600" />
+        return <AlertTriangle className="h-4 w-4 text-red-600" />
       case 'progress-milestone': 
         return <Target className="h-4 w-4 text-blue-600" />
       default: 

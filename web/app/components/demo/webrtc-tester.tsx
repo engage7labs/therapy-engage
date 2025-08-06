@@ -8,10 +8,9 @@ import {
   Video, 
   TestTube, 
   CheckCircle, 
-  AlertTriangle,
   Info,
   Play
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 export function WebRTCTester() {
   const [activeTest, setActiveTest] = useState<string | null>(null)
@@ -61,12 +60,12 @@ export function WebRTCTester() {
     },
     {
       name: 'VP9 Codec Support',
-      check: () => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus'),
+      check: () => MediaRecorder.isTypeSupported?.('video/webm;codecs=vp9,opus') ?? false,
       description: 'Browser supports VP9 video codec'
     },
     {
       name: 'WebM Support',
-      check: () => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('video/webm'),
+      check: () => MediaRecorder.isTypeSupported?.('video/webm') ?? false,
       description: 'Browser supports WebM container format'
     },
     {
@@ -95,7 +94,8 @@ export function WebRTCTester() {
     for (const capability of capabilities) {
       try {
         results[capability.name] = capability.check()
-      } catch (error) {
+      } catch {
+        // If capability check fails, mark as unsupported
         results[capability.name] = false
       }
     }

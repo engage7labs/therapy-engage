@@ -1,20 +1,17 @@
 import { ReactNode } from 'react'
-import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { EnhancedLogoutTooltip } from '@/components/auth/enhanced-logout-tooltip'
 import { useAuth } from '../../contexts/auth-context'
-import { useTheme } from '../../contexts/theme-context'
 import { useLogoutConfirmation } from '../../hooks/use-logout-confirmation'
-import { User, Calendar, FileText, Video, Shield } from '@phosphor-icons/react'
+import { User, Calendar, FileText, Video, Shield } from 'lucide-react'
 
 interface PatientLayoutProps {
-  children: ReactNode
+  readonly children: ReactNode
 }
 
 export function PatientLayout({ children }: PatientLayoutProps) {
-  const { user, logout } = useAuth()
-  const { t } = useTheme()
+  const { user } = useAuth()
   const { requestLogout, LogoutConfirmationDialog } = useLogoutConfirmation()
 
   return (

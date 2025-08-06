@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useState } from 'react'
+import { useKV } from '@/hooks/use-kv'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -9,18 +9,16 @@ import {
   Activity,
   AlertCircle,
   X,
-  Minimize,
-  Maximize
-} from '@phosphor-icons/react'
+  Minimize2
+} from 'lucide-react'
 
 interface FloatingSessionMonitorProps {
-  onClose?: () => void
-  onNavigateToSession?: (sessionId: string) => void
+  readonly onClose?: () => void
+  readonly onNavigateToSession?: (sessionId: string) => void
 }
 
 export function FloatingSessionMonitor({ onClose, onNavigateToSession }: FloatingSessionMonitorProps) {
   const [isMinimized, setIsMinimized] = useState(false)
-  const [currentTime, setCurrentTime] = useState(new Date())
 
   // Same session data as the main component
   const [sessionActivities] = useKV("session-activities", [
@@ -53,16 +51,8 @@ export function FloatingSessionMonitor({ onClose, onNavigateToSession }: Floatin
     }
   ])
 
-  // Update current time every 30 seconds
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentTime(new Date())
-    }, 30000)
-    return () => clearInterval(timer)
-  }, [])
-
   const activeSessionsCount = sessionActivities.filter(s => s.status === 'active').length
-  const criticalSessionsCount = sessionActivities.filter(s => s.riskLevel === 'critical' || s.status === 'critical').length
+  const criticalSessionsCount = sessionActivities.filter(s => s.riskLevel === 'high').length
 
   const getStatusIcon = (status: string) => {
     switch (status) {
@@ -131,7 +121,7 @@ export function FloatingSessionMonitor({ onClose, onNavigateToSession }: Floatin
                 onClick={() => setIsMinimized(true)}
                 className="h-6 w-6 p-0"
               >
-                <Minimize className="w-3 h-3" />
+                <Minimize2 className="w-3 h-3" />
               </Button>
               <Button
                 variant="ghost"
@@ -173,9 +163,6 @@ export function FloatingSessionMonitor({ onClose, onNavigateToSession }: Floatin
                       <span>{formatDuration(activity.duration)}</span>
                       {activity.riskLevel === 'high' && (
                         <div className="w-2 h-2 bg-orange-500 rounded-full" />
-                      )}
-                      {activity.riskLevel === 'critical' && (
-                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
                       )}
                     </div>
                   </div>

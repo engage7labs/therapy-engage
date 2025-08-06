@@ -3,20 +3,18 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { 
   Info,
-  Play,
   Video,
   Brain,
   Shield,
   CheckCircle,
   TestTube,
-  Warning,
-  FirstAid,
+  AlertTriangle,
   Target
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { VideoCallTestSummary } from './video-call-test-summary'
 
 interface DemoGuideProps {
-  onStartDemo?: () => void
+  readonly onStartDemo?: () => void
 }
 
 export function DemoGuide({ onStartDemo }: DemoGuideProps) {
@@ -34,7 +32,7 @@ export function DemoGuide({ onStartDemo }: DemoGuideProps) {
       count: "End-to-end encryption"
     },
     {
-      icon: <Warning className="h-4 w-4 text-orange-600" />,
+      icon: <AlertTriangle className="h-4 w-4 text-orange-600" />,
       title: "Audit Trail & Compliance",
       description: "Complete activity logging with consent tracking and regulatory reporting",
       count: "Full audit trail"
@@ -144,8 +142,8 @@ export function DemoGuide({ onStartDemo }: DemoGuideProps) {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
-            {securityFeatures.map((feature, index) => (
-              <div key={index} className="flex items-start gap-3 p-4 rounded-lg border">
+            {securityFeatures.map((feature) => (
+              <div key={feature.title} className="flex items-start gap-3 p-4 rounded-lg border">
                 <div className="p-2 bg-gray-50 rounded-lg flex-shrink-0">
                   {feature.icon}
                 </div>
@@ -171,8 +169,8 @@ export function DemoGuide({ onStartDemo }: DemoGuideProps) {
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 md:grid-cols-2">
-            {demoSteps.map((step, index) => (
-              <div key={index} className="flex items-start gap-3 p-3 rounded-lg border">
+            {demoSteps.map((step) => (
+              <div key={step.title} className="flex items-start gap-3 p-3 rounded-lg border">
                 <div className="p-2 bg-primary/10 rounded-lg flex-shrink-0">
                   {step.icon}
                 </div>
@@ -195,8 +193,8 @@ export function DemoGuide({ onStartDemo }: DemoGuideProps) {
         </CardHeader>
         <CardContent>
           <div className="grid gap-2 md:grid-cols-2">
-            {features.map((feature, index) => (
-              <div key={index} className="flex items-center gap-2 text-sm">
+            {features.map((feature) => (
+              <div key={feature} className="flex items-center gap-2 text-sm">
                 <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
                 {feature}
               </div>

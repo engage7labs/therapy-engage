@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -9,14 +9,14 @@ import { useTheme } from '../../contexts/theme-context'
 import { 
   Bell, 
   BellOff, 
-  Volume, 
+  Volume2, 
   VolumeX, 
   AlertTriangle,
   CheckCircle,
   Settings,
   Clock,
   User
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 interface CriticalAlert {
   id: string
@@ -40,8 +40,8 @@ interface AudioAlertSettings {
 }
 
 interface CriticalAudioAlertsProps {
-  onNavigateToSession?: (sessionId: string) => void
-  onAcknowledgeAlert?: (alertId: string) => void
+  readonly onNavigateToSession?: (sessionId: string) => void
+  readonly onAcknowledgeAlert?: (alertId: string) => void
 }
 
 export function CriticalAudioAlerts({ onNavigateToSession, onAcknowledgeAlert }: CriticalAudioAlertsProps) {
@@ -88,9 +88,7 @@ export function CriticalAudioAlerts({ onNavigateToSession, onAcknowledgeAlert }:
 
   // Initialize audio context
   useEffect(() => {
-    if (!audioContextRef.current) {
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
-    }
+    audioContextRef.current ??= new (window.AudioContext || (window as any).webkitAudioContext)()
   }, [])
 
   // Generate medical alert tones using Web Audio API
@@ -169,6 +167,30 @@ export function CriticalAudioAlerts({ onNavigateToSession, onAcknowledgeAlert }:
     }
   }
 
+  // Setup repeat alerts for critical/urgent alerts
+  const setupRepeatAlert = (alert: CriticalAlert) => {
+    let repeatCount = 0
+    const repeatTimer = setInterval(() => {
+      repeatCount++
+      if (repeatCount >= alertSettings.maxRepeats) {
+        clearInterval(repeatTimer)
+        playbackTimersRef.current.delete(alert.id)
+        return
+      }
+      
+      // Check if alert is still unacknowledged
+      const currentAlert = criticalAlerts.find(a => a.id === alert.id)
+      if (currentAlert && !currentAlert.acknowledged) {
+        playAlertSound(alert.alertType, alert.severity)
+      } else {
+        clearInterval(repeatTimer)
+        playbackTimersRef.current.delete(alert.id)
+      }
+    }, alertSettings.repeatInterval * 1000)
+    
+    playbackTimersRef.current.set(alert.id, repeatTimer)
+  }
+
   // Handle new critical alerts
   useEffect(() => {
     const unacknowledgedAlerts = criticalAlerts.filter(alert => !alert.acknowledged)
@@ -188,26 +210,7 @@ export function CriticalAudioAlerts({ onNavigateToSession, onAcknowledgeAlert }:
         
         // Set up repeat alerts for critical/urgent alerts
         if (alert.severity === 'critical' || alert.severity === 'urgent') {
-          let repeatCount = 0
-          const repeatTimer = setInterval(() => {
-            repeatCount++
-            if (repeatCount >= alertSettings.maxRepeats) {
-              clearInterval(repeatTimer)
-              playbackTimersRef.current.delete(alert.id)
-              return
-            }
-            
-            // Check if alert is still unacknowledged
-            const currentAlert = criticalAlerts.find(a => a.id === alert.id)
-            if (currentAlert && !currentAlert.acknowledged) {
-              playAlertSound(alert.alertType, alert.severity)
-            } else {
-              clearInterval(repeatTimer)
-              playbackTimersRef.current.delete(alert.id)
-            }
-          }, alertSettings.repeatInterval * 1000)
-          
-          playbackTimersRef.current.set(alert.id, repeatTimer)
+          setupRepeatAlert(alert)
         }
       }
     })
@@ -235,8 +238,8 @@ export function CriticalAudioAlerts({ onNavigateToSession, onAcknowledgeAlert }:
   }, [])
 
   const acknowledgeAlert = (alertId: string) => {
-    setCriticalAlerts(currentAlerts => 
-      currentAlerts.map(alert => 
+    setCriticalAlerts(
+      criticalAlerts.map(alert =>
         alert.id === alertId ? { ...alert, acknowledged: true } : alert
       )
     )
@@ -245,7 +248,7 @@ export function CriticalAudioAlerts({ onNavigateToSession, onAcknowledgeAlert }:
 
   const muteAlertsTemporarily = (minutes: number) => {
     const muteUntil = new Date(Date.now() + minutes * 60000).toISOString()
-    setAlertSettings(current => ({ ...current, muteUntil }))
+    setAlertSettings({ ...alertSettings, muteUntil })
   }
 
   const testAlertSound = async () => {
@@ -335,7 +338,7 @@ export function CriticalAudioAlerts({ onNavigateToSession, onAcknowledgeAlert }:
               <Switch
                 checked={alertSettings.enabled}
                 onCheckedChange={(enabled) => 
-                  setAlertSettings(current => ({ ...current, enabled }))
+                  setAlertSettings({ ...alertSettings, enabled })
                 }
               />
             </div>
@@ -352,14 +355,15 @@ export function CriticalAudioAlerts({ onNavigateToSession, onAcknowledgeAlert }:
                     step="0.1"
                     value={alertSettings.volume}
                     onChange={(e) => 
-                      setAlertSettings(current => ({ 
-                        ...current, 
+                      setAlertSettings({ 
+                        ...alertSettings, 
                         volume: parseFloat(e.target.value) 
-                      }))
+                      })
                     }
                     className="w-16 h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                    aria-label={t('settings.volume')}
                   />
-                  <Volume className="w-3 h-3" />
+                  <Volume2 className="w-3 h-3" />
                 </div>
               </div>
               

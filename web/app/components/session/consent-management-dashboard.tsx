@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useKV } from '../hooks/use-kv'
+import * as React from 'react'
+import { useKV } from '@/hooks/use-kv'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -9,16 +9,13 @@ import {
   Search, 
   Filter, 
   FileText, 
-  Calendar, 
-  User,
   CheckCircle,
   XCircle,
   AlertTriangle,
   Download,
   Eye,
   Clock
-} from '@phosphor-icons/react'
-import { toast } from 'sonner'
+} from 'lucide-react'
 
 interface ConsentRecord {
   id: string
@@ -59,108 +56,265 @@ interface AuditLogEntry {
   details: any
 }
 
-export function ConsentManagementDashboard() {
-  // State management
-  const [consents, setConsents] = useState<ConsentRecord[]>([])
-  const [auditLog, setAuditLog] = useState<AuditLogEntry[]>([])
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'revoked' | 'expired'>('all')
-  const [selectedConsent, setSelectedConsent] = useState<ConsentRecord | null>(null)
-  const [showAuditLog, setShowAuditLog] = useState(false)
+interface ConsentDetailModalProps {
+  readonly consent: ConsentRecord
+  readonly onClose: () => void
+  readonly onExport: (consent: ConsentRecord) => void
+  readonly onRevoke: (consent: ConsentRecord) => void
+  readonly getConsentStatusColor: (status: string) => string
+}
 
-  // Load consent data on mount
-  useEffect(() => {
-    loadConsentData()
-    loadAuditData()
-  }, [])
+const ConsentDetailModal = ({ consent, onClose, onExport, onRevoke, getConsentStatusColor }: ConsentDetailModalProps) => (
+  <Card className="max-w-4xl mx-auto">
+    <CardHeader>
+      <div className="flex items-center justify-between">
+        <CardTitle className="flex items-center gap-2">
+          <FileText className="h-5 w-5" />
+          Consent Record Details
+        </CardTitle>
+        <Button 
+          onClick={onClose} 
+          variant="outline" 
+          size="sm"
+        >
+          Close
+        </Button>
+      </div>
+    </CardHeader>
+    <CardContent className="space-y-6">
+      {/* Basic Information */}
+      <div className="grid gap-4 md:grid-cols-2">
+        <div>
+          <h4 className="font-medium mb-2">Patient Information</h4>
+          <div className="space-y-1 text-sm">
+            <p><span className="font-medium">Name:</span> {consent.patientName}</p>
+            <p><span className="font-medium">Patient ID:</span> {consent.patientId}</p>
+            <p><span className="font-medium">Session ID:</span> {consent.sessionId}</p>
+          </div>
+        </div>
+        <div>
+          <h4 className="font-medium mb-2">Consent Details</h4>
+          <div className="space-y-1 text-sm">
+            <p><span className="font-medium">Date:</span> {new Date(consent.timestamp).toLocaleString()}</p>
+            <p><span className="font-medium">Duration:</span> {consent.consentDuration}</p>
+            <p><span className="font-medium">Status:</span> 
+              <Badge className={`ml-2 ${getConsentStatusColor(consent.status || 'active')}`}>
+                {consent.status || 'active'}
+              </Badge>
+            </p>
+          </div>
+        </div>
+      </div>
 
-  const loadConsentData = async () => {
-    try {
-      // Get all keys that start with "consent-"
-      const allKeys = await spark.kv.keys()
-      const consentKeys = allKeys.filter(key => key.startsWith('consent-') && !key.includes('metadata'))
-      
-      const consentPromises = consentKeys.map(async (key) => {
-        const data = await spark.kv.get<ConsentRecord>(key)
-        if (data && data.id) {
-          // Check if consent has expired
-          const now = new Date()
-          const consentDate = new Date(data.timestamp)
-          let isExpired = false
-
-          switch (data.consentDuration) {
-            case '30-days':
-              isExpired = (now.getTime() - consentDate.getTime()) > (30 * 24 * 60 * 60 * 1000)
-              break
-            case '90-days':
-              isExpired = (now.getTime() - consentDate.getTime()) > (90 * 24 * 60 * 60 * 1000)
-              break
-            case '1-year':
-              isExpired = (now.getTime() - consentDate.getTime()) > (365 * 24 * 60 * 60 * 1000)
-              break
-            case 'session':
-              // Session consents don't expire automatically
-              isExpired = false
-              break
-          }
-
-          // Calculate expiration date
-          let expiresAt: string | undefined
-          if (data.consentDuration !== 'session') {
-            const expDate = new Date(consentDate)
-            switch (data.consentDuration) {
-              case '30-days':
-                expDate.setDate(expDate.getDate() + 30)
-                break
-              case '90-days':
-                expDate.setDate(expDate.getDate() + 90)
-                break
-              case '1-year':
-                expDate.setFullYear(expDate.getFullYear() + 1)
-                break
+      {/* Permissions */}
+      <div>
+        <h4 className="font-medium mb-3">Granted Permissions</h4>
+        <div className="grid gap-3 md:grid-cols-2">
+          <div className="flex items-center gap-2">
+            {consent.videoRecordingConsent ? 
+              <CheckCircle className="h-4 w-4 text-green-600" /> : 
+              <XCircle className="h-4 w-4 text-red-600" />
             }
-            expiresAt = expDate.toISOString()
+            <span className="text-sm">Video Recording</span>
+          </div>
+          <div className="flex items-center gap-2">
+            {consent.audioRecordingConsent ? 
+              <CheckCircle className="h-4 w-4 text-green-600" /> : 
+              <XCircle className="h-4 w-4 text-red-600" />
+            }
+            <span className="text-sm">Audio Recording</span>
+          </div>
+          <div className="flex items-center gap-2">
+            {consent.transcriptionConsent ? 
+              <CheckCircle className="h-4 w-4 text-green-600" /> : 
+              <XCircle className="h-4 w-4 text-red-600" />
+            }
+            <span className="text-sm">Transcription</span>
+          </div>
+          <div className="flex items-center gap-2">
+            {consent.aiAnalysisConsent ? 
+              <CheckCircle className="h-4 w-4 text-green-600" /> : 
+              <XCircle className="h-4 w-4 text-red-600" />
+            }
+            <span className="text-sm">AI Analysis</span>
+          </div>
+          <div className="flex items-center gap-2">
+            {consent.dataRetentionConsent ? 
+              <CheckCircle className="h-4 w-4 text-green-600" /> : 
+              <XCircle className="h-4 w-4 text-red-600" />
+            }
+            <span className="text-sm">Data Retention</span>
+          </div>
+          <div className="flex items-center gap-2">
+            {consent.researchConsent ? 
+              <CheckCircle className="h-4 w-4 text-green-600" /> : 
+              <XCircle className="h-4 w-4 text-red-600" />
+            }
+            <span className="text-sm">Research Use</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Clinical Justification */}
+      <div>
+        <h4 className="font-medium mb-2">Clinical Justification</h4>
+        <p className="text-sm text-muted-foreground bg-muted p-3 rounded">
+          {consent.clinicalJustification}
+        </p>
+      </div>
+
+      {/* Special Conditions */}
+      {consent.specialConditions && (
+        <div>
+          <h4 className="font-medium mb-2">Special Conditions</h4>
+          <p className="text-sm text-muted-foreground bg-muted p-3 rounded">
+            {consent.specialConditions}
+          </p>
+        </div>
+      )}
+
+      {/* Witness Information */}
+      {consent.witnessInfo && (
+        <div>
+          <h4 className="font-medium mb-2">Witness Information</h4>
+          <div className="grid gap-2 md:grid-cols-2 text-sm">
+            <p><span className="font-medium">Name:</span> {consent.witnessInfo.name}</p>
+            <p><span className="font-medium">Relationship:</span> {consent.witnessInfo.relationship}</p>
+            <p><span className="font-medium">Signature:</span> {consent.witnessInfo.signature}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Digital Signature */}
+      <div>
+        <h4 className="font-medium mb-2">Digital Signature</h4>
+        <p className="text-sm font-mono bg-muted p-2 rounded">
+          {consent.digitalSignature}
+        </p>
+        <p className="text-xs text-muted-foreground mt-1">
+          Signed from IP: {consent.ipAddress} on {new Date(consent.timestamp).toLocaleString()}
+        </p>
+      </div>
+
+      {/* Actions */}
+      <div className="flex gap-3 pt-4 border-t">
+        <Button onClick={() => onExport(consent)} variant="outline">
+          <Download className="h-4 w-4 mr-2" />
+          Export Record
+        </Button>
+        {consent.status === 'active' && (
+          <Button 
+            onClick={() => onRevoke(consent)} 
+            variant="destructive"
+          >
+            Revoke Consent
+          </Button>
+        )}
+      </div>
+    </CardContent>
+  </Card>
+)
+
+export function ConsentManagementDashboard() {
+  // State management using useKV for persistence
+  const [consents, setConsents] = useKV<ConsentRecord[]>('consent-records', [])
+  const [auditLog, setAuditLog] = useKV<AuditLogEntry[]>('audit-trail', [])
+  const [searchTerm, setSearchTerm] = useKV<string>('consent-search', '')
+  const [statusFilter, setStatusFilter] = useKV<string>('consent-status-filter', 'all')
+  const [selectedConsent, setSelectedConsent] = useKV<ConsentRecord | null>('selected-consent', null)
+  const [showAuditLog, setShowAuditLog] = useKV<boolean>('show-audit-log', false)
+
+  // Sample data initialization
+  React.useEffect(() => {
+    if (consents.length === 0) {
+      const sampleConsents: ConsentRecord[] = [
+        {
+          id: 'consent-001',
+          patientId: 'patient-001',
+          sessionId: 'session-001',
+          patientName: 'Ana Silva',
+          timestamp: '2025-01-15T10:00:00Z',
+          digitalSignature: 'digital-signature-hash-abc123',
+          ipAddress: '192.168.1.100',
+          videoRecordingConsent: true,
+          audioRecordingConsent: true,
+          transcriptionConsent: true,
+          aiAnalysisConsent: false,
+          dataRetentionConsent: true,
+          researchConsent: false,
+          clinicalUseConsent: true,
+          consentDuration: '90-days',
+          dataProcessingLocations: ['EU', 'Brazil'],
+          withdrawalAcknowledged: true,
+          clinicalJustification: 'Required for therapeutic analysis and improvement',
+          status: 'active'
+        },
+        {
+          id: 'consent-002',
+          patientId: 'patient-002',
+          sessionId: 'session-002',
+          patientName: 'João Oliveira',
+          timestamp: '2025-01-14T14:30:00Z',
+          digitalSignature: 'digital-signature-hash-def456',
+          ipAddress: '192.168.1.102',
+          videoRecordingConsent: true,
+          audioRecordingConsent: true,
+          transcriptionConsent: false,
+          aiAnalysisConsent: true,
+          dataRetentionConsent: true,
+          researchConsent: true,
+          clinicalUseConsent: true,
+          consentDuration: '90-days',
+          dataProcessingLocations: ['EU'],
+          withdrawalAcknowledged: true,
+          clinicalJustification: 'Essential for long-term treatment planning',
+          status: 'expired',
+          witnessInfo: {
+            name: 'Maria Oliveira',
+            relationship: 'Spouse',
+            signature: 'witness-signature-hash-789'
           }
-
-          return {
-            ...data,
-            status: data.status === 'revoked' ? 'revoked' : isExpired ? 'expired' : 'active',
-            expiresAt
-          } as ConsentRecord
         }
-        return null
-      })
-
-      const consentData = (await Promise.all(consentPromises))
-        .filter((consent): consent is ConsentRecord => consent !== null)
-        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-
-      setConsents(consentData)
-    } catch (error) {
-      console.error('Error loading consent data:', error)
-      toast.error('Failed to load consent records')
+      ]
+      setConsents(sampleConsents)
     }
-  }
 
-  const loadAuditData = async () => {
-    try {
-      const auditTrail = await spark.kv.get<AuditLogEntry[]>('audit-trail') || []
-      setAuditLog(auditTrail.sort((a, b) => 
-        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-      ))
-    } catch (error) {
-      console.error('Error loading audit data:', error)
+    if (auditLog.length === 0) {
+      const sampleAuditLog: AuditLogEntry[] = [
+        {
+          id: 'audit-001',
+          type: 'CONSENT_GIVEN',
+          sessionId: 'session-001',
+          patientId: 'patient-001',
+          timestamp: '2025-01-15T10:00:00Z',
+          details: {
+            permissions: ['video', 'audio', 'transcription'],
+            duration: '90-days'
+          }
+        },
+        {
+          id: 'audit-002',
+          type: 'CONSENT_MODIFIED',
+          sessionId: 'session-002',
+          patientId: 'patient-002',
+          timestamp: '2025-01-14T15:00:00Z',
+          details: {
+            changedPermissions: ['aiAnalysis'],
+            previousValue: false,
+            newValue: true
+          }
+        }
+      ]
+      setAuditLog(sampleAuditLog)
     }
-  }
+  }, [consents.length, auditLog.length, setConsents, setAuditLog])
 
+  // Filter consents based on search and status
   const filteredConsents = consents.filter(consent => {
-    const matchesSearch = 
-      consent.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      consent.sessionId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      consent.id.toLowerCase().includes(searchTerm.toLowerCase())
-
+    const matchesSearch = consent.patientName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      consent.patientId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      consent.sessionId.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus = statusFilter === 'all' || consent.status === statusFilter
-
     return matchesSearch && matchesStatus
   })
 
@@ -183,19 +337,19 @@ export function ConsentManagementDashboard() {
     if (consent.audioRecordingConsent) permissions.push('Audio')
     if (consent.transcriptionConsent) permissions.push('Transcription')
     if (consent.aiAnalysisConsent) permissions.push('AI Analysis')
+    if (consent.dataRetentionConsent) permissions.push('Data Retention')
+    if (consent.researchConsent) permissions.push('Research')
     return permissions.join(', ') || 'None'
   }
 
   const exportConsentRecord = (consent: ConsentRecord) => {
-    const exportData = {
+    const dataToExport = {
       consentRecord: consent,
       exportedAt: new Date().toISOString(),
-      exportedBy: 'Therapist Dashboard',
-      complianceNote: 'This export complies with GDPR Article 20 (Right to Data Portability)'
+      exportedBy: 'therapist-dashboard'
     }
-
-    const blob = new Blob([JSON.stringify(exportData, null, 2)], { 
-      type: 'application/json' 
+    const blob = new Blob([JSON.stringify(dataToExport, null, 2)], {
+      type: 'application/json'
     })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -206,7 +360,7 @@ export function ConsentManagementDashboard() {
     document.body.removeChild(a)
     URL.revokeObjectURL(url)
 
-    toast.success('Consent record exported successfully')
+    console.log('✅ Consent record exported successfully')
   }
 
   const revokeConsent = async (consent: ConsentRecord) => {
@@ -217,8 +371,11 @@ export function ConsentManagementDashboard() {
         revokedAt: new Date().toISOString()
       }
 
-      // Update the stored consent
-      await spark.kv.set(`consent-${consent.sessionId}`, revokedConsent)
+      // Update the consents array
+      const updatedConsents = consents.map(c => 
+        c.id === consent.id ? revokedConsent : c
+      )
+      setConsents(updatedConsents)
 
       // Add audit log entry
       const auditEntry = {
@@ -234,185 +391,33 @@ export function ConsentManagementDashboard() {
         }
       }
 
-      const existingAudit = await spark.kv.get<AuditLogEntry[]>('audit-trail') || []
-      await spark.kv.set('audit-trail', [...existingAudit, auditEntry])
+      setAuditLog([auditEntry, ...auditLog])
 
-      // Refresh data
-      await loadConsentData()
-      await loadAuditData()
-
-      toast.success('Consent revoked successfully')
+      console.log('✅ Consent revoked successfully')
     } catch (error) {
-      console.error('Error revoking consent:', error)
-      toast.error('Failed to revoke consent')
+      console.error('❌ Error revoking consent:', error)
     }
   }
-
-  const ConsentDetailModal = ({ consent }: { consent: ConsentRecord }) => (
-    <Card className="max-w-4xl mx-auto">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="h-5 w-5" />
-            Consent Record Details
-          </CardTitle>
-          <Button 
-            onClick={() => setSelectedConsent(null)} 
-            variant="outline" 
-            size="sm"
-          >
-            Close
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Basic Information */}
-        <div className="grid gap-4 md:grid-cols-2">
-          <div>
-            <h4 className="font-medium mb-2">Patient Information</h4>
-            <div className="space-y-1 text-sm">
-              <p><span className="font-medium">Name:</span> {consent.patientName}</p>
-              <p><span className="font-medium">Patient ID:</span> {consent.patientId}</p>
-              <p><span className="font-medium">Session ID:</span> {consent.sessionId}</p>
-            </div>
-          </div>
-          <div>
-            <h4 className="font-medium mb-2">Consent Details</h4>
-            <div className="space-y-1 text-sm">
-              <p><span className="font-medium">Date:</span> {new Date(consent.timestamp).toLocaleString()}</p>
-              <p><span className="font-medium">Duration:</span> {consent.consentDuration}</p>
-              <p><span className="font-medium">Status:</span> 
-                <Badge className={`ml-2 ${getConsentStatusColor(consent.status || 'active')}`}>
-                  {consent.status || 'active'}
-                </Badge>
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Permissions */}
-        <div>
-          <h4 className="font-medium mb-3">Granted Permissions</h4>
-          <div className="grid gap-3 md:grid-cols-2">
-            <div className="flex items-center gap-2">
-              {consent.videoRecordingConsent ? 
-                <CheckCircle className="h-4 w-4 text-green-600" /> : 
-                <XCircle className="h-4 w-4 text-red-600" />
-              }
-              <span className="text-sm">Video Recording</span>
-            </div>
-            <div className="flex items-center gap-2">
-              {consent.audioRecordingConsent ? 
-                <CheckCircle className="h-4 w-4 text-green-600" /> : 
-                <XCircle className="h-4 w-4 text-red-600" />
-              }
-              <span className="text-sm">Audio Recording</span>
-            </div>
-            <div className="flex items-center gap-2">
-              {consent.transcriptionConsent ? 
-                <CheckCircle className="h-4 w-4 text-green-600" /> : 
-                <XCircle className="h-4 w-4 text-red-600" />
-              }
-              <span className="text-sm">Transcription</span>
-            </div>
-            <div className="flex items-center gap-2">
-              {consent.aiAnalysisConsent ? 
-                <CheckCircle className="h-4 w-4 text-green-600" /> : 
-                <XCircle className="h-4 w-4 text-red-600" />
-              }
-              <span className="text-sm">AI Analysis</span>
-            </div>
-            <div className="flex items-center gap-2">
-              {consent.dataRetentionConsent ? 
-                <CheckCircle className="h-4 w-4 text-green-600" /> : 
-                <XCircle className="h-4 w-4 text-red-600" />
-              }
-              <span className="text-sm">Data Retention</span>
-            </div>
-            <div className="flex items-center gap-2">
-              {consent.researchConsent ? 
-                <CheckCircle className="h-4 w-4 text-green-600" /> : 
-                <XCircle className="h-4 w-4 text-red-600" />
-              }
-              <span className="text-sm">Research Use</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Clinical Justification */}
-        <div>
-          <h4 className="font-medium mb-2">Clinical Justification</h4>
-          <p className="text-sm text-muted-foreground bg-muted p-3 rounded">
-            {consent.clinicalJustification}
-          </p>
-        </div>
-
-        {/* Special Conditions */}
-        {consent.specialConditions && (
-          <div>
-            <h4 className="font-medium mb-2">Special Conditions</h4>
-            <p className="text-sm text-muted-foreground bg-muted p-3 rounded">
-              {consent.specialConditions}
-            </p>
-          </div>
-        )}
-
-        {/* Witness Information */}
-        {consent.witnessInfo && (
-          <div>
-            <h4 className="font-medium mb-2">Witness Information</h4>
-            <div className="grid gap-2 md:grid-cols-2 text-sm">
-              <p><span className="font-medium">Name:</span> {consent.witnessInfo.name}</p>
-              <p><span className="font-medium">Relationship:</span> {consent.witnessInfo.relationship}</p>
-              <p><span className="font-medium">Signature:</span> {consent.witnessInfo.signature}</p>
-            </div>
-          </div>
-        )}
-
-        {/* Digital Signature */}
-        <div>
-          <h4 className="font-medium mb-2">Digital Signature</h4>
-          <p className="text-sm font-mono bg-muted p-2 rounded">
-            {consent.digitalSignature}
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">
-            Signed from IP: {consent.ipAddress} on {new Date(consent.timestamp).toLocaleString()}
-          </p>
-        </div>
-
-        {/* Actions */}
-        <div className="flex gap-3 pt-4 border-t">
-          <Button onClick={() => exportConsentRecord(consent)} variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Export Record
-          </Button>
-          {consent.status === 'active' && (
-            <Button 
-              onClick={() => revokeConsent(consent)} 
-              variant="destructive"
-            >
-              Revoke Consent
-            </Button>
-          )}
-        </div>
-      </CardContent>
-    </Card>
-  )
-
-  if (selectedConsent) {
-    return <ConsentDetailModal consent={selectedConsent} />
-  }
-
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Shield className="h-5 w-5 text-primary" />
-            Consent Management Dashboard
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
+      {selectedConsent ? (
+        <ConsentDetailModal
+          consent={selectedConsent}
+          onClose={() => setSelectedConsent(null)}
+          onExport={exportConsentRecord}
+          onRevoke={revokeConsent}
+          getConsentStatusColor={getConsentStatusColor}
+        />
+      ) : (
+        <>
+          {/* Header */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Shield className="h-5 w-5 text-primary" />
+                Consent Management Dashboard
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
             Manage patient consent records and audit trail for therapy session recordings
           </p>
         </CardHeader>
@@ -490,6 +495,7 @@ export function ConsentManagementDashboard() {
             </div>
             
             <select
+              title="Filter by consent status"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as any)}
               className="px-3 py-2 border rounded-md"
@@ -597,6 +603,8 @@ export function ConsentManagementDashboard() {
           </div>
         </CardContent>
       </Card>
+      </>
+      )}
     </div>
   )
 }

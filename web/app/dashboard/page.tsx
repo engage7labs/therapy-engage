@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { useAuth } from '@/contexts/auth-context'
 import { DashboardLayout } from '@/components/layout/dashboard-layout'
 import { StatsOverview } from '@/components/dashboard/stats-overview'
@@ -170,12 +170,12 @@ export default function DashboardPage() {
   ])
 
   const handleTriggerAlert = (alert: any) => {
-    setCriticalAlerts(current => [alert, ...current])
+    setCriticalAlerts([alert, ...criticalAlerts])
   }
 
   const handleAcknowledgeAlert = (alertId: string) => {
-    setCriticalAlerts(current => 
-      current.map(alert => 
+    setCriticalAlerts(
+      criticalAlerts.map((alert: any) => 
         alert.id === alertId ? { ...alert, acknowledged: true } : alert
       )
     )
@@ -197,20 +197,20 @@ export default function DashboardPage() {
             <StatsOverview 
               patients={patients}
               sessions={upcomingSessions}
-              insights={recentInsights}
+              insights={recentInsights as any}
             />
           </div>
 
           {/* Main Dashboard Content */}
           <div className="grid gap-6 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-6">
-              <PatientList patients={patients} />
-              <UpcomingSessions sessions={upcomingSessions} />
+              <PatientList patients={patients as any} />
+              <UpcomingSessions sessions={upcomingSessions as any} />
             </div>
             
             <div className="space-y-6">
               <EmergencyWhatsAppContact 
-                patients={patients}
+                patients={patients as any}
                 onContactInitiated={(contactId) => {
                   console.log('Emergency contact initiated:', contactId)
                 }}
@@ -233,8 +233,8 @@ export default function DashboardPage() {
                 }}
               />
               <EmergencySessionSimulator onTriggerAlert={handleTriggerAlert} />
-              <QuickActions onNavigate={() => {}} patients={patients} />
-              <RecentInsights insights={recentInsights} />
+              <QuickActions onNavigate={() => {}} patients={patients as any} />
+              <RecentInsights insights={recentInsights as any} />
             </div>
           </div>
         </div>

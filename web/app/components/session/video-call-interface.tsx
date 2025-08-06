@@ -1,27 +1,28 @@
 import { useState, useRef, useEffect } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { 
   Video, 
   VideoOff, 
-  Microphone, 
-  MicrophoneSlash,
+  Mic, 
+  MicOff,
   Phone,
-  PhoneSlash,
+  PhoneOff,
   Monitor,
-  Record,
+  Circle,
   Pause,
   Play,
   Users,
-  Warning,
+  AlertTriangle,
   CheckCircle,
   Clock,
   Settings,
-  ChatCircle,
+  MessageCircle,
+  Brain,
   Heart
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { toast } from 'sonner'
 
 interface VideoCallInterfaceProps {
@@ -329,27 +330,18 @@ export function VideoCallInterface({
 
   // Generate AI insights during call
   const generateInsights = async () => {
-    const prompt = spark.llmPrompt`
-      Analyze this therapy session context and provide clinical insights:
-      
-      Patient: ${patientName}
-      Session Duration: ${formatTime(callState.duration)}
-      Current Notes: ${sessionNotes}
-      
-      Generate 2-3 brief clinical observations that would be helpful for the therapist during this live session.
-      Focus on engagement, mood indicators, and therapeutic progress.
-    `
+      // ###desabilitado_mvp### const prompt = "Template desabilitado para MVP"
     
     try {
-      const response = await spark.llm(prompt)
+      // ###desabilitado_mvp### const response = await spark.llm(prompt)
       const newInsight = {
         id: `insight-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        content: response,
+        content: "###desabilitado_mvp### AI insights disabled for MVP",
         type: 'live-session'
       }
       
-      setAiInsights((prev: any[]) => [...prev, newInsight])
+      setAiInsights([...aiInsights, newInsight] as any)
       toast.success('AI insights updated')
     } catch (error) {
       toast.error('Failed to generate insights')
@@ -382,7 +374,7 @@ export function VideoCallInterface({
                 )}
                 {callState.isRecording && (
                   <>
-                    <Record className="h-4 w-4 text-red-500" />
+                    <Circle className="h-4 w-4 text-red-500" />
                     <span className="text-red-500">{formatTime(callState.recordingDuration)}</span>
                   </>
                 )}
@@ -423,7 +415,7 @@ export function VideoCallInterface({
               </div>
               <div className="absolute top-4 right-4 flex gap-2">
                 {patient.hasVideo && <Video className="h-5 w-5 text-white" />}
-                {patient.hasAudio && <Microphone className="h-5 w-5 text-white" />}
+                {patient.hasAudio && <Mic className="h-5 w-5 text-white" />}
               </div>
             </div>
           )}
@@ -445,7 +437,7 @@ export function VideoCallInterface({
             </div>
             <div className="absolute top-4 right-4 flex gap-2">
               {callState.isVideoEnabled && <Video className="h-5 w-5 text-white" />}
-              {callState.isAudioEnabled && <Microphone className="h-5 w-5 text-white" />}
+              {callState.isAudioEnabled && <Mic className="h-5 w-5 text-white" />}
             </div>
           </div>
         </div>
@@ -486,9 +478,9 @@ export function VideoCallInterface({
             disabled={!callState.isConnected}
           >
             {callState.isAudioEnabled ? (
-              <Microphone className="h-5 w-5" />
+              <Mic className="h-5 w-5" />
             ) : (
-              <MicrophoneSlash className="h-5 w-5" />
+              <MicOff className="h-5 w-5" />
             )}
           </Button>
 
@@ -514,7 +506,7 @@ export function VideoCallInterface({
             {callState.isRecording ? (
               <Pause className="h-5 w-5" />
             ) : (
-              <Record className="h-5 w-5" />
+              <Circle className="h-5 w-5" />
             )}
           </Button>
 
@@ -524,7 +516,7 @@ export function VideoCallInterface({
             onClick={() => setShowNotes(!showNotes)}
             disabled={!callState.isConnected}
           >
-            <ChatCircle className="h-5 w-5" />
+            <MessageCircle className="h-5 w-5" />
           </Button>
 
           <Button
@@ -541,7 +533,7 @@ export function VideoCallInterface({
             size="lg"
             onClick={endCall}
           >
-            <PhoneSlash className="h-5 w-5" />
+            <PhoneOff className="h-5 w-5" />
           </Button>
         </div>
       </div>

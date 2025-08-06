@@ -1,6 +1,5 @@
-import { ReactNode, useState } from 'react'
+import { ReactNode } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Toaster } from '@/components/ui/sonner'
@@ -9,7 +8,6 @@ import { EnhancedLogoutTooltip } from '@/components/auth/enhanced-logout-tooltip
 import { MiniSessionStatus } from '@/components/dashboard/mini-session-status'
 import { CompactSessionStatus } from '@/components/dashboard/compact-session-status'
 import { QuickThemeLanguageToggle } from '@/components/settings/quick-theme-language-toggle'
-import { useAuth } from '../../contexts/auth-context'
 import { useTheme } from '../../contexts/theme-context'
 import { useLogoutConfirmation } from '../../hooks/use-logout-confirmation'
 import { 
@@ -18,34 +16,32 @@ import {
   Users, 
   Brain, 
   Settings, 
-  Bell,
   User,
   Video,
   House,
   Play,
   TestTube,
   Shield,
-  ClipboardText,
+  Clipboard,
   Globe,
   Siren,
   Timer,
   Info
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 interface DashboardLayoutProps {
-  children: ReactNode
-  therapist: {
-    id: string
-    name: string
-    license: string
-    specialization: string
+  readonly children: ReactNode
+  readonly therapist: {
+    readonly id: string
+    readonly name: string
+    readonly license: string
+    readonly specialization: string
   }
-  activeView?: string
-  onNavigate?: (view: string) => void
+  readonly activeView?: string
+  readonly onNavigate?: (view: string) => void
 }
 
 export function DashboardLayout({ children, therapist, activeView = 'dashboard', onNavigate }: DashboardLayoutProps) {
-  const { logout } = useAuth()
   const { t } = useTheme()
   const { requestLogout, LogoutConfirmationDialog } = useLogoutConfirmation()
   
@@ -57,7 +53,7 @@ export function DashboardLayout({ children, therapist, activeView = 'dashboard',
     { id: 'timeout-tester', label: 'Session Timeout Test', icon: Timer },
     { id: 'timeout-guide', label: 'Session Timeout Guide', icon: Info },
     { id: 'secure-sessions', label: 'Secure Recording', icon: Shield },
-    { id: 'consent-management', label: 'Consent Manager', icon: ClipboardText },
+    { id: 'consent-management', label: 'Consent Manager', icon: Clipboard },
     { id: 'brazilian-consent', label: 'Brasil LGPD 🇧🇷', icon: Shield },
     { id: 'international-consent', label: 'International Consent', icon: Globe },
     { id: 'gdpr-tester', label: 'GDPR Tester', icon: TestTube },
@@ -76,7 +72,7 @@ export function DashboardLayout({ children, therapist, activeView = 'dashboard',
         <div className="flex h-16 items-center justify-between px-6">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <Stethoscope className="h-8 w-8 text-primary" weight="bold" />
+              <Stethoscope className="h-8 w-8 text-primary" />
               <span className="text-xl font-semibold text-foreground">
                 Therapy Engage
               </span>
@@ -88,12 +84,10 @@ export function DashboardLayout({ children, therapist, activeView = 'dashboard',
 
           <div className="flex items-center space-x-4">
             <CompactSessionStatus 
-              onOpenAlerts={() => onNavigate?.('dashboard')}
-            />
+              onOpenAlerts={() => onNavigate?.('dashboard')} />
             
             <MiniSessionStatus 
-              onExpand={() => onNavigate?.('dashboard')}
-            />
+              onExpand={() => onNavigate?.('dashboard')} />
 
             {/* Theme and Language Controls */}
             <QuickThemeLanguageToggle />
@@ -122,8 +116,7 @@ export function DashboardLayout({ children, therapist, activeView = 'dashboard',
             <EnhancedLogoutTooltip 
               onLogoutRequest={requestLogout}
               variant="ghost"
-              size="sm"
-            />
+              size="sm" />
           </div>
         </div>
       </header>
@@ -158,7 +151,6 @@ export function DashboardLayout({ children, therapist, activeView = 'dashboard',
               </Button>
             </div>
           </div>
-
 
         </nav>
 

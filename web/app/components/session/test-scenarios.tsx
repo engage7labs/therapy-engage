@@ -3,14 +3,14 @@ import { Badge } from '@/components/ui/badge'
 import { 
   TestTube, 
   CheckCircle, 
-  Warning, 
-  FirstAid, 
+  AlertTriangle, 
+  Plus, 
   Info,
   Brain,
   Heart,
   Clock,
   Target
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 /**
  * Test Scenarios Documentation Component
@@ -287,8 +287,8 @@ export function TestScenarios() {
   const getRiskIcon = (riskLevel: string) => {
     switch (riskLevel) {
       case 'low': return <CheckCircle className="h-4 w-4" />
-      case 'moderate': return <Warning className="h-4 w-4" />
-      case 'high': return <FirstAid className="h-4 w-4" />
+      case 'moderate': return <AlertTriangle className="h-4 w-4" />
+      case 'high': return <Plus className="h-4 w-4" />
       default: return <Info className="h-4 w-4" />
     }
   }
@@ -349,7 +349,7 @@ export function TestScenarios() {
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-yellow-100 rounded-lg">
-                <Warning className="h-5 w-5 text-yellow-700" />
+                <AlertTriangle className="h-5 w-5 text-yellow-700" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{testScenarios.filter(s => s.riskLevel === 'moderate').length}</p>
@@ -363,7 +363,7 @@ export function TestScenarios() {
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-red-100 rounded-lg">
-                <FirstAid className="h-5 w-5 text-red-700" />
+                <Plus className="h-5 w-5 text-red-700" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{testScenarios.filter(s => s.riskLevel === 'high').length}</p>

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -11,22 +11,20 @@ import { Separator } from '@/components/ui/separator'
 import { 
   Shield, 
   FileText, 
-  UserCheck, 
-  Clock, 
   AlertTriangle,
   CheckCircle,
   Video,
-  Microphone,
+  Mic,
   Lock
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { toast } from 'sonner'
 
 interface ConsentFormProps {
-  patientId: string
-  patientName: string
-  sessionId: string
-  onConsentGranted: (consentData: ConsentData) => void
-  onConsentDeclined: () => void
+  readonly patientId: string
+  readonly patientName: string
+  readonly sessionId: string
+  readonly onConsentGranted: (consentData: ConsentData) => void
+  readonly onConsentDeclined: () => void
 }
 
 interface ConsentData {
@@ -54,6 +52,8 @@ interface ConsentData {
   dataProcessingLocations: string[]
   withdrawalAcknowledged: boolean
   clinicalJustification: string
+  status?: 'active' | 'revoked' | 'expired'
+  revokedAt?: string
 }
 
 export function PatientConsentForm({ 
@@ -65,6 +65,7 @@ export function PatientConsentForm({
 }: ConsentFormProps) {
   // Consent state management
   const [consentData, setConsentData] = useKV<ConsentData | null>(`consent-${sessionId}`, null)
+  const [auditTrail, setAuditTrail] = useKV<any[]>('audit-trail', [])
   
   // Form state
   const [digitalSignature, setDigitalSignature] = useState('')
@@ -177,14 +178,7 @@ export function PatientConsentForm({
       }
 
       // Store audit trail
-      const [existingAudit, setAuditTrail] = await Promise.all([
-        spark.kv.get<any[]>('audit-trail') || [],
-        spark.kv.set('audit-trail', [])
-      ])
-      
-      if (Array.isArray(existingAudit)) {
-        await spark.kv.set('audit-trail', [...existingAudit, auditEntry])
-      }
+      setAuditTrail([...auditTrail, auditEntry])
 
       toast.success('Informed consent documented successfully')
       onConsentGranted(newConsentData)
@@ -210,10 +204,7 @@ export function PatientConsentForm({
     }
 
     // Log refusal in audit trail
-    spark.kv.get<any[]>('audit-trail').then(existingAudit => {
-      const trail = existingAudit || []
-      spark.kv.set('audit-trail', [...trail, auditEntry])
-    })
+    setAuditTrail([...auditTrail, auditEntry])
 
     toast.info('Consent declined - session will proceed without recording')
     onConsentDeclined()
@@ -225,7 +216,7 @@ export function PatientConsentForm({
       const revokedConsent = {
         ...consentData,
         revokedAt: new Date().toISOString(),
-        status: 'revoked'
+        status: 'revoked' as const
       }
 
       setConsentData(revokedConsent)
@@ -242,8 +233,7 @@ export function PatientConsentForm({
         }
       }
 
-      const existingAudit = await spark.kv.get<any[]>('audit-trail') || []
-      await spark.kv.set('audit-trail', [...existingAudit, auditEntry])
+      setAuditTrail([...auditTrail, auditEntry])
 
       toast.success('Consent revoked successfully')
     }
@@ -294,7 +284,7 @@ export function PatientConsentForm({
               )}
               {consentData.audioRecordingConsent && (
                 <Badge variant="default" className="justify-start">
-                  <Microphone className="h-3 w-3 mr-1" />
+                  <Mic className="h-3 w-3 mr-1" />
                   Audio Recording
                 </Badge>
               )}
@@ -402,7 +392,7 @@ export function PatientConsentForm({
                 />
                 <div className="space-y-1">
                   <Label htmlFor="audio-consent" className="flex items-center gap-2">
-                    <Microphone className="h-4 w-4" />
+                    <Mic className="h-4 w-4" />
                     Audio Recording Consent
                   </Label>
                   <p className="text-xs text-muted-foreground">
@@ -510,6 +500,7 @@ export function PatientConsentForm({
               value={consentDuration}
               onChange={(e) => setConsentDuration(e.target.value as any)}
               className="w-full p-2 border rounded-md"
+              aria-label="Consent Duration"
             >
               <option value="session">This session only</option>
               <option value="30-days">30 days</option>

@@ -4,9 +4,9 @@ import { Badge } from '@/components/ui/badge'
 import { 
   Calendar,
   Clock,
-  VideoCamera,
+  Video,
   Phone
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 interface Session {
   id: string
@@ -18,7 +18,7 @@ interface Session {
 }
 
 interface UpcomingSessionsProps {
-  sessions: Session[]
+  readonly sessions: Session[]
 }
 
 export function UpcomingSessions({ sessions }: UpcomingSessionsProps) {
@@ -131,7 +131,7 @@ export function UpcomingSessions({ sessions }: UpcomingSessionsProps) {
               <div className="flex items-center space-x-2">
                 {isStartingSoon && (
                   <Button size="sm" className="bg-primary hover:bg-primary/90">
-                    <VideoCamera className="h-4 w-4 mr-2" />
+                    <Video className="h-4 w-4 mr-2" />
                     Join Now
                   </Button>
                 )}

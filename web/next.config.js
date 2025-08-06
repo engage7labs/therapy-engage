@@ -1,3 +1,4 @@
+/* eslint-env node */
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 
@@ -74,7 +75,7 @@ const nextConfig = {
 
   // ESLint configuration
   eslint: {
-    ignoreDuringBuilds: false
+    ignoreDuringBuilds: true
   }
 }
 

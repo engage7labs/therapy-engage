@@ -5,22 +5,22 @@ import {
   Users, 
   Calendar, 
   Brain, 
-  TrendUp 
-} from '@phosphor-icons/react'
+  TrendingUp 
+} from 'lucide-react'
 
 interface StatsOverviewProps {
-  patients: Array<{
-    id: string
-    riskLevel: string
-    moodTrend: string
+  readonly patients: Array<{
+    readonly id: string
+    readonly riskLevel: string
+    readonly moodTrend: string
   }>
-  sessions: Array<{
-    id: string
-    status: string
+  readonly sessions: Array<{
+    readonly id: string
+    readonly status: string
   }>
-  insights: Array<{
-    id: string
-    type: string
+  readonly insights: Array<{
+    readonly id: string
+    readonly type: string
   }>
 }
 
@@ -86,7 +86,7 @@ export function StatsOverview({ patients, sessions, insights }: StatsOverviewPro
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Progress Trends</CardTitle>
-          <TrendUp className="h-4 w-4 text-muted-foreground" />
+          <TrendingUp className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{improvingPatients}</div>

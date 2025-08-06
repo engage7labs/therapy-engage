@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -11,7 +11,7 @@ import {
   AlertTriangle,
   Timer,
   Users
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 interface EmergencyScenario {
   id: string
@@ -26,7 +26,7 @@ interface EmergencyScenario {
 }
 
 interface EmergencySimulatorProps {
-  onTriggerAlert?: (alert: {
+  readonly onTriggerAlert?: (alert: {
     id: string
     patientName: string
     patientId: string
@@ -104,7 +104,7 @@ export function EmergencySessionSimulator({ onTriggerAlert }: EmergencySimulator
     }
   ]
 
-  const [criticalAlerts, setCriticalAlerts] = useKV<any[]>('critical-alerts', [])
+  const [, setCriticalAlerts] = useKV<any[]>('critical-alerts', [])
 
   // Timer countdown effect
   useEffect(() => {
@@ -137,8 +137,9 @@ export function EmergencySessionSimulator({ onTriggerAlert }: EmergencySimulator
       sessionId: `session-emergency-${Date.now()}`
     }
 
-    // Add to critical alerts
-    setCriticalAlerts(current => [newAlert, ...current])
+    // Add to critical alerts - get current state first
+    const currentAlerts = JSON.parse(localStorage.getItem('critical-alerts') || '[]')
+    setCriticalAlerts([newAlert, ...currentAlerts])
     
     // Trigger callback for parent component
     onTriggerAlert?.(newAlert)

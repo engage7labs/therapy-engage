@@ -1,4 +1,4 @@
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -10,10 +10,10 @@ import {
   Download, 
   Share, 
   AlertTriangle,
-  TrendUp,
+  TrendingUp,
   Clock,
   User
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 interface SessionInsightsProps {
   sessionId: string
@@ -249,7 +249,7 @@ Dr. Deleta: These are all very positive developments. Let's explore what other s
           {/* Progress Markers */}
           <div>
             <h4 className="font-medium mb-3 flex items-center gap-2">
-              <TrendUp className="h-4 w-4 text-green-600" />
+              <TrendingUp className="h-4 w-4 text-green-600" />
               Progress Markers
             </h4>
             <ul className="space-y-2">

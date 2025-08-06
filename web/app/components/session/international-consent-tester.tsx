@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useState } from 'react'
+import { useKV } from '@/hooks/use-kv'
 import { useInternationalization } from '@/hooks/use-internationalization'
 import { LanguageSelector } from '@/components/i18n/language-selector'
 import { MultilingualConsentForm } from '@/components/i18n/multilingual-consent-form'
@@ -8,20 +8,16 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Separator } from '@/components/ui/separator'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { toast } from 'sonner'
 import { 
   Globe, 
   Shield, 
   CheckCircle, 
-  Clock,
   FileText,
   Users,
   BarChart3,
-  AlertTriangle,
-  Play,
-  Settings
-} from '@phosphor-icons/react'
+  Play
+} from 'lucide-react'
 
 interface TestScenario {
   id: string
@@ -172,10 +168,10 @@ export function InternationalConsentTester() {
       }
     }
     
-    setTestResults(prev => ({
-      ...prev,
+    setTestResults({
+      ...testResults,
       [activeScenario.id]: testResult
-    }))
+    })
     
     setCurrentStep('results')
     toast.success('Test scenario completed successfully!')
@@ -248,8 +244,8 @@ export function InternationalConsentTester() {
                     Test Objectives
                   </h4>
                   <ul className="text-sm space-y-1 pl-6">
-                    {scenario.testObjectives.map((objective, index) => (
-                      <li key={index} className="flex items-start gap-2">
+                    {scenario.testObjectives.map((objective) => (
+                      <li key={objective} className="flex items-start gap-2">
                         <span className="text-muted-foreground">•</span>
                         {objective}
                       </li>

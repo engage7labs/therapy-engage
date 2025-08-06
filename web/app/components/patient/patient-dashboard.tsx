@@ -1,4 +1,4 @@
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -11,10 +11,10 @@ import {
   CheckCircle, 
   Video, 
   FileText, 
-  TrendUp,
+  TrendingUp,
   Shield,
   Heart
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 export function PatientDashboard() {
   const { user } = useAuth()
@@ -223,7 +223,7 @@ export function PatientDashboard() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <TrendUp size={20} />
+                <TrendingUp size={20} />
                 Progresso do Tratamento
               </CardTitle>
             </CardHeader>
@@ -240,8 +240,8 @@ export function PatientDashboard() {
 
               <div className="space-y-3">
                 <h4 className="font-medium">Objetivos Atuais</h4>
-                {patientData.progress.currentGoals.map((goal, index) => (
-                  <div key={index} className="flex items-center gap-2">
+                {patientData.progress.currentGoals.map((goal) => (
+                  <div key={goal} className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-blue-500 rounded-full" />
                     <span className="text-sm">{goal}</span>
                   </div>
@@ -250,8 +250,8 @@ export function PatientDashboard() {
 
               <div className="space-y-3">
                 <h4 className="font-medium text-green-600">Objetivos Alcançados</h4>
-                {patientData.progress.completedGoals.map((goal, index) => (
-                  <div key={index} className="flex items-center gap-2">
+                {patientData.progress.completedGoals.map((goal) => (
+                  <div key={goal} className="flex items-center gap-2">
                     <CheckCircle size={16} className="text-green-500" />
                     <span className="text-sm line-through text-muted-foreground">{goal}</span>
                   </div>

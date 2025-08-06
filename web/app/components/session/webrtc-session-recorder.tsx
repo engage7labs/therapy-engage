@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { useWebRTCRecording } from '@/hooks/use-webrtc-recording'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -11,10 +11,10 @@ import {
   Play, 
   Pause, 
   Square, 
-  Microphone, 
-  MicrophoneSlash, 
+  Mic,
+  MicOff,
   Video, 
-  VideoSlash,
+  VideoOff,
   FileText,
   Brain,
   Shield,
@@ -25,7 +25,7 @@ import {
   Users,
   Activity,
   RotateCcw
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { toast } from 'sonner'
 
 interface WebRTCSessionRecorderProps {
@@ -296,7 +296,7 @@ export function WebRTCSessionRecorder({
                     <p className="text-sm text-muted-foreground">Please wait...</p>
                   </div>
                 ) : (
-                  <VideoSlash className="h-16 w-16 text-muted-foreground" />
+                  <VideoOff className="h-16 w-16 text-muted-foreground" />
                 )}
               </div>
             )}
@@ -349,7 +349,7 @@ export function WebRTCSessionRecorder({
                       onClick={toggleVideo}
                       disabled={!session}
                     >
-                      {videoEnabled ? <Video className="h-4 w-4" /> : <VideoSlash className="h-4 w-4" />}
+                      {videoEnabled ? <Video className="h-4 w-4" /> : <VideoOff className="h-4 w-4" />}
                     </Button>
 
                     <Button
@@ -358,7 +358,7 @@ export function WebRTCSessionRecorder({
                       onClick={toggleAudio}
                       disabled={!session}
                     >
-                      {audioEnabled ? <Microphone className="h-4 w-4" /> : <MicrophoneSlash className="h-4 w-4" />}
+                      {audioEnabled ? <Mic className="h-4 w-4" /> : <MicOff className="h-4 w-4" />}
                     </Button>
 
                     <Separator orientation="vertical" className="h-8" />

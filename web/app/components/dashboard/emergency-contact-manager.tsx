@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { useKV } from '../hooks/use-kv'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useKV } from '@/hooks/use-kv'
+import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
@@ -13,14 +13,14 @@ import {
   MessageCircle, 
   Phone, 
   Shield, 
-  ShieldWarning,
+  ShieldAlert,
   Clock,
   CheckCircle,
   AlertTriangle,
-  Edit,
+  Edit2,
   Save,
   X
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 interface Patient {
   id: string
@@ -44,8 +44,8 @@ interface EmergencyContactLog {
 }
 
 interface EmergencyContactManagerProps {
-  patients: Patient[]
-  onPatientUpdate?: (patientId: string, updates: Partial<Patient>) => void
+  readonly patients: Patient[]
+  readonly onPatientUpdate?: (patientId: string, updates: Partial<Patient>) => void
 }
 
 export function EmergencyContactManager({ patients, onPatientUpdate }: EmergencyContactManagerProps) {
@@ -54,33 +54,36 @@ export function EmergencyContactManager({ patients, onPatientUpdate }: Emergency
   const [editForm, setEditForm] = useState<Partial<Patient>>({})
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
+  // Helper function to process response simulation
+  const processResponseSimulation = (logs: EmergencyContactLog[]): EmergencyContactLog[] => {
+    return logs.map(log => {
+      if (log.status === 'sent' && Math.random() > 0.7) {
+        const responses = [
+          'Estou bem, obrigado por perguntar!',
+          'Meio ansioso hoje, mas melhor que ontem',
+          'Preciso conversar, pode me ligar?',
+          'Tudo tranquilo por aqui',
+          'Não muito bem hoje...'
+        ]
+        return {
+          ...log,
+          status: 'responded' as const,
+          response: responses[Math.floor(Math.random() * responses.length)],
+          responseTime: new Date().toISOString()
+        }
+      }
+      return log
+    })
+  }
+
   // Auto-simulate responses for demo
   useEffect(() => {
     const interval = setInterval(() => {
-      setContactLogs(current => 
-        current.map(log => {
-          if (log.status === 'sent' && Math.random() > 0.7) {
-            const responses = [
-              'Estou bem, obrigado por perguntar!',
-              'Meio ansioso hoje, mas melhor que ontem',
-              'Preciso conversar, pode me ligar?',
-              'Tudo tranquilo por aqui',
-              'Não muito bem hoje...'
-            ]
-            return {
-              ...log,
-              status: 'responded' as const,
-              response: responses[Math.floor(Math.random() * responses.length)],
-              responseTime: new Date().toISOString()
-            }
-          }
-          return log
-        })
-      )
+      setContactLogs(processResponseSimulation(contactLogs))
     }, 10000) // Check every 10 seconds
 
     return () => clearInterval(interval)
-  }, [setContactLogs])
+  }, [contactLogs, setContactLogs])
 
   const handleEditPatient = (patient: Patient) => {
     setEditingPatient(patient.id)
@@ -143,17 +146,16 @@ export function EmergencyContactManager({ patients, onPatientUpdate }: Emergency
     }
 
     // Add to logs
-    setContactLogs(current => [newLog, ...current])
+    setContactLogs([newLog, ...contactLogs])
 
     // Simulate sent status after delay
     setTimeout(() => {
-      setContactLogs(current => 
-        current.map(log => 
-          log.id === contactId 
-            ? { ...log, status: 'sent' as const }
-            : log
-        )
+      const updatedLogs = contactLogs.map(log => 
+        log.id === contactId 
+          ? { ...log, status: 'sent' as const }
+          : log
       )
+      setContactLogs(updatedLogs)
     }, 2000)
 
     toast.success(`${type === 'whatsapp' ? 'WhatsApp' : 'Chamada'} iniciado`, {
@@ -231,7 +233,7 @@ export function EmergencyContactManager({ patients, onPatientUpdate }: Emergency
                             </div>
                           ) : (
                             <div className="flex items-center gap-1">
-                              <ShieldWarning className="w-3 h-3 text-orange-500" />
+                              <ShieldAlert className="w-3 h-3 text-orange-500" />
                               <span>Sem autorização</span>
                             </div>
                           )}
@@ -279,7 +281,7 @@ export function EmergencyContactManager({ patients, onPatientUpdate }: Emergency
                           </div>
                         </div>
                         <Button size="sm" variant="outline" onClick={() => handleEditPatient(patient)}>
-                          <Edit className="w-3 h-3" />
+                          <Edit2 className="w-3 h-3" />
                         </Button>
                       </div>
                     )}

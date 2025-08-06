@@ -6,15 +6,15 @@ import { toast } from 'sonner'
 import { 
   User, 
   Calendar, 
-  TrendUp, 
-  TrendDown, 
+  TrendingUp, 
+  TrendingDown, 
   Minus,
-  VideoCamera,
+  Video,
   MessageCircle,
   Phone,
   Shield,
-  ShieldWarning
-} from '@phosphor-icons/react'
+  ShieldAlert
+} from 'lucide-react'
 
 interface Patient {
   id: string
@@ -33,7 +33,7 @@ interface Patient {
 }
 
 interface PatientListProps {
-  patients: Patient[]
+  readonly patients: Patient[]
 }
 
 export function PatientList({ patients }: PatientListProps) {
@@ -48,8 +48,8 @@ export function PatientList({ patients }: PatientListProps) {
 
   const getTrendIcon = (trend: string) => {
     switch (trend) {
-      case 'improving': return <TrendUp className="h-4 w-4 text-green-600" />
-      case 'declining': return <TrendDown className="h-4 w-4 text-red-600" />
+      case 'improving': return <TrendingUp className="h-4 w-4 text-green-600" />
+      case 'declining': return <TrendingDown className="h-4 w-4 text-red-600" />
       default: return <Minus className="h-4 w-4 text-gray-400" />
     }
   }
@@ -180,7 +180,7 @@ export function PatientList({ patients }: PatientListProps) {
                   {patient.consentForEmergencyContact ? (
                     <Shield className="h-3 w-3 text-green-600" />
                   ) : (
-                    <ShieldWarning className="h-3 w-3 text-orange-500" />
+                    <ShieldAlert className="h-3 w-3 text-orange-500" />
                   )}
                   <span className="text-xs text-muted-foreground">
                     {patient.consentForEmergencyContact ? 'Contato autorizado' : 'Sem consentimento'}
@@ -191,7 +191,7 @@ export function PatientList({ patients }: PatientListProps) {
               {/* Action Buttons */}
               <div className="flex flex-col space-y-1">
                 <Button size="sm" variant="outline">
-                  <VideoCamera className="h-4 w-4 mr-2" />
+                  <Video className="h-4 w-4 mr-2" />
                   Start Session
                 </Button>
                 

@@ -1,31 +1,20 @@
 import { useState } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Progress } from '@/components/ui/progress'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { 
-  Video, 
   Play, 
-  Stop, 
+  StopCircle, 
   Clock, 
-  User, 
-  Warning,
+  AlertTriangle,
   CheckCircle,
-  FirstAid,
-  Brain,
   Heart,
-  Target,
   TestTube,
-  MicrophoneSlash,
-  Microphone,
-  Camera,
-  CameraSlash,
-  Phone,
-  PhoneSlash,
   Info
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { VideoCallInterface } from './video-call-interface'
 import { toast } from 'sonner'
 
@@ -92,7 +81,6 @@ export function ComprehensiveVideoTest() {
   const [currentPhase, setCurrentPhase] = useState(0)
 
   // Test session data persistence
-  const [testResults, setTestResults] = useKV<TestResult[]>('video-test-results', [])
   const [sessionMetrics, setSessionMetrics] = useKV('session-metrics', {
     totalTests: 0,
     passedTests: 0,
@@ -392,12 +380,13 @@ export function ComprehensiveVideoTest() {
       const total = testScenarios.find(s => s.id === activeTest.scenarioId)?.validationPoints.length || 0
 
       // Update metrics
-      setSessionMetrics((prev) => ({
-        totalTests: prev.totalTests + 1,
-        passedTests: prev.passedTests + (passed === total ? 1 : 0),
-        averageDuration: Math.round((prev.averageDuration * prev.totalTests + duration) / (prev.totalTests + 1)),
-        criticalIssues: prev.criticalIssues + (passed < total * 0.7 ? 1 : 0)
-      }))
+      const newMetrics = {
+        totalTests: sessionMetrics.totalTests + 1,
+        passedTests: sessionMetrics.passedTests + (passed === total ? 1 : 0),
+        averageDuration: Math.round((sessionMetrics.averageDuration * sessionMetrics.totalTests + duration) / (sessionMetrics.totalTests + 1)),
+        criticalIssues: sessionMetrics.criticalIssues + (passed < total * 0.7 ? 1 : 0)
+      }
+      setSessionMetrics(newMetrics)
 
       toast.success(`Test completed: ${passed}/${total} validations passed`)
     }
@@ -459,7 +448,7 @@ export function ComprehensiveVideoTest() {
                 Mark Validation
               </Button>
               <Button onClick={endTestSession} variant="destructive" size="sm">
-                <Stop className="h-4 w-4 mr-2" />
+                <StopCircle className="h-4 w-4 mr-2" />
                 End Test
               </Button>
             </div>
@@ -501,23 +490,32 @@ export function ComprehensiveVideoTest() {
                 const isCompleted = activeTest.completedValidations.includes(point)
                 const isCurrent = index === currentPhase
                 
+                let containerClass = 'bg-gray-50 border border-gray-200'
+                if (isCompleted) {
+                  containerClass = 'bg-green-50 border border-green-200'
+                } else if (isCurrent) {
+                  containerClass = 'bg-blue-50 border border-blue-200'
+                }
+
                 return (
                   <div 
-                    key={index}
-                    className={`flex items-center gap-3 p-3 rounded-lg ${
-                      isCompleted ? 'bg-green-50 border border-green-200' :
-                      isCurrent ? 'bg-blue-50 border border-blue-200' :
-                      'bg-gray-50 border border-gray-200'
-                    }`}
+                    key={`${point}-${index}`}
+                    className={`flex items-center gap-3 p-3 rounded-lg ${containerClass}`}
                   >
-                    {isCompleted ? (
-                      <CheckCircle className="h-5 w-5 text-green-600" />
-                    ) : isCurrent ? (
-                      <Clock className="h-5 w-5 text-blue-600" />
-                    ) : (
-                      <div className="w-5 h-5 border-2 border-gray-300 rounded-full" />
-                    )}
-                    <span className={isCompleted ? 'text-green-800' : isCurrent ? 'text-blue-800' : 'text-gray-600'}>
+                    {(() => {
+                      if (isCompleted) {
+                        return <CheckCircle className="h-5 w-5 text-green-600" />
+                      } else if (isCurrent) {
+                        return <Clock className="h-5 w-5 text-blue-600" />
+                      } else {
+                        return <div className="w-5 h-5 border-2 border-gray-300 rounded-full" />
+                      }
+                    })()}
+                    <span className={(() => {
+                      if (isCompleted) return 'text-green-800'
+                      if (isCurrent) return 'text-blue-800'
+                      return 'text-gray-600'
+                    })()}>
                       {point}
                     </span>
                   </div>
@@ -539,7 +537,7 @@ export function ComprehensiveVideoTest() {
           <h1 className="text-3xl font-bold">Comprehensive Video Call Testing</h1>
         </div>
         <p className="text-muted-foreground max-w-3xl mx-auto">
-          Test the platform's video call capabilities with realistic therapy scenarios across different 
+          Test the platform&apos;s video call capabilities with realistic therapy scenarios across different 
           patient types, risk levels, and therapeutic challenges to ensure robust clinical performance.
         </p>
       </div>
@@ -592,7 +590,7 @@ export function ComprehensiveVideoTest() {
           <CardContent className="p-6">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-red-100 rounded-lg">
-                <Warning className="h-5 w-5 text-red-700" />
+                <AlertTriangle className="h-5 w-5 text-red-700" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{sessionMetrics.criticalIssues}</p>
@@ -623,10 +621,11 @@ export function ComprehensiveVideoTest() {
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">{scenario.name}</CardTitle>
-                    <Badge variant={
-                      scenario.complexity === 'complex' ? 'destructive' :
-                      scenario.complexity === 'moderate' ? 'secondary' : 'default'
-                    }>
+                    <Badge variant={(() => {
+                      if (scenario.complexity === 'complex') return 'destructive'
+                      if (scenario.complexity === 'moderate') return 'secondary'
+                      return 'default'
+                    })()}>
                       {scenario.complexity}
                     </Badge>
                   </div>
@@ -642,8 +641,8 @@ export function ComprehensiveVideoTest() {
                   <div className="text-sm">
                     <span className="text-muted-foreground">Validations:</span>
                     <div className="mt-1 space-y-1">
-                      {scenario.validationPoints.slice(0, 3).map((point, index) => (
-                        <div key={index} className="flex items-start gap-2">
+                      {scenario.validationPoints.slice(0, 3).map((point) => (
+                        <div key={point} className="flex items-start gap-2">
                           <span className="w-1 h-1 bg-primary rounded-full mt-2 flex-shrink-0" />
                           <span className="text-xs text-muted-foreground">{point}</span>
                         </div>
@@ -675,10 +674,11 @@ export function ComprehensiveVideoTest() {
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg">{patient.name}</CardTitle>
                     <div className="flex items-center gap-2">
-                      <Badge variant={
-                        patient.riskLevel === 'high' ? 'destructive' :
-                        patient.riskLevel === 'moderate' ? 'secondary' : 'default'
-                      }>
+                      <Badge variant={(() => {
+                        if (patient.riskLevel === 'high') return 'destructive'
+                        if (patient.riskLevel === 'moderate') return 'secondary'
+                        return 'default'
+                      })()}>
                         {patient.riskLevel} risk
                       </Badge>
                       {patient.isOnline && (
@@ -700,8 +700,8 @@ export function ComprehensiveVideoTest() {
                   <div className="text-sm">
                     <span className="text-muted-foreground">Current Challenges:</span>
                     <div className="mt-1 space-y-1">
-                      {patient.currentChallenges.slice(0, 2).map((challenge, index) => (
-                        <div key={index} className="flex items-start gap-2">
+                      {patient.currentChallenges.slice(0, 2).map((challenge) => (
+                        <div key={challenge} className="flex items-start gap-2">
                           <span className="w-1 h-1 bg-orange-500 rounded-full mt-2 flex-shrink-0" />
                           <span className="text-xs text-muted-foreground">{challenge}</span>
                         </div>
@@ -712,8 +712,8 @@ export function ComprehensiveVideoTest() {
                   <div className="text-sm">
                     <span className="text-muted-foreground">Expected Behaviors:</span>
                     <div className="mt-1 space-y-1">
-                      {patient.expectedBehaviors.slice(0, 2).map((behavior, index) => (
-                        <div key={index} className="flex items-start gap-2">
+                      {patient.expectedBehaviors.slice(0, 2).map((behavior) => (
+                        <div key={behavior} className="flex items-start gap-2">
                           <span className="w-1 h-1 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
                           <span className="text-xs text-muted-foreground">{behavior}</span>
                         </div>
@@ -723,10 +723,11 @@ export function ComprehensiveVideoTest() {
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
-                      <Heart className={`h-3 w-3 ${
-                        patient.moodTrend === 'improving' ? 'text-green-500' :
-                        patient.moodTrend === 'stable' ? 'text-yellow-500' : 'text-red-500'
-                      }`} />
+                      <Heart className={(() => {
+                        if (patient.moodTrend === 'improving') return 'h-3 w-3 text-green-500'
+                        if (patient.moodTrend === 'stable') return 'h-3 w-3 text-yellow-500'
+                        return 'h-3 w-3 text-red-500'
+                      })()} />
                       <span className="text-xs">{patient.moodTrend}</span>
                     </div>
                     <div className="text-xs text-muted-foreground">
@@ -776,7 +777,7 @@ export function ComprehensiveVideoTest() {
               <h4 className="font-semibold mb-2">During Testing:</h4>
               <ul className="space-y-1 text-sm text-muted-foreground">
                 <li>• Monitor real-time validation checklist</li>
-                <li>• Use "Mark Validation" for completed checkpoints</li>
+                <li>• Use &quot;Mark Validation&quot; for completed checkpoints</li>
                 <li>• Test different audio/video scenarios</li>
                 <li>• Observe AI insight generation and accuracy</li>
               </ul>

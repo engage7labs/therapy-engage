@@ -11,12 +11,12 @@ import {
   Phone,
   Calendar,
   Play,
-  Record,
+  Circle,
   Monitor
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 
 interface VideoCallTestSummaryProps {
-  onStartVideoCall?: () => void
+  readonly onStartVideoCall?: () => void
 }
 
 export function VideoCallTestSummary({ onStartVideoCall }: VideoCallTestSummaryProps) {
@@ -38,7 +38,7 @@ export function VideoCallTestSummary({ onStartVideoCall }: VideoCallTestSummaryP
     {
       name: "Audio Recording", 
       status: testResults.audioRecordingSupported ? "supported" : "unsupported",
-      icon: <Record className="h-4 w-4" />,
+      icon: <Circle className="h-4 w-4" />,
       description: "High-quality audio capture for session analysis"
     },
     {
@@ -88,11 +88,11 @@ export function VideoCallTestSummary({ onStartVideoCall }: VideoCallTestSummaryP
     }
   ]
 
-  const browserCompatibility = {
-    chrome: true,
-    firefox: true,
-    safari: true,
-    edge: true
+  // Get risk badge variant
+  const getRiskBadgeVariant = (riskLevel: string) => {
+    if (riskLevel === 'high') return 'destructive'
+    if (riskLevel === 'moderate') return 'secondary'
+    return 'default'
   }
 
   return (
@@ -138,8 +138,8 @@ export function VideoCallTestSummary({ onStartVideoCall }: VideoCallTestSummaryP
         </CardHeader>
         <CardContent>
           <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-            {capabilities.map((capability, index) => (
-              <div key={index} className="flex items-start gap-3 p-3 rounded-lg border">
+            {capabilities.map((capability) => (
+              <div key={capability.name} className="flex items-start gap-3 p-3 rounded-lg border">
                 <div className={`p-2 rounded-lg ${
                   capability.status === 'supported' 
                     ? 'bg-green-50 text-green-600' 
@@ -176,8 +176,8 @@ export function VideoCallTestSummary({ onStartVideoCall }: VideoCallTestSummaryP
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {demoScenarios.map((scenario, index) => (
-              <div key={index} className="flex items-center gap-4 p-4 rounded-lg border">
+            {demoScenarios.map((scenario) => (
+              <div key={scenario.title} className="flex items-center gap-4 p-4 rounded-lg border">
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-muted-foreground" />
                   <div>
@@ -187,10 +187,7 @@ export function VideoCallTestSummary({ onStartVideoCall }: VideoCallTestSummaryP
                 </div>
                 <div className="flex items-center gap-2 ml-auto">
                   <span className="text-xs text-muted-foreground">{scenario.patients}</span>
-                  <Badge variant={
-                    scenario.riskLevel === 'high' ? 'destructive' :
-                    scenario.riskLevel === 'moderate' ? 'secondary' : 'default'
-                  }>
+                  <Badge variant={getRiskBadgeVariant(scenario.riskLevel)}>
                     {scenario.riskLevel}
                   </Badge>
                 </div>

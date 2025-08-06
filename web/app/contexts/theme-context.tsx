@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useEffect } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 
 interface ThemeContextType {
   theme: 'light' | 'dark'
@@ -68,7 +68,7 @@ const translations = {
     'common.save': 'Save',
     'common.cancel': 'Cancel',
     'common.delete': 'Delete',
-    'common.edit': 'Edit',
+    'common.edit': 'Edit2',
     'common.view': 'View',
     'common.close': 'Close',
     'common.loading': 'Loading...',
@@ -314,11 +314,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     document.documentElement.lang = language
     
     // Set direction for RTL languages (future support)
-    if (language === 'ar') {
-      document.documentElement.dir = 'rtl'
-    } else {
-      document.documentElement.dir = 'ltr'
-    }
+    // Currently only LTR languages are supported (en, pt, es)
+    document.documentElement.dir = 'ltr'
   }, [language])
 
   const setTheme = (newTheme: 'light' | 'dark') => {

@@ -6,8 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Progress } from '@/components/ui/progress'
-import { Separator } from '@/components/ui/separator'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { useAuth } from '@/contexts/auth-context'
 import { useSessionTimeout, useActivityTracker } from '@/hooks/use-session-timeout'
 import { 
@@ -53,19 +52,11 @@ export function SessionTimeoutTester() {
     autoExtendOnActivity: testScenario !== 'inactive',
     onTimeout: () => {
       console.log('⏰ Test timeout triggered!')
-      setTestResults(prev => [...prev, {
-        timestamp: Date.now(),
-        event: 'timeout_triggered',
-        scenario: testScenario
-      }])
+      addTestResult('timeout_triggered')
     },
     onWarning: (level) => {
       console.log(`⚠️ Test warning: ${level}`)
-      setTestResults(prev => [...prev, {
-        timestamp: Date.now(),
-        event: `warning_${level}`,
-        scenario: testScenario
-      }])
+      addTestResult(`warning_${level}`)
     }
   })
 
@@ -75,6 +66,16 @@ export function SessionTimeoutTester() {
     event: string
     scenario: string
   }>>('session-test-results', [])
+
+  // Helper function to add test results
+  const addTestResult = (event: string) => {
+    const newResult = {
+      timestamp: Date.now(),
+      event,
+      scenario: testScenario
+    }
+    setTestResults([...testResults, newResult])
+  }
 
   // Simulate activity bursts
   const simulateActivity = () => {
@@ -87,11 +88,7 @@ export function SessionTimeoutTester() {
     
     console.log(`🖱️ Simulated ${randomEvent} activity`)
     
-    setTestResults(prev => [...prev, {
-      timestamp: Date.now(),
-      event: `simulated_${randomEvent}`,
-      scenario: testScenario
-    }])
+    addTestResult(`simulated_${randomEvent}`)
   }
 
   // Start activity burst simulation
@@ -127,6 +124,14 @@ export function SessionTimeoutTester() {
       default:
         return 'Normal operation - standard timeout behavior'
     }
+  }
+
+  // Get warning badge variant
+  const getWarningBadgeVariant = () => {
+    if (sessionTimeout.warningLevel === 'critical') return 'destructive'
+    if (sessionTimeout.warningLevel === 'urgent') return 'secondary'
+    if (sessionTimeout.warningLevel === 'early') return 'outline'
+    return 'default'
   }
 
   // Get warning level color
@@ -253,11 +258,7 @@ export function SessionTimeoutTester() {
             </div>
             <div className="space-y-1">
               <Label className="text-sm font-medium">Warning Level</Label>
-              <Badge variant={
-                sessionTimeout.warningLevel === 'critical' ? 'destructive' :
-                sessionTimeout.warningLevel === 'urgent' ? 'secondary' :
-                sessionTimeout.warningLevel === 'early' ? 'outline' : 'default'
-              }>
+              <Badge variant={getWarningBadgeVariant()}>
                 {sessionTimeout.warningLevel === 'none' ? 'Safe' : sessionTimeout.warningLevel}
               </Badge>
             </div>
@@ -335,8 +336,8 @@ export function SessionTimeoutTester() {
         </CardHeader>
         <CardContent>
           <div className="space-y-2 max-h-64 overflow-y-auto">
-            {testResults.slice(-20).reverse().map((result, index) => (
-              <div key={index} className="flex items-center justify-between p-2 border rounded text-sm">
+            {testResults.slice(-20).reverse().map((result) => (
+              <div key={`${result.timestamp}-${result.event}`} className="flex items-center justify-between p-2 border rounded text-sm">
                 <div className="flex items-center gap-2">
                   {result.event.includes('warning') && <AlertTriangle className="h-4 w-4 text-orange-500" />}
                   {result.event.includes('timeout') && <Clock className="h-4 w-4 text-red-500" />}

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { useAuth } from '@/contexts/auth-context'
 
 interface UseSessionTimeoutOptions {
@@ -228,9 +228,10 @@ export function useSessionSecurity() {
       details
     }
     
-    setSecurityEvents(current => [event, ...current.slice(0, 49)]) // Keep last 50 events
+    const currentEvents = securityEvents || []
+    setSecurityEvents([event, ...currentEvents.slice(0, 49)]) // Keep last 50 events
     console.log(`🔒 Security event: ${type}`, details)
-  }, [setSecurityEvents])
+  }, [setSecurityEvents, securityEvents])
 
   const getRecentEvents = useCallback((minutes: number = 60) => {
     const cutoff = Date.now() - (minutes * 60 * 1000)

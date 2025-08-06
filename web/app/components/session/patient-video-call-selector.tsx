@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useKV } from '../hooks/use-kv'
+import { useKV } from '@/hooks/use-kv'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -13,11 +13,11 @@ import {
   Search,
   Plus,
   CircleDot,
-  Warning,
+  AlertTriangle,
   CheckCircle,
   Heart,
   Brain
-} from '@phosphor-icons/react'
+} from 'lucide-react'
 import { VideoCallInterface } from './video-call-interface'
 
 interface Patient {
@@ -240,7 +240,7 @@ export function PatientVideoCallSelector() {
             variant={selectedView === 'emergency' ? 'destructive' : 'outline'}
             onClick={() => setSelectedView('emergency')}
           >
-            <Warning className="h-4 w-4 mr-2" />
+            <AlertTriangle className="h-4 w-4 mr-2" />
             Priority
           </Button>
         </div>
@@ -331,7 +331,7 @@ export function PatientVideoCallSelector() {
                   <div className="flex items-center gap-2">
                     <CircleDot className={`h-4 w-4 ${getStatusColor(patient)}`} />
                     {patient.emergencyContact && (
-                      <Warning className="h-4 w-4 text-red-500" />
+                      <AlertTriangle className="h-4 w-4 text-red-500" />
                     )}
                   </div>
                 </div>
@@ -401,7 +401,7 @@ export function PatientVideoCallSelector() {
         <div className="space-y-4">
           <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
             <div className="flex items-center gap-2 text-destructive font-medium mb-2">
-              <Warning className="h-5 w-5" />
+              <AlertTriangle className="h-5 w-5" />
               Priority Patients
             </div>
             <p className="text-sm text-muted-foreground">
@@ -482,7 +482,7 @@ export function PatientVideoCallSelector() {
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <Warning className="h-4 w-4 text-red-500" />
+              <AlertTriangle className="h-4 w-4 text-red-500" />
               <span className="text-sm font-medium">High Risk</span>
             </div>
             <div className="text-2xl font-bold mt-2">
