@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { EnhancedLogoutTooltip } from '@/components/auth/enhanced-logout-tooltip'
 import { useAuth } from '../../contexts/auth-context'
-import { useLogoutConfirmation } from '../../hooks/use-logout-confirmation'
+import { useLogoutConfirmation } from '@/hooks/use-logout-confirmation'
 import { User, Calendar, FileText, Video, Shield } from 'lucide-react'
 
 interface PatientLayoutProps {

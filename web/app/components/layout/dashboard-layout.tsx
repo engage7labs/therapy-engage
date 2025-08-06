@@ -9,7 +9,7 @@ import { MiniSessionStatus } from '@/components/dashboard/mini-session-status'
 import { CompactSessionStatus } from '@/components/dashboard/compact-session-status'
 import { QuickThemeLanguageToggle } from '@/components/settings/quick-theme-language-toggle'
 import { useTheme } from '../../contexts/theme-context'
-import { useLogoutConfirmation } from '../../hooks/use-logout-confirmation'
+import { useLogoutConfirmation } from '@/hooks/use-logout-confirmation'
 import { 
   Stethoscope, 
   Calendar, 

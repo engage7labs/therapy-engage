@@ -5,7 +5,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { useAuth } from '../../contexts/auth-context'
-import { useLogoutConfirmation } from '../../hooks/use-logout-confirmation'
+import { useLogoutConfirmation } from '@/hooks/use-logout-confirmation'
 import { 
   Stethoscope,
   XCircle, 

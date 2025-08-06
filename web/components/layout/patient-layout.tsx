@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { EnhancedLogoutTooltip } from '@/components/auth/enhanced-logout-tooltip'
 import { useAuth } from '@/hooks/use-auth'
 import { useTheme } from '@/hooks/use-theme'
-import { useLogoutConfirmation } from '../../hooks/use-logout-confirmation'
+import { useLogoutConfirmation } from '@/hooks/use-logout-confirmation'
 import { User, Calendar, FileText, Video, Shield } from '@phosphor-icons/react'
 
 interface PatientLayoutProps {

@@ -5,7 +5,7 @@ import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { EnhancedLogoutTooltip } from '@/components/auth/enhanced-logout-tooltip'
 import { useTheme } from '../../contexts/theme-context'
-import { useLogoutConfirmation } from '../../hooks/use-logout-confirmation'
+import { useLogoutConfirmation } from '@/hooks/use-logout-confirmation'
 import { 
   Info, 
   Settings, 
