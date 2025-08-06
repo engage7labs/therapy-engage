@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip'
 import { LogOut, Shield, Clock, Info } from 'lucide-react'
+import { useTheme } from '@/hooks/use-theme'
 
 interface EnhancedLogoutTooltipProps {
   onLogoutRequest: () => void
@@ -17,21 +19,26 @@ export function EnhancedLogoutTooltip({
   size = "icon",
   className = ""
 }: EnhancedLogoutTooltipProps) {
-  // MVP: hardcoded text instead of translations
+  const [isHovered, setIsHovered] = useState(false)
+  const { t } = useTheme()
 
   return (
     <Tooltip>
       <TooltipTrigger asChild>
-                <Button
+        <Button
           variant={variant}
           size={size}
+          className={`logout-button ${className}`}
           onClick={onLogoutRequest}
-          className={`transition-colors duration-200 ${className}`}
-          aria-label="Logout from application"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
         >
           <LogOut 
             size={20} 
-            className="logout-icon" />
+            className={`logout-icon transition-all duration-200 ${
+              isHovered ? 'text-red-600' : 'text-gray-600'
+            }`}
+          />
         </Button>
       </TooltipTrigger>
       
@@ -39,12 +46,14 @@ export function EnhancedLogoutTooltip({
         side="bottom"
         align="end"
         className="tooltip-enhanced p-0 w-72"
+        onPointerEnter={() => setIsHovered(true)}
+        onPointerLeave={() => setIsHovered(false)}
       >
         <Card className="border-0 shadow-lg">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
               <LogOut size={16} className="text-destructive" />
-              Confirm Logout
+              {t('logout.confirmTitle')}
             </CardTitle>
           </CardHeader>
           
@@ -56,10 +65,10 @@ export function EnhancedLogoutTooltip({
               <Shield className="text-primary mt-0.5" size={14} />
               <div className="text-xs text-muted-foreground">
                 <p className="font-medium text-foreground">
-                  Security Notice
+                  {t('logout.securityNote')}
                 </p>
                 <p>
-                  All session data will be cleared for security.
+                  {t('logout.securityDetails')}
                 </p>
               </div>
             </div>
@@ -82,7 +91,7 @@ export function EnhancedLogoutTooltip({
               <Info className="text-blue-500 mt-0.5" size={14} />
               <div className="text-xs text-muted-foreground">
                 <p className="font-medium text-foreground">
-                  Click to logout securely
+                  {t('tooltip.logout_preview')}
                 </p>
                 <p>
                   Click to show confirmation dialog
