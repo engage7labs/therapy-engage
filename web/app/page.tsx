@@ -5,6 +5,9 @@ import { LoginPage } from '@/components/auth/login-page'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
+// Force dynamic rendering - page uses authentication context
+export const dynamic = 'force-dynamic'
+
 export default function HomePage() {
   const { user, isAuthenticated } = useAuth()
   const router = useRouter()
