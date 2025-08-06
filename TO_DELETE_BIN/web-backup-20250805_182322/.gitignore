@@ -1,4 +1,0 @@
-# web/.gitignore
-node_modules/
-.next/
-out/
