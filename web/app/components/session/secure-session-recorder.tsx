@@ -3,6 +3,7 @@ import { useKV } from '@/hooks/use-kv'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { spark } from '@/lib/spark-mock'
 import { 
   Shield, 
   UserCheck, 
