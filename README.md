@@ -105,6 +105,91 @@ graph TB
 
 ---
 
+## 🎯 Spark Platform Integration Plan
+
+### Next.js Frontend Implementation Roadmap
+
+The web portal is currently being enhanced with advanced therapy management features from the Spark platform codebase. This integration focuses on creating a comprehensive demonstration environment for academic evaluation.
+
+#### 🥇 **Priority 1: Core Authentication & Layout** (Week 1)
+
+**Target:** Professional login system and structured dashboard layout
+
+| Component | Source | Status | Purpose |
+|-----------|--------|--------|---------|
+| `use-auth` | Spark Platform | 🚧 Planned | Robust authentication system |
+| `LoginPage` | Spark Platform | 🚧 Planned | Advanced login interface |
+| `DashboardLayout` | Spark Platform | 🚧 Planned | Professional therapist dashboard |
+| `PatientLayout` | Spark Platform | 🚧 Planned | Patient portal interface |
+
+#### 🥈 **Priority 2: Session Management Core** (Week 2)
+
+**Target:** Complete therapist-patient session workflow
+
+| Component | Source | Status | Purpose |
+|-----------|--------|--------|---------|
+| `SessionManager` | Spark Platform | 🚧 Planned | Core session functionality |
+| `UpcomingSessions` | Spark Platform | 🚧 Planned | Session scheduling system |
+| `PatientVideoCallSelector` | Spark Platform | 🚧 Planned | Video call initiation |
+| `SessionTimeoutManager` | Spark Platform | 🚧 Planned | Security timeout management |
+
+#### 🥉 **Priority 3: Video Communication** (Week 3)
+
+**Target:** Functional video therapy sessions
+
+| Component | Source | Status | Purpose |
+|-----------|--------|--------|---------|
+| `VideoCallInterface` | Spark Platform | 🚧 Planned | Video call UI/UX |
+| `WebRTCTester` | Spark Platform | 🚧 Planned | Connection testing |
+| `ComprehensiveVideoTest` | Spark Platform | 🚧 Planned | Full video functionality validation |
+| `SecureSessionRecorder` | Spark Platform | 🚧 Planned | GDPR-compliant session recording |
+
+#### 🎓 **Priority 4: Academic Demo Features** (Week 4)
+
+**Target:** Impressive evaluation demonstration
+
+| Component | Source | Status | Purpose |
+|-----------|--------|--------|---------|
+| `StatsOverview` | Spark Platform | 🚧 Planned | Dashboard analytics |
+| `PatientList` | Spark Platform | 🚧 Planned | Patient management |
+| `ConsentManagementDashboard` | Spark Platform | 🚧 Planned | GDPR compliance demonstration |
+| `EmergencyWhatsAppContact` | Spark Platform | 🚧 Planned | Mental health crisis management |
+
+### 🎭 **Demonstration Flow for Academic Evaluation**
+
+**Step 1: Role-Based Authentication** (2 minutes)
+
+- Evaluator logs in as **Therapist** → Views comprehensive dashboard
+- Evaluator logs in as **Patient** → Views patient portal
+
+**Step 2: Session Scheduling** (3 minutes)
+
+- **Therapist View:** Creates new session for patient
+- **Patient View:** Receives session notification and accepts
+
+**Step 3: Live Therapy Session** (5 minutes)
+
+- **Both Users:** Join video call interface
+- **Demonstration:** Real-time video communication
+- **Security:** Session recording with consent management
+
+**Step 4: Post-Session Management** (2 minutes)
+
+- **Analytics:** Therapist views session insights and statistics
+- **Compliance:** GDPR consent workflows and data management
+- **Security:** Automatic logout and session cleanup
+
+### 📊 **Current Development Status**
+
+| Week | Focus Area | Components | Demo Capability |
+|------|------------|------------|-----------------|
+| **Week 1** | ✅ Authentication & Layout | 4 components | Login system demonstration |
+| **Week 2** | 🚧 Session Management | 4 components | Scheduling workflow |
+| **Week 3** | 📋 Video Communication | 4 components | Live therapy sessions |
+| **Week 4** | 📋 Demo Features | 4 components | Complete evaluation demo |
+
+---
+
 ## 🔐 HTTPS Configuration
 
 **Production Endpoint:** https://20.82.234.39.sslip.io/graphql
