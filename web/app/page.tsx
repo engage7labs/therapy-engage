@@ -1,7 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { useAuth } from './contexts/auth-context'
+import { useAuth } from './hooks/use-auth'
+import { SessionManager } from '../components/session/SessionManager'
+import { UpcomingSessions } from '../components/session/UpcomingSessions'
+import { PatientVideoCallSelector } from '../components/session/PatientVideoCallSelector'
 
 // Simple login component for now
 function LoginPage() {
@@ -87,6 +90,49 @@ function LoginPage() {
 function PatientDashboard() {
   const { user, logout } = useAuth()
   
+  // Demo data for patient's upcoming sessions
+  const patientSessions = [
+    {
+      id: 'session-patient-001',
+      therapistName: 'Dr. Sarah Johnson',
+      date: '2025-01-15T14:00:00Z',
+      type: 'Follow-up Session',
+      duration: 50,
+      status: 'scheduled',
+      isVideoSession: true
+    },
+    {
+      id: 'session-patient-002', 
+      therapistName: 'Dr. Sarah Johnson',
+      date: '2025-01-22T14:00:00Z',
+      type: 'CBT Session',
+      duration: 45,
+      status: 'scheduled',
+      isVideoSession: false
+    }
+  ]
+
+  const formatSessionTime = (dateString: string) => {
+    const date = new Date(dateString)
+    const today = new Date()
+    const isToday = date.toDateString() === today.toDateString()
+    
+    if (isToday) {
+      return `Today at ${date.toLocaleTimeString('en-US', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      })}`
+    }
+    
+    return date.toLocaleDateString('en-US', { 
+      weekday: 'long',
+      month: 'long', 
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
+  
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="bg-white shadow">
@@ -109,17 +155,94 @@ function PatientDashboard() {
       </div>
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 flex items-center justify-center">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                Welcome to Your Patient Portal
-              </h2>
-              <p className="text-gray-600">
-                Your therapy dashboard will be available here.
-              </p>
-              <p className="text-sm text-gray-500 mt-2">
-                Session timeout: {user?.sessionTimeout || 60} minutes
-              </p>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {/* Upcoming Sessions */}
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Your Upcoming Sessions</h3>
+                <div className="space-y-4">
+                  {patientSessions.map(session => (
+                    <div key={session.id} className="border rounded-lg p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-semibold">{session.therapistName}</h4>
+                          <p className="text-sm text-gray-600">
+                            {session.type} • {session.duration} minutes
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            {formatSessionTime(session.date)}
+                          </p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                              session.isVideoSession 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-blue-100 text-blue-800'
+                            }`}>
+                              {session.isVideoSession ? 'Video Session' : 'In-Person'}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                          {session.isVideoSession && (
+                            <button className="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">
+                              Join Video
+                            </button>
+                          )}
+                          <button className="bg-gray-500 text-white px-3 py-1 rounded text-sm hover:bg-gray-600">
+                            Reschedule
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  
+                  {patientSessions.length === 0 && (
+                    <div className="text-center py-8 text-gray-500">
+                      No upcoming sessions scheduled
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Actions & Progress */}
+            <div className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Your Progress</h3>
+                
+                <div className="space-y-4">
+                  <div className="bg-blue-50 rounded-lg p-4">
+                    <h4 className="font-medium text-blue-900">Sessions Completed</h4>
+                    <p className="text-2xl font-bold text-blue-600">8 / 12</p>
+                    <div className="w-full bg-blue-200 rounded-full h-2 mt-2">
+                      <div className="bg-blue-600 h-2 rounded-full w-2/3"></div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-green-50 rounded-lg p-4">
+                    <h4 className="font-medium text-green-900">Mood Progress</h4>
+                    <p className="text-sm text-green-700">Showing improvement</p>
+                    <div className="flex items-center gap-1 mt-2">
+                      <span className="text-green-600">📈</span>
+                      <span className="text-sm text-green-600">Trending upward</span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h4 className="font-medium text-gray-900">Quick Actions</h4>
+                    <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
+                      Schedule New Session
+                    </button>
+                    <button className="w-full bg-gray-500 text-white py-2 rounded hover:bg-gray-600">
+                      Message Therapist
+                    </button>
+                  </div>
+                </div>
+                
+                <p className="text-sm text-gray-500 mt-4">
+                  Session timeout: {user?.sessionTimeout || 60} minutes
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -130,6 +253,7 @@ function PatientDashboard() {
 
 function TherapistDashboard() {
   const { user, logout } = useAuth()
+  const [activeTab, setActiveTab] = useState<'sessions' | 'upcoming' | 'video'>('sessions')
   
   return (
     <div className="min-h-screen bg-gray-50">
@@ -151,24 +275,58 @@ function TherapistDashboard() {
           </div>
         </div>
       </div>
+      
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Patient Overview</h3>
-                <p className="text-gray-600">Your patient management dashboard will be here.</p>
-                <p className="text-sm text-gray-500 mt-2">
-                  Session timeout: {user?.sessionTimeout || 30} minutes
-                </p>
-              </div>
-            </div>
-            <div className="bg-white overflow-hidden shadow rounded-lg">
-              <div className="p-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
-                <p className="text-gray-600">Quick therapy tools and actions will be available here.</p>
-              </div>
-            </div>
+          {/* Tab Navigation */}
+          <div className="mb-6">
+            <nav className="flex space-x-8">
+              <button
+                onClick={() => setActiveTab('sessions')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'sessions'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                Session Management
+              </button>
+              <button
+                onClick={() => setActiveTab('upcoming')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'upcoming'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                Upcoming Sessions
+              </button>
+              <button
+                onClick={() => setActiveTab('video')}
+                className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'video'
+                    ? 'border-blue-500 text-blue-600'
+                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                }`}
+              >
+                Video Calls
+              </button>
+            </nav>
+          </div>
+
+          {/* Tab Content */}
+          <div className="space-y-6">
+            {activeTab === 'sessions' && (
+              <SessionManager />
+            )}
+            
+            {activeTab === 'upcoming' && (
+              <UpcomingSessions />
+            )}
+            
+            {activeTab === 'video' && (
+              <PatientVideoCallSelector />
+            )}
           </div>
         </div>
       </div>

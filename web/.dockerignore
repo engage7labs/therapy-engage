@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.gitignore
+README.md
+*.log
+.env*
+coverage
+.nyc_output
+.cache
+build-log.txt
+build-success-log.txt

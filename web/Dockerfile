@@ -3,6 +3,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
+# Build with standalone output for Docker
 RUN npm run build
 
 FROM node:20-alpine
