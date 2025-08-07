@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useAuth } from './contexts/auth-context'
 import { useTheme } from '../hooks/use-theme'
+import { useLogoutConfirmation } from '../hooks/use-logout-confirmation'
 import { SessionManager } from '../components/session/SessionManager'
 import { UpcomingSessions } from '../components/session/UpcomingSessions'
 import { PatientVideoCallSelector } from '../components/session/PatientVideoCallSelector'
@@ -109,7 +110,8 @@ function LoginPage() {
 
 // Simple dashboard components
 function PatientDashboard() {
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
+  const { requestLogout, LogoutConfirmationDialog } = useLogoutConfirmation()
   
   // Demo data for patient's upcoming sessions
   const patientSessions = [
@@ -166,7 +168,7 @@ function PatientDashboard() {
               <DebugThemeLanguageToggle />
               <span className="text-sm text-muted-foreground">Welcome, {user?.name}</span>
               <button
-                onClick={logout}
+                onClick={requestLogout}
                 className="text-sm text-primary hover:text-primary/80"
               >
                 Logout
@@ -269,12 +271,16 @@ function PatientDashboard() {
           </div>
         </div>
       </div>
+      
+      {/* Logout Confirmation Modal */}
+      <LogoutConfirmationDialog />
     </div>
   )
 }
 
 function TherapistDashboard() {
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
+  const { requestLogout, LogoutConfirmationDialog } = useLogoutConfirmation()
   const [activeTab, setActiveTab] = useState<'sessions' | 'upcoming' | 'video'>('sessions')
   
   return (
@@ -289,7 +295,7 @@ function TherapistDashboard() {
               <DebugThemeLanguageToggle />
               <span className="text-sm text-muted-foreground">Dr. {user?.name}</span>
               <button
-                onClick={logout}
+                onClick={requestLogout}
                 className="text-sm text-primary hover:text-primary/80"
               >
                 Logout
@@ -353,12 +359,16 @@ function TherapistDashboard() {
           </div>
         </div>
       </div>
+      
+      {/* Logout Confirmation Modal */}
+      <LogoutConfirmationDialog />
     </div>
   )
 }
 
 function AdminDashboard() {
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
+  const { requestLogout, LogoutConfirmationDialog } = useLogoutConfirmation()
   
   return (
     <div className="min-h-screen bg-background">
@@ -372,7 +382,7 @@ function AdminDashboard() {
               <DebugThemeLanguageToggle />
               <span className="text-sm text-muted-foreground">{user?.name}</span>
               <button
-                onClick={logout}
+                onClick={requestLogout}
                 className="text-sm text-primary hover:text-primary/80"
               >
                 Logout
@@ -398,6 +408,9 @@ function AdminDashboard() {
           </div>
         </div>
       </div>
+      
+      {/* Logout Confirmation Modal */}
+      <LogoutConfirmationDialog />
     </div>
   )
 }
