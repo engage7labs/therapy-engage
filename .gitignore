@@ -76,10 +76,7 @@ web/disable-spark.ps1
 web/fix-*.ps1
 web/src/
 web/components/demo/
-web/components/ui/
 web/contexts/
 web/hooks/use-internationalization.ts
-web/hooks/use-kv.ts
 web/hooks/use-logout-confirmation.tsx
 web/hooks/use-session-timeout.ts
-web/hooks/use-theme.ts
