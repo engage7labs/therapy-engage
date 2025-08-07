@@ -1,9 +1,9 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
-import { TooltipProvider } from '@/components/ui/tooltip'
-import { AuthProvider } from '@/contexts/auth-context'
-import { ThemeProvider } from '@/hooks/use-theme'
+import { TooltipProvider } from '../../components/ui/tooltip'
+import { AuthProvider } from '../../contexts/auth-context'
+import { ThemeProvider } from '../../contexts/theme-context'
 
 const inter = Inter({ 
   subsets: ['latin'],

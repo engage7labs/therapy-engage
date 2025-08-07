@@ -1,9 +1,9 @@
 'use client'
 
-import { TooltipProvider } from '@/components/ui/tooltip'
-import { AuthProvider } from '@/contexts/auth-context'
-import { ThemeProvider } from '@/contexts/theme-context'
-import { ClientOnly } from '@/components/client-only'
+import { TooltipProvider } from './ui/tooltip'
+import { AuthProvider } from '../contexts/auth-context'
+import { ThemeProvider } from '../contexts/theme-context'
+import { ClientOnly } from './client-only'
 import { Suspense, useEffect, useState } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 

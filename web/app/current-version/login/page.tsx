@@ -3,8 +3,8 @@
 // Force dynamic rendering to avoid serialization issues
 export const dynamic = 'force-dynamic'
 
-import { useAuth } from '@/contexts/auth-context'
-import { LoginPage } from '@/components/auth/login-page'
+import { useAuth } from '../../../contexts/auth-context'
+import { LoginPage } from '../../../components/auth/login-page'
 import { redirect } from 'next/navigation'
 
 export default function LoginPageRoute() {
