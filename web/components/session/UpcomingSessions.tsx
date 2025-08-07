@@ -1,6 +1,6 @@
 import { useKV } from '../../app/hooks/use-kv'
 
-interface Session {
+export interface Session {
   id: string
   patientName: string
   time: string
@@ -33,7 +33,7 @@ export function UpcomingSessions({ sessions: propSessions }: UpcomingSessionsPro
     },
     {
       id: 'session-upcoming-003',
-      patientName: 'Dr. Sarah Smith',
+      patientName: 'Dr. Ego Smith',
       time: '2025-01-16T10:00:00Z',
       type: 'Supervision',
       duration: 30,
@@ -50,15 +50,16 @@ export function UpcomingSessions({ sessions: propSessions }: UpcomingSessionsPro
     }
   }
 
-  const formatSessionTime = (dateString: string) => {
-    const date = new Date(dateString)
-    const today = new Date()
-    const isToday = date.toDateString() === today.toDateString()
-    const tomorrow = new Date(today)
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    const isTomorrow = date.toDateString() === tomorrow.toDateString()
+  const formatTime = (timeString: string) => {
+    const date = new Date(timeString)
+    const now = new Date()
+    const today = now.toDateString() === date.toDateString()
     
-    if (isToday) {
+    const tomorrow = new Date(now)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    const isTomorrow = tomorrow.toDateString() === date.toDateString()
+    
+    if (today) {
       return {
         day: 'Today',
         time: date.toLocaleTimeString('en-US', { 
@@ -66,9 +67,7 @@ export function UpcomingSessions({ sessions: propSessions }: UpcomingSessionsPro
           minute: '2-digit' 
         })
       }
-    }
-    
-    if (isTomorrow) {
+    } else if (isTomorrow) {
       return {
         day: 'Tomorrow',
         time: date.toLocaleTimeString('en-US', { 
@@ -76,18 +75,18 @@ export function UpcomingSessions({ sessions: propSessions }: UpcomingSessionsPro
           minute: '2-digit' 
         })
       }
-    }
-    
-    return {
-      day: date.toLocaleDateString('en-US', { 
-        weekday: 'short',
-        month: 'short', 
-        day: 'numeric' 
-      }),
-      time: date.toLocaleTimeString('en-US', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      })
+    } else {
+      return {
+        day: date.toLocaleDateString('en-US', { 
+          weekday: 'short',
+          month: 'short', 
+          day: 'numeric' 
+        }),
+        time: date.toLocaleTimeString('en-US', { 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        })
+      }
     }
   }
 
@@ -106,75 +105,77 @@ export function UpcomingSessions({ sessions: propSessions }: UpcomingSessionsPro
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md">
-      <div className="p-6 border-b">
-        <h2 className="text-xl font-semibold">Upcoming Sessions</h2>
-        <p className="text-sm text-gray-600 mt-1">
+    <div className="bg-card rounded-lg shadow-md border">
+      <div className="p-6 border-b border-border">
+        <h2 className="text-xl font-semibold text-foreground">Upcoming Sessions</h2>
+        <p className="text-sm text-muted-foreground mt-1">
           {sortedSessions.length} sessions scheduled
         </p>
       </div>
       
       <div className="p-6">
         {sortedSessions.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            <div className="text-4xl mb-2">📅</div>
-            <p>No upcoming sessions</p>
-            <p className="text-sm">Your next sessions will appear here</p>
+          <div className="text-center py-8">
+            <p className="text-muted-foreground">No upcoming sessions scheduled</p>
           </div>
         ) : (
           <div className="space-y-4">
-            {sortedSessions.map(session => {
-              const timeInfo = formatSessionTime(session.time)
+            {sortedSessions.map((session) => {
+              const timeInfo = formatTime(session.time)
               
               return (
-                <div 
-                  key={session.id} 
-                  className="border rounded-lg p-4 hover:shadow-md transition-shadow"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="font-semibold">{session.patientName}</h3>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(session.status)}`}>
-                          {session.status}
-                        </span>
-                      </div>
-                      
-                      <p className="text-sm text-gray-600 mb-1">
-                        {session.type} • {session.duration} minutes
-                      </p>
-                      
-                      <div className="flex items-center gap-4 text-sm">
-                        <div className="flex items-center gap-1">
-                          <span className="font-medium">{timeInfo.day}</span>
-                          <span className="text-gray-500">{timeInfo.time}</span>
-                        </div>
-                      </div>
+                <div key={session.id} className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="font-semibold text-foreground">{session.patientName}</h3>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(session.status)}`}>
+                        {session.status}
+                      </span>
                     </div>
                     
-                    <div className="flex gap-2">
-                      {session.status === 'confirmed' && (
-                        <button 
-                          onClick={() => handleJoinSession(session.id)}
-                          className="bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 text-sm"
-                        >
-                          Join
-                        </button>
-                      )}
-                      
-                      <button 
-                        onClick={() => handleRescheduleSession(session.id)}
-                        className="bg-gray-500 text-white px-3 py-1 rounded-md hover:bg-gray-600 text-sm"
-                      >
-                        Reschedule
-                      </button>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <span>{session.type}</span>
+                      <span>•</span>
+                      <span>{session.duration} minutes</span>
+                      <span>•</span>
+                      <span>{timeInfo.day} at {timeInfo.time}</span>
                     </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-2">
+                    {session.status === 'confirmed' && (
+                      <button
+                        onClick={() => handleJoinSession(session.id)}
+                        className="px-3 py-1 bg-primary text-primary-foreground rounded-md text-sm hover:bg-primary/90 transition-colors"
+                      >
+                        Join
+                      </button>
+                    )}
+                    
+                    <button
+                      onClick={() => handleRescheduleSession(session.id)}
+                      className="px-3 py-1 border border-border rounded-md text-sm hover:bg-muted transition-colors"
+                    >
+                      Reschedule
+                    </button>
                   </div>
                 </div>
               )
             })}
           </div>
         )}
+      </div>
+      
+      <div className="border-t border-border p-6">
+        <div className="flex items-center justify-between">
+          <div className="text-sm text-muted-foreground">
+            Total sessions this week: {sessions.length}
+          </div>
+          
+          <button className="px-4 py-2 bg-primary text-primary-foreground rounded-md text-sm hover:bg-primary/90 transition-colors">
+            Schedule New Session
+          </button>
+        </div>
       </div>
     </div>
   )

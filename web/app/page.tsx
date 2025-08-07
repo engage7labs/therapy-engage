@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { LogOut, Heart } from 'lucide-react'
 import { useAuth } from './contexts/auth-context'
 import { useTheme } from '../hooks/use-theme'
 import { useLogoutConfirmation } from '../hooks/use-logout-confirmation'
@@ -42,9 +43,14 @@ function LoginPage() {
       
       <div className="max-w-md w-full space-y-8 p-8 bg-card rounded-lg shadow-md border">
         <div>
-          <h2 className="text-3xl font-bold text-center text-foreground mb-2">
-            Therapy Engage
-          </h2>
+          <div className="flex items-center justify-center mb-4">
+            <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mr-3">
+              <Heart className="h-6 w-6 text-primary-foreground" />
+            </div>
+            <h2 className="text-3xl font-bold text-foreground">
+              Therapy Engage
+            </h2>
+          </div>
           <p className="text-center text-muted-foreground">{t('login.title')}</p>
         </div>
         <form className="space-y-6" onSubmit={handleSubmit}>
@@ -84,7 +90,7 @@ function LoginPage() {
             {isLoading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-        <div className="text-center text-sm text-gray-600">
+        <div className="text-center text-sm text-muted-foreground">
           <p>Demo Accounts:</p>
           <p>Therapist: dr.smith / demo123</p>
           <p>Patient: rodrigo / demo123</p>
@@ -112,6 +118,7 @@ function LoginPage() {
 function PatientDashboard() {
   const { user } = useAuth()
   const { requestLogout, LogoutConfirmationDialog } = useLogoutConfirmation()
+  const { t } = useTheme()
   
   // Demo data for patient's upcoming sessions
   const patientSessions = [
@@ -162,16 +169,17 @@ function PatientDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-foreground">Patient Portal</h1>
+              <h1 className="text-xl font-semibold text-foreground">{t('dashboard.patient.title')}</h1>
             </div>
             <div className="flex items-center space-x-4">
+              <span className="text-sm text-muted-foreground">{t('dashboard.welcome')}, {user?.name}</span>
               <DebugThemeLanguageToggle />
-              <span className="text-sm text-muted-foreground">Welcome, {user?.name}</span>
               <button
                 onClick={requestLogout}
-                className="text-sm text-primary hover:text-primary/80"
+                className="text-sm text-primary hover:text-primary/80 flex items-center gap-1"
+                title="Logout"
               >
-                Logout
+                <LogOut className="h-4 w-4" />
               </button>
             </div>
           </div>
@@ -181,16 +189,16 @@ function PatientDashboard() {
         <div className="px-4 py-6 sm:px-0">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             {/* Upcoming Sessions */}
-            <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="bg-card overflow-hidden shadow rounded-lg border">
               <div className="p-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Your Upcoming Sessions</h3>
+                <h3 className="text-lg font-medium text-foreground mb-4">{t('dashboard.sessions.upcoming')}</h3>
                 <div className="space-y-4">
                   {patientSessions.map(session => (
                     <div key={session.id} className="border rounded-lg p-4">
                       <div className="flex items-center justify-between">
                         <div>
                           <h4 className="font-semibold">{session.therapistName}</h4>
-                          <p className="text-sm text-gray-600">
+                          <p className="text-sm text-muted-foreground">
                             {session.type} • {session.duration} minutes
                           </p>
                           <p className="text-sm text-gray-500">
@@ -230,9 +238,9 @@ function PatientDashboard() {
             </div>
 
             {/* Quick Actions & Progress */}
-            <div className="bg-white overflow-hidden shadow rounded-lg">
+            <div className="bg-card overflow-hidden shadow rounded-lg border">
               <div className="p-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Your Progress</h3>
+                <h3 className="text-lg font-medium text-foreground mb-4">{t('dashboard.sessions.progress')}</h3>
                 
                 <div className="space-y-4">
                   <div className="bg-blue-50 rounded-lg p-4">
@@ -253,18 +261,18 @@ function PatientDashboard() {
                   </div>
                   
                   <div className="space-y-2">
-                    <h4 className="font-medium text-gray-900">Quick Actions</h4>
+                    <h4 className="font-medium text-foreground">{t('dashboard.actions.quick')}</h4>
                     <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
-                      Schedule New Session
+                      {t('dashboard.sessions.schedule')}
                     </button>
                     <button className="w-full bg-gray-500 text-white py-2 rounded hover:bg-gray-600">
-                      Message Therapist
+                      {t('dashboard.sessions.message')}
                     </button>
                   </div>
                 </div>
                 
-                <p className="text-sm text-gray-500 mt-4">
-                  Session timeout: {user?.sessionTimeout || 60} minutes
+                <p className="text-sm text-muted-foreground mt-4">
+                  {t('dashboard.timeout')}: {user?.sessionTimeout || 60} minutes
                 </p>
               </div>
             </div>
@@ -281,6 +289,7 @@ function PatientDashboard() {
 function TherapistDashboard() {
   const { user } = useAuth()
   const { requestLogout, LogoutConfirmationDialog } = useLogoutConfirmation()
+  const { t } = useTheme()
   const [activeTab, setActiveTab] = useState<'sessions' | 'upcoming' | 'video'>('sessions')
   
   return (
@@ -289,16 +298,17 @@ function TherapistDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-foreground">Therapist Dashboard</h1>
+              <h1 className="text-xl font-semibold text-foreground">{t('dashboard.therapist.title')}</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <DebugThemeLanguageToggle />
               <span className="text-sm text-muted-foreground">Dr. {user?.name}</span>
+              <DebugThemeLanguageToggle />
               <button
                 onClick={requestLogout}
-                className="text-sm text-primary hover:text-primary/80"
+                className="text-sm text-primary hover:text-primary/80 flex items-center gap-1"
+                title="Logout"
               >
-                Logout
+                <LogOut className="h-4 w-4" />
               </button>
             </div>
           </div>
@@ -369,6 +379,7 @@ function TherapistDashboard() {
 function AdminDashboard() {
   const { user } = useAuth()
   const { requestLogout, LogoutConfirmationDialog } = useLogoutConfirmation()
+  const { t } = useTheme()
   
   return (
     <div className="min-h-screen bg-background">
@@ -376,16 +387,17 @@ function AdminDashboard() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-foreground">Admin Dashboard</h1>
+              <h1 className="text-xl font-semibold text-foreground">{t('dashboard.admin.title')}</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <DebugThemeLanguageToggle />
               <span className="text-sm text-muted-foreground">{user?.name}</span>
+              <DebugThemeLanguageToggle />
               <button
                 onClick={requestLogout}
-                className="text-sm text-primary hover:text-primary/80"
+                className="text-sm text-primary hover:text-primary/80 flex items-center gap-1"
+                title="Logout"
               >
-                Logout
+                <LogOut className="h-4 w-4" />
               </button>
             </div>
           </div>
@@ -393,16 +405,16 @@ function AdminDashboard() {
       </div>
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 flex items-center justify-center">
+          <div className="border-4 border-dashed border-border rounded-lg h-96 flex items-center justify-center">
             <div className="text-center">
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">
-                System Administration
+              <h2 className="text-2xl font-bold text-foreground mb-4">
+                {t('dashboard.admin.management')}
               </h2>
-              <p className="text-gray-600">
-                Platform management tools will be available here.
+              <p className="text-muted-foreground">
+                {t('dashboard.admin.tools')}
               </p>
-              <p className="text-sm text-gray-500 mt-2">
-                Session timeout: {user?.sessionTimeout || 45} minutes
+              <p className="text-sm text-muted-foreground mt-2">
+                {t('dashboard.timeout')}: {user?.sessionTimeout || 45} minutes
               </p>
             </div>
           </div>

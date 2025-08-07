@@ -29,6 +29,20 @@ const translations = {
     'nav.logout': 'Logout',
     
     // Dashboard
+    'dashboard.patient.title': 'Patient Portal',
+    'dashboard.therapist.title': 'Therapist Dashboard',
+    'dashboard.admin.title': 'Admin Dashboard',
+    'dashboard.welcome': 'Welcome',
+    'dashboard.sessions.upcoming': 'Your Upcoming Sessions',
+    'dashboard.sessions.progress': 'Your Progress',
+    'dashboard.actions.quick': 'Quick Actions',
+    'dashboard.sessions.schedule': 'Schedule New Session',
+    'dashboard.sessions.message': 'Message Therapist',
+    'dashboard.timeout': 'Session timeout',
+    'dashboard.admin.management': 'System Administration',
+    'dashboard.admin.tools': 'Platform management tools will be available here.',
+    
+    // Dashboard
     'dashboard.title': 'Clinical Dashboard',
     'dashboard.stats.patients': 'Total Patients',
     'dashboard.stats.sessions_today': 'Sessions Today',
@@ -122,6 +136,20 @@ const translations = {
     'nav.logout': 'Sair',
     
     // Dashboard
+    'dashboard.patient.title': 'Portal do Paciente',
+    'dashboard.therapist.title': 'Painel do Terapeuta',
+    'dashboard.admin.title': 'Painel Administrativo',
+    'dashboard.welcome': 'Bem-vindo',
+    'dashboard.sessions.upcoming': 'Suas Próximas Sessões',
+    'dashboard.sessions.progress': 'Seu Progresso',
+    'dashboard.actions.quick': 'Ações Rápidas',
+    'dashboard.sessions.schedule': 'Agendar Nova Sessão',
+    'dashboard.sessions.message': 'Mensagem para Terapeuta',
+    'dashboard.timeout': 'Timeout da sessão',
+    'dashboard.admin.management': 'Administração do Sistema',
+    'dashboard.admin.tools': 'Ferramentas de gestão da plataforma estarão disponíveis aqui.',
+    
+    // Dashboard
     'dashboard.title': 'Painel Clínico',
     'dashboard.stats.patients': 'Total de Pacientes',
     'dashboard.stats.sessions_today': 'Sessões Hoje',
@@ -213,6 +241,20 @@ const translations = {
     'nav.reports': 'Reportes',
     'nav.settings': 'Configuración',
     'nav.logout': 'Cerrar Sesión',
+    
+    // Dashboard
+    'dashboard.patient.title': 'Portal del Paciente',
+    'dashboard.therapist.title': 'Panel del Terapeuta',
+    'dashboard.admin.title': 'Panel Administrativo',
+    'dashboard.welcome': 'Bienvenido',
+    'dashboard.sessions.upcoming': 'Sus Próximas Sesiones',
+    'dashboard.sessions.progress': 'Su Progreso',
+    'dashboard.actions.quick': 'Acciones Rápidas',
+    'dashboard.sessions.schedule': 'Programar Nueva Sesión',
+    'dashboard.sessions.message': 'Mensaje al Terapeuta',
+    'dashboard.timeout': 'Tiempo de espera de sesión',
+    'dashboard.admin.management': 'Administración del Sistema',
+    'dashboard.admin.tools': 'Las herramientas de gestión de la plataforma estarán disponibles aquí.',
     
     // Dashboard
     'dashboard.title': 'Panel Clínico',

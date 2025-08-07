@@ -37,7 +37,7 @@ const mockUsers: Record<string, { password: string; user: User }> = {
       id: 'user-001',
       username: 'dr.smith',
       role: 'therapist',
-      name: 'Dr. Sarah Smith',
+      name: 'Dr. Ego Smith',
       email: 'dr.smith@therapyengage.com',
       sessionTimeout: 30, // 30 minutes for therapists
       profile: {
