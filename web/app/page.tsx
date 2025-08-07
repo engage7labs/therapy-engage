@@ -81,6 +81,19 @@ function LoginPage() {
           <p>Patient: rodrigo / demo123</p>
           <p>Admin: admin / admin123</p>
         </div>
+        
+        {/* Debug button to clear localStorage */}
+        <div className="mt-4 text-center">
+          <button 
+            onClick={() => {
+              localStorage.clear()
+              window.location.reload()
+            }}
+            className="text-xs text-gray-500 hover:text-gray-700 underline"
+          >
+            Clear Storage & Reload (Debug)
+          </button>
+        </div>
       </div>
     </div>
   )
