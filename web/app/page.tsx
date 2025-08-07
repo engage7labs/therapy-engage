@@ -9,6 +9,7 @@ import { SessionManager } from '../components/session/SessionManager'
 import { UpcomingSessions } from '../components/session/UpcomingSessions'
 import { PatientVideoCallSelector } from '../components/session/PatientVideoCallSelector'
 import { DebugThemeLanguageToggle } from '../components/settings/debug-theme-language-toggle'
+import TherapistLayout from '../components/layout/therapist-layout'
 
 // Simple login component for now
 function LoginPage() {
@@ -293,27 +294,22 @@ function TherapistDashboard() {
   const [activeTab, setActiveTab] = useState<'sessions' | 'upcoming' | 'video'>('sessions')
   
   return (
-    <div className="min-h-screen bg-background">
-      <div className="bg-card shadow border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-foreground">{t('dashboard.therapist.title')}</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-muted-foreground">{user?.name}</span>
-              <DebugThemeLanguageToggle />
-              <button
-                onClick={requestLogout}
-                className="text-sm text-primary hover:text-primary/80 flex items-center gap-1"
-                title="Logout"
-              >
-                <LogOut className="h-4 w-4" />
-              </button>
-            </div>
-          </div>
+    <TherapistLayout
+      currentUser={{
+        name: user?.name || 'Dr. Professional',
+        role: 'Licensed Therapist'
+      }}
+      notifications={3}
+      onLogout={requestLogout}
+    >
+      <div className="space-y-6">
+        {/* Professional Dashboard Header */}
+        <div className="bg-card rounded-lg border p-6">
+          <h1 className="text-2xl font-bold text-foreground mb-2">{t('dashboard.therapist.title')}</h1>
+          <p className="text-muted-foreground">
+            Welcome back, {user?.name}. You have 4 sessions scheduled for today.
+          </p>
         </div>
-      </div>
       
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
@@ -369,10 +365,11 @@ function TherapistDashboard() {
           </div>
         </div>
       </div>
+      </div>
       
       {/* Logout Confirmation Modal */}
       <LogoutConfirmationDialog />
-    </div>
+    </TherapistLayout>
   )
 }
 

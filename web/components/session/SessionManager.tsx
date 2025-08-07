@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useKV } from '../../app/hooks/use-kv'
+import AIInsights from './ai-insights'
 
 interface Session {
   id: string
@@ -320,6 +321,16 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
                   <p><strong>Risk Assessment:</strong> {selectedSession.riskLevel} risk</p>
                 </div>
               </div>
+
+              {/* AI Clinical Insights Panel */}
+              <AIInsights 
+                sessionId={selectedSession.id}
+                isRecording={selectedSession.status === 'in-progress'}
+                onInsightAction={(insight) => {
+                  console.log('Insight action:', insight)
+                  // Handle insight actions (e.g., add to notes, schedule follow-up)
+                }}
+              />
               
               <div className="grid grid-cols-3 gap-4">
                 <div className="border rounded-lg p-3 text-center">
