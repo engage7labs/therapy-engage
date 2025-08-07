@@ -34,7 +34,28 @@ This directory contains temporarily moved code that was causing Docker build fai
 - **Move Date**: August 7, 2025
 - **Structure**: Complete old therapy platform codebase
 
-### 4. Root page.tsx (if moved)
+### 4. page_simple_redirect.tsx
+**Original Path**: `web/app/page.tsx`
+**Contents**: Simple redirect page created during build troubleshooting
+- **Status**: Replaced with Spark-based page.tsx with role-based dashboards
+- **Purpose**: Basic redirect to current-version route
+- **Move Date**: August 7, 2025
+
+### 5. current-version_page_simple.tsx
+**Original Path**: `web/app/current-version/page.tsx`  
+**Contents**: Simple current-version landing page
+- **Status**: Replaced with redirect to main app
+- **Purpose**: Basic current-version entry point
+- **Move Date**: August 7, 2025
+
+### 6. app_preliminary_remaining/ (if exists)
+**Original Path**: `web/app/preliminary/`
+**Contents**: Remaining preliminary code that wasn't moved earlier
+- **Status**: Moved to preserve from build conflicts
+- **Purpose**: Additional preliminary therapy platform code
+- **Move Date**: August 7, 2025
+
+### 7. Root page.tsx (if moved)
 **Original Path**: `web/app/page.tsx`
 **Contents**: Main landing page with complex component dependencies
 

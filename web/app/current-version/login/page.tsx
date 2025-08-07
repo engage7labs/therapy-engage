@@ -1,23 +1,22 @@
 'use client'
 
-// Force dynamic rendering to avoid serialization issues
-export const dynamic = 'force-dynamic'
-
-import { useAuth } from '../../contexts/auth-context'
-import { LoginPage } from '../../../components/auth/login-page'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function LoginPageRoute() {
-  const { isAuthenticated, user } = useAuth()
+  const router = useRouter()
 
-  // Redirect if already authenticated
-  if (isAuthenticated && user?.role === 'therapist') {
-    redirect('/dashboard')
-  }
-  
-  if (isAuthenticated && user?.role === 'patient') {
-    redirect('/client-portal')
-  }
+  useEffect(() => {
+    // Redirect to main app
+    router.push('/')
+  }, [router])
 
-  return <LoginPage />
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold mb-4">Login</h1>
+        <p className="text-gray-600">Redirecting to main application...</p>
+      </div>
+    </div>
+  )
 }

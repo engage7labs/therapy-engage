@@ -1,28 +1,21 @@
 'use client'
 
-// Force dynamic rendering to avoid serialization issues
-export const dynamic = 'force-dynamic'
-
-import { useAuth } from '../../contexts/auth-context'
-import { redirect } from 'next/navigation'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export default function SettingsPage() {
-  const { user, isAuthenticated } = useAuth()
+  const router = useRouter()
 
-  if (!isAuthenticated) {
-    redirect('/current-version/login')
-  }
+  useEffect(() => {
+    // Redirect to main app
+    router.push('/')
+  }, [router])
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6">Settings</h1>
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
-          <p>Welcome, {user?.username}!</p>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
-            Settings page is being set up. Check back soon!
-          </p>
-        </div>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <h1 className="text-2xl font-bold mb-4">Settings</h1>
+        <p className="text-gray-600">Redirecting to main application...</p>
       </div>
     </div>
   )

@@ -8,6 +8,7 @@ interface User {
   role: 'therapist' | 'patient' | 'admin'
   name: string
   email?: string
+  sessionTimeout?: number
   profile?: {
     avatar?: string
     specialization?: string
@@ -17,7 +18,7 @@ interface User {
   }
 }
 
-interface AuthContextType {
+export interface AuthContextType {
   user: User | null
   isAuthenticated: boolean
   login: (username: string, password: string) => Promise<boolean>
@@ -38,6 +39,7 @@ const mockUsers: Record<string, { password: string; user: User }> = {
       role: 'therapist',
       name: 'Dr. Sarah Smith',
       email: 'dr.smith@therapyengage.com',
+      sessionTimeout: 30, // 30 minutes for therapists
       profile: {
         specialization: 'Cognitive Behavioral Therapy',
         license: 'PSY-12345',
@@ -53,6 +55,7 @@ const mockUsers: Record<string, { password: string; user: User }> = {
       role: 'patient',
       name: 'Rodrigo Silva',
       email: 'rodrigo@email.com',
+      sessionTimeout: 60, // 60 minutes for patients
       profile: {
         phone: '+55 11 99999-1234',
         emergencyContact: '+55 11 99999-5678'
@@ -66,7 +69,8 @@ const mockUsers: Record<string, { password: string; user: User }> = {
       username: 'admin',
       role: 'admin',
       name: 'System Administrator',
-      email: 'admin@therapyengage.com'
+      email: 'admin@therapyengage.com',
+      sessionTimeout: 45 // 45 minutes for admin
     }
   }
 }

@@ -3,19 +3,19 @@
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
-export default function ClientPortalPage() {
+export default function HomePage() {
   const router = useRouter()
 
   useEffect(() => {
-    // Redirect to main app
-    router.push('/')
+    // Redirect to current-version by default
+    router.push('/current-version')
   }, [router])
 
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
-        <h1 className="text-2xl font-bold mb-4">Client Portal</h1>
-        <p className="text-gray-600">Redirecting to main application...</p>
+        <h1 className="text-2xl font-bold mb-4">Therapy Engage Platform</h1>
+        <p className="text-gray-600">Redirecting to platform...</p>
       </div>
     </div>
   )

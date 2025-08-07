@@ -1,8 +1,8 @@
 'use client'
 
 import { useContext } from 'react'
-import { AuthContext } from '@/contexts/auth-context'
-import type { AuthContextType } from '@/contexts/auth-context'
+import { AuthContext } from '../app/contexts/auth-context'
+import type { AuthContextType } from '../app/contexts/auth-context'
 
 export function useAuth(): AuthContextType {
   const context = useContext(AuthContext)
@@ -16,9 +16,8 @@ export function useAuth(): AuthContextType {
         isAuthenticated: false,
         login: async () => false,
         logout: () => {},
-        sessionInfo: null,
-        updateActivity: () => {},
-        extendSession: () => {}
+        updateLastActivity: () => {},
+        lastActivity: null
       }
     }
     throw new Error('useAuth must be used within an AuthProvider')

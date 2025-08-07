@@ -1,8 +1,5 @@
 'use client'
 
-// Force dynamic rendering to avoid serialization issues
-export const dynamic = 'force-dynamic'
-
 import { useAuth } from '../../contexts/auth-context'
 import { redirect } from 'next/navigation'
 
