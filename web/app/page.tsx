@@ -44,8 +44,8 @@ function LoginPage() {
       <div className="max-w-md w-full space-y-8 p-8 bg-card rounded-lg shadow-md border">
         <div>
           <div className="flex items-center justify-center mb-4">
-            <div className="w-12 h-12 bg-primary rounded-full flex items-center justify-center mr-3">
-              <Heart className="h-6 w-6 text-primary-foreground" />
+            <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+              <Heart className="h-6 w-6 text-white" />
             </div>
             <h2 className="text-3xl font-bold text-foreground">
               Therapy Engage
@@ -78,7 +78,7 @@ function LoginPage() {
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-3 py-2 border border-input rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
               placeholder="Enter your password"
             />
           </div>
@@ -201,7 +201,7 @@ function PatientDashboard() {
                           <p className="text-sm text-muted-foreground">
                             {session.type} • {session.duration} minutes
                           </p>
-                          <p className="text-sm text-gray-500">
+                          <p className="text-sm text-muted-foreground">
                             {formatSessionTime(session.date)}
                           </p>
                           <div className="flex items-center gap-2 mt-2">
@@ -220,7 +220,7 @@ function PatientDashboard() {
                               Join Video
                             </button>
                           )}
-                          <button className="bg-gray-500 text-white px-3 py-1 rounded text-sm hover:bg-gray-600">
+                          <button className="bg-secondary text-secondary-foreground px-3 py-1 rounded text-sm hover:bg-secondary/80">
                             Reschedule
                           </button>
                         </div>
@@ -229,7 +229,7 @@ function PatientDashboard() {
                   ))}
                   
                   {patientSessions.length === 0 && (
-                    <div className="text-center py-8 text-gray-500">
+                    <div className="text-center py-8 text-muted-foreground">
                       No upcoming sessions scheduled
                     </div>
                   )}
@@ -262,10 +262,10 @@ function PatientDashboard() {
                   
                   <div className="space-y-2">
                     <h4 className="font-medium text-foreground">{t('dashboard.actions.quick')}</h4>
-                    <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600">
+                    <button className="w-full bg-primary text-primary-foreground py-2 rounded hover:bg-primary/90">
                       {t('dashboard.sessions.schedule')}
                     </button>
-                    <button className="w-full bg-gray-500 text-white py-2 rounded hover:bg-gray-600">
+                    <button className="w-full bg-secondary text-secondary-foreground py-2 rounded hover:bg-secondary/80">
                       {t('dashboard.sessions.message')}
                     </button>
                   </div>
@@ -301,7 +301,7 @@ function TherapistDashboard() {
               <h1 className="text-xl font-semibold text-foreground">{t('dashboard.therapist.title')}</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-muted-foreground">Dr. {user?.name}</span>
+              <span className="text-sm text-muted-foreground">{user?.name}</span>
               <DebugThemeLanguageToggle />
               <button
                 onClick={requestLogout}
@@ -324,8 +324,8 @@ function TherapistDashboard() {
                 onClick={() => setActiveTab('sessions')}
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'sessions'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
                 }`}
               >
                 Session Management
@@ -334,8 +334,8 @@ function TherapistDashboard() {
                 onClick={() => setActiveTab('upcoming')}
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'upcoming'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
                 }`}
               >
                 Upcoming Sessions
@@ -344,8 +344,8 @@ function TherapistDashboard() {
                 onClick={() => setActiveTab('video')}
                 className={`py-2 px-1 border-b-2 font-medium text-sm ${
                   activeTab === 'video'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-muted-foreground hover:text-foreground'
                 }`}
               >
                 Video Calls

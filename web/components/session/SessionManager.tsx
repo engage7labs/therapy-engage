@@ -90,20 +90,20 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
 
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
-      case 'completed': return 'bg-green-100 text-green-800'
-      case 'in-progress': return 'bg-blue-100 text-blue-800'
-      case 'scheduled': return 'bg-yellow-100 text-yellow-800'
-      case 'cancelled': return 'bg-red-100 text-red-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'completed': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+      case 'in-progress': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+      case 'scheduled': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+      case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+      default: return 'bg-secondary text-secondary-foreground'
     }
   }
 
   const getRiskBadgeColor = (riskLevel: string | null) => {
     switch (riskLevel) {
-      case 'high': return 'bg-red-100 text-red-800'
-      case 'moderate': return 'bg-orange-100 text-orange-800'
-      case 'low': return 'bg-green-100 text-green-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'high': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+      case 'moderate': return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
+      case 'low': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+      default: return 'bg-secondary text-secondary-foreground'
     }
   }
 
@@ -175,13 +175,13 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
 
   if (activeView === 'list') {
     return (
-      <div className="bg-white rounded-lg shadow-md">
-        <div className="p-6 border-b">
+      <div className="bg-card rounded-lg shadow-md border">
+        <div className="p-6 border-b border-border">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Session Management</h2>
+            <h2 className="text-xl font-semibold text-foreground">Session Management</h2>
             <button 
               onClick={createNewSession}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 text-sm"
+              className="bg-primary text-primary-foreground px-4 py-2 rounded-md hover:bg-primary/90 text-sm"
             >
               + New Session
             </button>
@@ -217,7 +217,7 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
         
         <div className="p-6 space-y-4">
           {filteredSessions.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted-foreground">
               No sessions found matching the current filters.
             </div>
           ) : (
@@ -226,7 +226,7 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
                 <div className="flex items-center justify-between">
                   <div>
                     <h3 className="font-semibold">{session.patientName}</h3>
-                    <p className="text-sm text-gray-600">{session.type}</p>
+                    <p className="text-sm text-muted-foreground">{session.type}</p>
                   </div>
                   <div className="flex gap-2">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(session.status)}`}>
@@ -240,7 +240,7 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
                   </div>
                 </div>
                 
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-muted-foreground">
                   {formatSessionTime(session.scheduledTime)}
                   {session.duration && ` • ${session.duration} minutes`}
                 </div>
@@ -287,13 +287,13 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
   if (activeView === 'insights') {
     const selectedSession = sessions.find(s => s.id === selectedSessionId)
     return (
-      <div className="bg-white rounded-lg shadow-md">
-        <div className="p-6 border-b">
+      <div className="bg-card rounded-lg shadow-md border">
+        <div className="p-6 border-b border-border">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Session Insights</h2>
+            <h2 className="text-xl font-semibold text-foreground">Session Insights</h2>
             <button 
               onClick={() => setActiveView('list')}
-              className="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600 text-sm"
+              className="bg-secondary text-secondary-foreground px-4 py-2 rounded-md hover:bg-secondary/80 text-sm"
             >
               Back to List
             </button>
@@ -305,8 +305,8 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
             <div className="space-y-4">
               <div>
                 <h3 className="font-semibold">{selectedSession.patientName}</h3>
-                <p className="text-sm text-gray-600">{selectedSession.type}</p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-muted-foreground">{selectedSession.type}</p>
+                <p className="text-sm text-muted-foreground">
                   {formatSessionTime(selectedSession.scheduledTime)}
                 </p>
               </div>
@@ -343,7 +343,7 @@ export function SessionManager({ patientId, patientName }: SessionManagerProps) 
               </div>
             </div>
           ) : (
-            <div className="text-center py-8 text-gray-500">
+            <div className="text-center py-8 text-muted-foreground">
               Session not found.
             </div>
           )}

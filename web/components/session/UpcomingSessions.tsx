@@ -43,10 +43,10 @@ export function UpcomingSessions({ sessions: propSessions }: UpcomingSessionsPro
 
   const getStatusBadgeColor = (status: string) => {
     switch (status) {
-      case 'confirmed': return 'bg-green-100 text-green-800'
-      case 'pending': return 'bg-yellow-100 text-yellow-800'
-      case 'completed': return 'bg-gray-100 text-gray-800'
-      default: return 'bg-gray-100 text-gray-800'
+      case 'confirmed': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+      case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+      case 'completed': return 'bg-secondary text-secondary-foreground'
+      default: return 'bg-secondary text-secondary-foreground'
     }
   }
 
