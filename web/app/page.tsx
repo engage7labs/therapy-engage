@@ -1,14 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import { useAuth } from './hooks/use-auth'
+import { useAuth } from './contexts/auth-context'
+import { useTheme } from '../hooks/use-theme'
 import { SessionManager } from '../components/session/SessionManager'
 import { UpcomingSessions } from '../components/session/UpcomingSessions'
 import { PatientVideoCallSelector } from '../components/session/PatientVideoCallSelector'
+import { SimpleThemeLanguageToggle } from '../components/settings/simple-theme-language-toggle'
 
 // Simple login component for now
 function LoginPage() {
   const { login } = useAuth()
+  const { t } = useTheme()
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -30,18 +33,23 @@ function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="max-w-md w-full space-y-8 p-8 bg-white rounded-lg shadow-md">
+    <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+      {/* Theme/Language Controls */}
+      <div className="absolute top-4 right-4">
+        <SimpleThemeLanguageToggle />
+      </div>
+      
+      <div className="max-w-md w-full space-y-8 p-8 bg-card rounded-lg shadow-md border">
         <div>
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-2">
+          <h2 className="text-3xl font-bold text-center text-foreground mb-2">
             Therapy Engage
           </h2>
-          <p className="text-center text-gray-600">Sign in to your account</p>
+          <p className="text-center text-muted-foreground">{t('login.title')}</p>
         </div>
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-              Username
+            <label htmlFor="username" className="block text-sm font-medium text-foreground">
+              {t('login.username')}
             </label>
             <input
               id="username"
@@ -49,13 +57,13 @@ function LoginPage() {
               required
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Enter your username"
+              className="mt-1 block w-full px-3 py-2 border border-input rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground"
+              placeholder={t('login.username')}
             />
           </div>
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-              Password
+            <label htmlFor="password" className="block text-sm font-medium text-foreground">
+              {t('login.password')}
             </label>
             <input
               id="password"
@@ -147,18 +155,19 @@ function PatientDashboard() {
   }
   
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow">
+    <div className="min-h-screen bg-background">
+      <div className="bg-card shadow border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-semibold">Patient Portal</h1>
+              <h1 className="text-xl font-semibold text-foreground">Patient Portal</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">Welcome, {user?.name}</span>
+              <SimpleThemeLanguageToggle />
+              <span className="text-sm text-muted-foreground">Welcome, {user?.name}</span>
               <button
                 onClick={logout}
-                className="text-sm text-blue-600 hover:text-blue-500"
+                className="text-sm text-primary hover:text-primary/80"
               >
                 Logout
               </button>
@@ -269,18 +278,19 @@ function TherapistDashboard() {
   const [activeTab, setActiveTab] = useState<'sessions' | 'upcoming' | 'video'>('sessions')
   
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow">
+    <div className="min-h-screen bg-background">
+      <div className="bg-card shadow border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-semibold">Therapist Dashboard</h1>
+              <h1 className="text-xl font-semibold text-foreground">Therapist Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">Dr. {user?.name}</span>
+              <SimpleThemeLanguageToggle />
+              <span className="text-sm text-muted-foreground">Dr. {user?.name}</span>
               <button
                 onClick={logout}
-                className="text-sm text-blue-600 hover:text-blue-500"
+                className="text-sm text-primary hover:text-primary/80"
               >
                 Logout
               </button>
@@ -351,18 +361,19 @@ function AdminDashboard() {
   const { user, logout } = useAuth()
   
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white shadow">
+    <div className="min-h-screen bg-background">
+      <div className="bg-card shadow border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
-              <h1 className="text-xl font-semibold">Admin Dashboard</h1>
+              <h1 className="text-xl font-semibold text-foreground">Admin Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">{user?.name}</span>
+              <SimpleThemeLanguageToggle />
+              <span className="text-sm text-muted-foreground">{user?.name}</span>
               <button
                 onClick={logout}
-                className="text-sm text-blue-600 hover:text-blue-500"
+                className="text-sm text-primary hover:text-primary/80"
               >
                 Logout
               </button>
