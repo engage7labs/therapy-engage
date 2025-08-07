@@ -1,0 +1,29 @@
+'use client'
+
+import { useContext } from 'react'
+import { AuthContext } from '../contexts/auth-context'
+
+export function useAuth() {
+  const context = useContext(AuthContext)
+  
+  // ###desabilitado_mvp### Handle SSR/SSG gracefully
+  if (!context) {
+    // During SSR/SSG, return default values instead of throwing
+    if (typeof window === 'undefined') {
+      return {
+        user: null,
+        isAuthenticated: false,
+        login: async () => false,
+        logout: () => {},
+        sessionInfo: null,
+        updateUserPreferences: () => {},
+        extendSession: () => {},
+        getSessionTimeRemaining: () => 0,
+        setSessionTimeout: () => {},
+        clearSessionData: () => {}
+      }
+    }
+    throw new Error('useAuth must be used within an AuthProvider')
+  }
+  return context
+}

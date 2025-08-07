@@ -1,7 +1,13 @@
 /* eslint-env node */
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
+  
+  // Development configuration for complex therapy platform
+  // Production build disabled due to complex state serialization
+  
   // Image optimization
   images: {
     domains: ['localhost'],
@@ -48,23 +54,25 @@ const nextConfig = {
   },
 
   // Webpack configuration for SVG and asset handling
-  webpack: (config) => {
+  webpack: (config, { isServer }) => {
     config.module.rules.push({
       test: /\.svg$/,
       use: ['@svgr/webpack']
     })
     
+    // Ignore problematic modules during server-side rendering
+    if (isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+      }
+    }
+    
     return config
   },
 
-  // Output configuration for static deployment
-  output: 'standalone',
-  
-  // Experimental configuration to handle auth pages
-  experimental: {
-    missingSuspenseWithCSRBailout: false,
-  },
-  
   // Enable React strict mode for development
   reactStrictMode: true,
   
@@ -73,14 +81,14 @@ const nextConfig = {
     removeConsole: process.env.NODE_ENV === 'production'
   },
 
-  // TypeScript configuration
+  // TypeScript configuration - optimized for development
   typescript: {
     ignoreBuildErrors: false
   },
 
-  // ESLint configuration
+  // ESLint configuration - optimized for development
   eslint: {
-    ignoreDuringBuilds: true
+    ignoreDuringBuilds: false
   }
 }
 

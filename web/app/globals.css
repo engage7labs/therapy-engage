@@ -2,88 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Basic theme variables */
 :root {
-  /* Medical Blue - Primary brand color for healthcare trust */
-  --background: oklch(0.98 0.01 240);
-  --foreground: oklch(0.15 0.02 240);
-
-  /* Card backgrounds with subtle medical tone */
-  --card: oklch(0.96 0.01 240);
-  --card-foreground: oklch(0.15 0.02 240);
-  --popover: oklch(0.98 0.01 240);
-  --popover-foreground: oklch(0.15 0.02 240);
-
-  /* Primary Medical Blue for key actions */
-  --primary: oklch(0.55 0.15 250);
-  --primary-foreground: oklch(0.98 0.01 240);
-
-  /* Therapeutic Green for secondary actions */
-  --secondary: oklch(0.92 0.05 160);
-  --secondary-foreground: oklch(0.15 0.02 240);
-
-  /* Clinical accent for highlights */
-  --accent: oklch(0.88 0.08 160);
-  --accent-foreground: oklch(0.15 0.02 240);
-
-  /* Clinical Alert Red for critical attention */
-  --destructive: oklch(0.6 0.18 25);
-  --destructive-foreground: oklch(0.98 0.01 240);
-
-  /* Professional neutral tones */
-  --muted: oklch(0.85 0.02 240);
-  --muted-foreground: oklch(0.45 0.03 240);
-  --border: oklch(0.85 0.02 240);
-  --input: oklch(0.85 0.02 240);
-  --ring: oklch(0.55 0.15 250);
-
-  /* Clinical-appropriate radius */
+  --primary: 0 0% 9%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 0 0% 96%;
+  --secondary-foreground: 0 0% 9%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 45%;
+  --accent: 0 0% 96%;
+  --accent-foreground: 0 0% 9%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --ring: 0 0% 9%;
+  --background: 0 0% 100%;
+  --foreground: 0 0% 9%;
   --radius: 0.5rem;
-}
-
-/* Dark theme variables */
-.dark {
-  /* Dark Medical theme with clinical professionalism */
-  --background: oklch(0.08 0.01 240);
-  --foreground: oklch(0.92 0.01 240);
-
-  /* Dark card backgrounds maintaining medical hierarchy */
-  --card: oklch(0.12 0.01 240);
-  --card-foreground: oklch(0.92 0.01 240);
-  --popover: oklch(0.08 0.01 240);
-  --popover-foreground: oklch(0.92 0.01 240);
-
-  /* Medical Blue adjusted for dark theme accessibility */
-  --primary: oklch(0.65 0.18 250);
-  --primary-foreground: oklch(0.08 0.01 240);
-
-  /* Therapeutic Green for dark theme */
-  --secondary: oklch(0.2 0.05 160);
-  --secondary-foreground: oklch(0.92 0.01 240);
-
-  /* Clinical accent for dark theme */
-  --accent: oklch(0.25 0.08 160);
-  --accent-foreground: oklch(0.92 0.01 240);
-
-  /* Critical Alert Red for dark theme visibility */
-  --destructive: oklch(0.65 0.2 25);
-  --destructive-foreground: oklch(0.08 0.01 240);
-
-  /* Dark professional neutral tones */
-  --muted: oklch(0.18 0.02 240);
-  --muted-foreground: oklch(0.6 0.03 240);
-  --border: oklch(0.18 0.02 240);
-  --input: oklch(0.18 0.02 240);
-  --ring: oklch(0.65 0.18 250);
-}
-
-/* Clinical-specific typography and spacing */
-body {
-  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
-  font-feature-settings: 'tnum' 1;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Smooth theme transitions */
-* {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }

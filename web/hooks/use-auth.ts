@@ -2,8 +2,9 @@
 
 import { useContext } from 'react'
 import { AuthContext } from '@/contexts/auth-context'
+import type { AuthContextType } from '@/contexts/auth-context'
 
-export function useAuth() {
+export function useAuth(): AuthContextType {
   const context = useContext(AuthContext)
   
   // ###desabilitado_mvp### Handle SSR/SSG gracefully
@@ -16,11 +17,8 @@ export function useAuth() {
         login: async () => false,
         logout: () => {},
         sessionInfo: null,
-        updateUserPreferences: () => {},
-        extendSession: () => {},
-        getSessionTimeRemaining: () => 0,
-        setSessionTimeout: () => {},
-        clearSessionData: () => {}
+        updateActivity: () => {},
+        extendSession: () => {}
       }
     }
     throw new Error('useAuth must be used within an AuthProvider')

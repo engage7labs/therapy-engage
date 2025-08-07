@@ -1,0 +1,31 @@
+# Auto-iteration instructions for GitHub Copilot Workspace
+auto_continue: true
+
+# Maximum iterations before requesting user input
+max_iterations: 15
+
+# Current project objective
+objective: "Complete Next.js therapy platform development with functional build pipeline and deployment readiness"
+
+# Iteration priorities (in order)
+priorities:
+  - "Fix compilation and build errors"
+  - "Resolve component dependencies"
+  - "Optimize production build configuration"
+  - "Implement missing features"
+  - "Code quality improvements"
+
+# Stop conditions (when to pause for user input)
+stop_conditions:
+  - "Major architectural changes required"
+  - "External API configuration needed"
+  - "Database schema modifications"
+  - "Authentication/security updates"
+  - "Breaking changes to existing features"
+
+# Development context
+context:
+  framework: "Next.js 14 with App Router"
+  language: "TypeScript"
+  styling: "Tailwind CSS + shadcn/ui"
+  current_focus: "Build pipeline optimization and component integration"
