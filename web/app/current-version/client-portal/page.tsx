@@ -3,10 +3,10 @@
 // Force dynamic rendering to avoid serialization issues
 export const dynamic = 'force-dynamic'
 
-import { useAuth } from '@/contexts/auth-context'
-import { PatientLayout } from '@/components/layout/patient-layout'
-import { PatientDashboard } from '@/components/patient/patient-dashboard'
-import { SessionTimeoutManager } from '@/components/auth/session-timeout-manager'
+import { useAuth } from '../../../contexts/auth-context'
+import { PatientLayout } from '../../../components/layout/patient-layout'
+import { PatientDashboard } from '../../../components/patient/patient-dashboard'
+import { SessionTimeoutManager } from '../../../components/auth/session-timeout-manager'
 import { redirect } from 'next/navigation'
 
 export default function ClientPortalPage() {
