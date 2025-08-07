@@ -72,7 +72,7 @@ export function SimpleThemeLanguageToggle() {
           <Button 
             variant="ghost" 
             size="sm" 
-            className="language-indicator h-8 px-2 gap-1 bg-muted/50 hover:bg-muted relative"
+            className="language-indicator h-8 px-2 gap-1 bg-muted/50 hover:bg-muted relative z-50"
             title={t('tooltip.language_toggle')}
           >
             <span className="text-sm">{currentLanguage?.flag}</span>
@@ -85,7 +85,7 @@ export function SimpleThemeLanguageToggle() {
             )}
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-40">
+        <DropdownMenuContent align="end" className="w-40 z-[100] bg-background border shadow-lg">
           <DropdownMenuLabel className="text-xs">
             {t('settings.language')}
           </DropdownMenuLabel>
@@ -94,7 +94,7 @@ export function SimpleThemeLanguageToggle() {
             <DropdownMenuItem
               key={option.value}
               onClick={() => handleLanguageChange(option.value as Language)}
-              className="flex items-center justify-between cursor-pointer"
+              className="flex items-center justify-between cursor-pointer hover:bg-muted"
             >
               <div className="flex items-center gap-2">
                 <span>{option.flag}</span>

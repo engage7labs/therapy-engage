@@ -6,7 +6,7 @@ import { useTheme } from '../hooks/use-theme'
 import { SessionManager } from '../components/session/SessionManager'
 import { UpcomingSessions } from '../components/session/UpcomingSessions'
 import { PatientVideoCallSelector } from '../components/session/PatientVideoCallSelector'
-import { SimpleThemeLanguageToggle } from '../components/settings/simple-theme-language-toggle'
+import { DebugThemeLanguageToggle } from '../components/settings/debug-theme-language-toggle'
 
 // Simple login component for now
 function LoginPage() {
@@ -36,7 +36,7 @@ function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
       {/* Theme/Language Controls */}
       <div className="absolute top-4 right-4">
-        <SimpleThemeLanguageToggle />
+        <DebugThemeLanguageToggle />
       </div>
       
       <div className="max-w-md w-full space-y-8 p-8 bg-card rounded-lg shadow-md border">
@@ -163,7 +163,7 @@ function PatientDashboard() {
               <h1 className="text-xl font-semibold text-foreground">Patient Portal</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <SimpleThemeLanguageToggle />
+              <DebugThemeLanguageToggle />
               <span className="text-sm text-muted-foreground">Welcome, {user?.name}</span>
               <button
                 onClick={logout}
@@ -286,7 +286,7 @@ function TherapistDashboard() {
               <h1 className="text-xl font-semibold text-foreground">Therapist Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <SimpleThemeLanguageToggle />
+              <DebugThemeLanguageToggle />
               <span className="text-sm text-muted-foreground">Dr. {user?.name}</span>
               <button
                 onClick={logout}
@@ -369,7 +369,7 @@ function AdminDashboard() {
               <h1 className="text-xl font-semibold text-foreground">Admin Dashboard</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <SimpleThemeLanguageToggle />
+              <DebugThemeLanguageToggle />
               <span className="text-sm text-muted-foreground">{user?.name}</span>
               <button
                 onClick={logout}
