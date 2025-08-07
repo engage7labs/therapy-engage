@@ -23,6 +23,7 @@ spec:
       containers:
         - name: web-portal
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy | default "IfNotPresent" }}
           ports:
             - containerPort: 3000
           {{- with .Values.env }}
