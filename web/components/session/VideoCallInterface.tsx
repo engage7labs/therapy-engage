@@ -4,7 +4,6 @@ import { useState, useEffect, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { VideoCallSession } from '@/lib/types/webrtc'
 import {
   Video,
   VideoOff,
@@ -14,11 +13,9 @@ import {
   PhoneOff,
   Share2,
   MessageSquare,
-  Settings,
   Users,
-  Clock,
   Signal,
-  Record,
+  Circle,
   Minimize2,
   Maximize2,
   Volume2,
@@ -267,7 +264,15 @@ export function VideoCallInterface({
               autoPlay
               playsInline
               className="w-full h-full object-cover"
-            />
+            >
+              <track
+                kind="captions"
+                src=""
+                srcLang="en"
+                label="English"
+                default
+              />
+            </video>
           )}
           
           {/* Connection quality indicator */}
@@ -303,7 +308,15 @@ export function VideoCallInterface({
               muted
               playsInline
               className="w-full h-full object-cover"
-            />
+            >
+              <track
+                kind="captions"
+                src=""
+                srcLang="en"
+                label="English"
+                default
+              />
+            </video>
           )}
         </div>
 
@@ -352,7 +365,7 @@ export function VideoCallInterface({
                   onClick={toggleRecording}
                   className="rounded-full w-12 h-12 p-0"
                 >
-                  <Record className="h-5 w-5" />
+                  <Circle className="h-5 w-5" />
                 </Button>
 
                 <Button

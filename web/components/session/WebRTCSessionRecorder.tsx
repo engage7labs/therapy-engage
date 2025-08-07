@@ -103,7 +103,8 @@ export function WebRTCSessionRecorder({
           sessionType: 'therapy'
         }
       })
-    } catch (err) {
+    } catch (error) {
+      console.error('Recording start failed:', error)
       toast.error('Failed to start recording')
     }
   }

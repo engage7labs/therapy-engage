@@ -20,7 +20,8 @@ export function LoginPage() {
       if (!success) {
         setError('Invalid credentials. Try: dr.smith/demo123 or rodrigo/demo123')
       }
-    } catch (err) {
+    } catch (error) {
+      console.error('Login error:', error)
       setError('Login failed. Please try again.')
     } finally {
       setIsLoading(false)

@@ -366,7 +366,7 @@ export default function VideoCommunicationPage() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Calendar className="h-5 w-5" />
-                Today's Schedule
+                Today&apos;s Schedule
               </CardTitle>
             </CardHeader>
             <CardContent>
