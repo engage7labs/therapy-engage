@@ -99,6 +99,34 @@ output "cosmosdb_database_name" {
   value       = module.cosmosdb.database_name
 }
 
+# Azure OpenAI outputs
+output "azure_openai_endpoint" {
+  description = "Azure OpenAI endpoint URL"
+  value       = module.azure_openai.azure_openai_endpoint
+}
+
+output "azure_openai_name" {
+  description = "Azure OpenAI resource name"
+  value       = module.azure_openai.azure_openai_name
+}
+
+output "azure_openai_config" {
+  description = "Azure OpenAI configuration for applications"
+  value       = module.azure_openai.azure_openai_config
+}
+
+# Environment variables for backend configuration
+output "backend_environment_variables" {
+  description = "Environment variables for backend configuration"
+  value = merge(
+    module.azure_openai.environment_variables,
+    {
+      COSMOSDB_ENDPOINT      = module.cosmosdb.endpoint
+      COSMOSDB_DATABASE_NAME = module.cosmosdb.database_name
+    }
+  )
+}
+
 # Note: Backend IP (20.13.251.223) is managed by AKS LoadBalancer
 # App Service domains will redirect to AKS Ingress
 
@@ -130,4 +158,21 @@ module "cosmosdb" {
   resource_group_name = azurerm_resource_group.rg.name
   database_name       = "therapyengage"
   tags                = var.tags
+}
+
+# Azure OpenAI for sentiment analysis and AI features
+module "azure_openai" {
+  source              = "./modules/azure_openai"
+  name                = "therapyengage-openai-${var.tags.environment}"
+  location            = "North Europe"  # Azure OpenAI availability
+  resource_group_name = azurerm_resource_group.rg.name
+  
+  tags = merge(var.tags, {
+    Component = "ai-services"
+    Purpose   = "sentiment-analysis"
+  })
+  
+  # Optional: Enable diagnostics if we have Log Analytics
+  # enable_diagnostics          = true
+  # log_analytics_workspace_id  = module.monitoring.log_analytics_workspace_id
 }
