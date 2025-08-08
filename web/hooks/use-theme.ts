@@ -158,7 +158,8 @@ const translations = {
     "cards.patients_improvement": "Patients with improvement",
     "cards.positive_trend": "Positive trend",
     "cards.attention_needed": "Attention needed",
-    "cards.patients_showed_progress": "of your patients showed progress this week",
+    "cards.patients_showed_progress":
+      "of your patients showed progress this week",
     "cards.mood_improving": "General patient mood is improving",
     "cards.patients_need_followup": "patients need extra follow-up",
     "cards.individual_therapy": "Individual Therapy",
@@ -310,9 +311,11 @@ const translations = {
     "cards.patients_improvement": "Pacientes com melhoria",
     "cards.positive_trend": "Tendência positiva",
     "cards.attention_needed": "Atenção necessária",
-    "cards.patients_showed_progress": "dos seus pacientes mostraram progresso esta semana",
+    "cards.patients_showed_progress":
+      "dos seus pacientes mostraram progresso esta semana",
     "cards.mood_improving": "Humor geral dos pacientes está melhorando",
-    "cards.patients_need_followup": "pacientes precisam de acompanhamento extra",
+    "cards.patients_need_followup":
+      "pacientes precisam de acompanhamento extra",
     "cards.individual_therapy": "Terapia Individual",
     "cards.anxiety_therapy": "Terapia de Ansiedade",
     "cards.family_therapy": "Terapia Familiar",
@@ -463,8 +466,10 @@ const translations = {
     "cards.patients_improvement": "Pacientes con mejora",
     "cards.positive_trend": "Tendencia positiva",
     "cards.attention_needed": "Atención necesaria",
-    "cards.patients_showed_progress": "de tus pacientes mostraron progreso esta semana",
-    "cards.mood_improving": "El estado de ánimo general de los pacientes está mejorando",
+    "cards.patients_showed_progress":
+      "de tus pacientes mostraron progreso esta semana",
+    "cards.mood_improving":
+      "El estado de ánimo general de los pacientes está mejorando",
     "cards.patients_need_followup": "pacientes necesitan seguimiento adicional",
     "cards.individual_therapy": "Terapia Individual",
     "cards.anxiety_therapy": "Terapia de Ansiedad",

@@ -420,12 +420,12 @@ function TherapistDashboard() {
   const { t } = useTheme();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 lg:flex">
       {/* Sidebar */}
       <TherapistSidebar />
 
       {/* Main Content Area */}
-      <div className="flex-1 ml-0 lg:ml-64">
+      <div className="lg:ml-0 lg:flex-1">
         {/* Header - Always visible */}
         <div className="bg-card/80 backdrop-blur shadow border-b">
           <div className="px-4 sm:px-6 lg:px-8">
@@ -440,7 +440,7 @@ function TherapistDashboard() {
               </div>
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-muted-foreground">
-                  {t("dashboard.welcome")}, Dr. {user?.name}
+                  {t("dashboard.welcome")}, {user?.name}
                 </span>
                 <DebugThemeLanguageToggle />
                 <button
@@ -460,7 +460,7 @@ function TherapistDashboard() {
           {/* Welcome Message */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-foreground mb-2">
-              {t("dashboard.welcome")}, Dr. {user?.name}! 👩‍⚕️
+              {t("dashboard.welcome")}, {user?.name}! 👩‍⚕️
             </h1>
             <p className="text-muted-foreground">
               {t("dashboard.therapist.subtitle")}

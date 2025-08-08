@@ -67,7 +67,7 @@ const TherapistSidebar: React.FC<SidebarProps> = ({
     <div
       className={`${
         isCollapsed ? "w-16" : "w-64"
-      } transition-all duration-300 bg-white dark:bg-gray-900 border-r border-border flex flex-col h-full`}
+      } transition-all duration-300 bg-white dark:bg-gray-900 border-r border-border flex flex-col h-screen fixed left-0 top-0 z-30 lg:relative lg:h-full`}
     >
       {/* Header with Logo and Collapse Button */}
       <div className="p-4 border-b border-border">

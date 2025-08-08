@@ -74,7 +74,7 @@ export function useLogoutConfirmation() {
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={confirmLogout}
-            className="w-full sm:w-auto bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 dark:from-orange-600 dark:to-orange-700 dark:hover:from-orange-700 dark:hover:to-orange-800 text-black dark:text-white"
+            className="w-full sm:w-auto bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 dark:from-orange-600 dark:to-orange-700 dark:hover:from-orange-700 dark:hover:to-orange-800 text-white dark:text-white border-0"
           >
             <LogOut className="h-4 w-4 mr-2" />
             {t("logout.confirm")}
