@@ -25,6 +25,8 @@ dist-ssr/
 *.tfstate
 *.tfstate.backup
 .terraform.lock.hcl
+# YAML files for Kubernetes
+TF-YAML/*
 
 # Editor directories and files
 .vscode/*

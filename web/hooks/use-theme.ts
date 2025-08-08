@@ -1,385 +1,408 @@
-'use client'
+"use client";
 
-import React, { createContext, useContext, useEffect } from 'react'
-import { useKV } from './use-kv'
+import React, { createContext, useContext, useEffect } from "react";
+import { useKV } from "./use-kv";
 
-type Theme = 'light' | 'dark'
-type Language = 'en' | 'pt' | 'es'
+type Theme = "light" | "dark";
+type Language = "en" | "pt" | "es";
 
 interface ThemeContextType {
-  theme: Theme
-  language: Language
-  setTheme: (theme: Theme) => void
-  setLanguage: (language: Language) => void
-  toggleTheme: () => void
-  t: (key: string) => string
+  theme: Theme;
+  language: Language;
+  setTheme: (theme: Theme) => void;
+  setLanguage: (language: Language) => void;
+  toggleTheme: () => void;
+  t: (key: string) => string;
 }
 
-const ThemeContext = createContext<ThemeContextType | null>(null)
+const ThemeContext = createContext<ThemeContextType | null>(null);
 
 // Comprehensive translations for all supported languages
 const translations = {
   en: {
     // Navigation
-    'nav.dashboard': 'Dashboard',
-    'nav.patients': 'Patients',
-    'nav.sessions': 'Sessions',
-    'nav.reports': 'Reports',
-    'nav.settings': 'Settings',
-    'nav.logout': 'Logout',
-    
+    "nav.dashboard": "Dashboard",
+    "nav.patients": "Patients",
+    "nav.sessions": "Sessions",
+    "nav.reports": "Reports",
+    "nav.settings": "Settings",
+    "nav.logout": "Logout",
+
     // Dashboard
-    'dashboard.patient.title': 'Patient Portal',
-    'dashboard.therapist.title': 'Therapist Dashboard',
-    'dashboard.admin.title': 'Admin Dashboard',
-    'dashboard.welcome': 'Welcome',
-    'dashboard.sessions.upcoming': 'Your Upcoming Sessions',
-    'dashboard.sessions.progress': 'Your Progress',
-    'dashboard.actions.quick': 'Quick Actions',
-    'dashboard.sessions.schedule': 'Schedule New Session',
-    'dashboard.sessions.message': 'Message Therapist',
-    'dashboard.timeout': 'Session timeout',
-    'dashboard.admin.management': 'System Administration',
-    'dashboard.admin.tools': 'Platform management tools will be available here.',
-    
+    "dashboard.patient.title": "Patient Portal",
+    "dashboard.therapist.title": "Therapist Dashboard",
+    "dashboard.admin.title": "Admin Dashboard",
+    "dashboard.welcome": "Welcome",
+    "dashboard.sessions.upcoming": "Your Upcoming Sessions",
+    "dashboard.sessions.progress": "Your Progress",
+    "dashboard.actions.quick": "Quick Actions",
+    "dashboard.sessions.schedule": "Schedule New Session",
+    "dashboard.sessions.message": "Message Therapist",
+    "dashboard.timeout": "Session timeout",
+    "dashboard.admin.management": "System Administration",
+    "dashboard.admin.tools":
+      "Platform management tools will be available here.",
+    "dashboard.mood.progress": "Mood Progress",
+    "dashboard.mood.improvement": "Showing improvement",
+    "dashboard.mood.trending": "Trending upward",
+
     // Dashboard
-    'dashboard.title': 'Clinical Dashboard',
-    'dashboard.stats.patients': 'Total Patients',
-    'dashboard.stats.sessions_today': 'Sessions Today',
-    'dashboard.stats.active_sessions': 'Active Sessions',
-    'dashboard.stats.alerts': 'Critical Alerts',
-    
+    "dashboard.title": "Clinical Dashboard",
+    "dashboard.stats.patients": "Total Patients",
+    "dashboard.stats.sessions_today": "Sessions Today",
+    "dashboard.stats.active_sessions": "Active Sessions",
+    "dashboard.stats.alerts": "Critical Alerts",
+
     // Patients
-    'patients.title': 'Patient Management',
-    'patients.search': 'Search patients...',
-    'patients.add_new': 'Add New Patient',
-    'patients.view_profile': 'View Profile',
-    'patients.risk_level': 'Risk Level',
-    'patients.next_session': 'Next Session',
-    'patients.last_contact': 'Last Contact',
-    
+    "patients.title": "Patient Management",
+    "patients.search": "Search patients...",
+    "patients.add_new": "Add New Patient",
+    "patients.view_profile": "View Profile",
+    "patients.risk_level": "Risk Level",
+    "patients.next_session": "Next Session",
+    "patients.last_contact": "Last Contact",
+
     // Sessions
-    'sessions.title': 'Session Management',
-    'sessions.upcoming': 'Upcoming Sessions',
-    'sessions.active': 'Active Sessions',
-    'sessions.completed': 'Completed Sessions',
-    'sessions.start_session': 'Start Session',
-    'sessions.join_session': 'Join Session',
-    'sessions.end_session': 'End Session',
-    'sessions.recording': 'Recording',
-    'sessions.duration': 'Duration',
-    
+    "sessions.title": "Session Management",
+    "sessions.upcoming": "Upcoming Sessions",
+    "sessions.active": "Active Sessions",
+    "sessions.completed": "Completed Sessions",
+    "sessions.start_session": "Start Session",
+    "sessions.join_session": "Join Session",
+    "sessions.end_session": "End Session",
+    "sessions.recording": "Recording",
+    "sessions.duration": "Duration",
+
     // Emergency & Alerts
-    'emergency.title': 'Emergency Contact',
-    'emergency.whatsapp': 'WhatsApp Emergency',
-    'emergency.call': 'Emergency Call',
-    'emergency.critical_alert': 'Critical Alert',
-    'emergency.immediate_attention': 'Requires Immediate Attention',
-    
+    "emergency.title": "Emergency Contact",
+    "emergency.whatsapp": "WhatsApp Emergency",
+    "emergency.call": "Emergency Call",
+    "emergency.critical_alert": "Critical Alert",
+    "emergency.immediate_attention": "Requires Immediate Attention",
+
     // Theme & Language
-    'settings.theme': 'Theme',
-    'settings.language': 'Language',
-    'settings.dark_mode': 'Dark Mode',
-    'settings.light_mode': 'Light Mode',
-    
+    "settings.theme": "Theme",
+    "settings.language": "Language",
+    "settings.dark_mode": "Dark Mode",
+    "settings.light_mode": "Light Mode",
+
     // Common
-    'common.save': 'Save',
-    'common.cancel': 'Cancel',
-    'common.delete': 'Delete',
-    'common.edit': 'Edit',
-    'common.view': 'View',
-    'common.close': 'Close',
-    'common.loading': 'Loading...',
-    'common.error': 'Error',
-    'common.success': 'Success',
-    'common.confirm': 'Confirm',
-    
+    "common.save": "Save",
+    "common.cancel": "Cancel",
+    "common.delete": "Delete",
+    "common.edit": "Edit",
+    "common.view": "View",
+    "common.close": "Close",
+    "common.loading": "Loading...",
+    "common.error": "Error",
+    "common.success": "Success",
+    "common.confirm": "Confirm",
+
     // Login
-    'login.title': 'Therapy Engage Login',
-    'login.username': 'Username',
-    'login.password': 'Password',
-    'login.sign_in': 'Sign In',
-    'login.demo_accounts': 'Demo Accounts',
-    'login.therapist_demo': 'Therapist Demo (dr.smith)',
-    'login.patient_demo': 'Patient Demo (rodrigo)',
-    
+    "login.title": "Therapy Engage Login",
+    "login.username": "Username",
+    "login.password": "Password",
+    "login.sign_in": "Sign In",
+    "login.demo_accounts": "Demo Accounts",
+    "login.therapist_demo": "Therapist Demo (dr.smith)",
+    "login.patient_demo": "Patient Demo (rodrigo)",
+
     // Risk Levels
-    'risk.low': 'Low Risk',
-    'risk.moderate': 'Moderate Risk',
-    'risk.high': 'High Risk',
-    'risk.critical': 'Critical Risk',
-    
+    "risk.low": "Low Risk",
+    "risk.moderate": "Moderate Risk",
+    "risk.high": "High Risk",
+    "risk.critical": "Critical Risk",
+
     // Logout Confirmation
-    'logout.confirmTitle': 'Confirm Logout',
-    'logout.confirmMessage': 'Are you sure you want to log out? Any unsaved work or active sessions will be lost.',
-    'logout.securityNote': 'Security Notice',
-    'logout.securityDetails': 'Logging out will end your current session and require re-authentication to access patient data.',
-    'logout.confirm': 'Yes, Logout',
-    
+    "logout.confirmTitle": "Confirm Logout",
+    "logout.confirmMessage":
+      "Are you sure you want to log out? Any unsaved work or active sessions will be lost.",
+    "logout.securityNote": "Security Notice",
+    "logout.securityDetails":
+      "Logging out will end your current session and require re-authentication to access patient data.",
+    "logout.confirm": "Yes, Logout",
+
     // Tooltips
-    'tooltip.logout': 'Logout - Click to confirm session end',
-    'tooltip.logout_preview': 'Will require confirmation before logging out',
-    'tooltip.theme_toggle': 'Toggle between light and dark themes',
-    'tooltip.language_toggle': 'Switch between English, Portuguese, and Spanish',
-    'tooltip.profile': 'View your profile information',
-    'tooltip.settings': 'Access application settings',
-    'tooltip.emergency': 'Emergency contact options for critical situations'
+    "tooltip.logout": "Logout - Click to confirm session end",
+    "tooltip.logout_preview": "Will require confirmation before logging out",
+    "tooltip.theme_toggle": "Toggle between light and dark themes",
+    "tooltip.language_toggle":
+      "Switch between English, Portuguese, and Spanish",
+    "tooltip.profile": "View your profile information",
+    "tooltip.settings": "Access application settings",
+    "tooltip.emergency": "Emergency contact options for critical situations",
   },
-  
+
   pt: {
     // Navigation
-    'nav.dashboard': 'Painel',
-    'nav.patients': 'Pacientes',
-    'nav.sessions': 'Sessões',
-    'nav.reports': 'Relatórios',
-    'nav.settings': 'Configurações',
-    'nav.logout': 'Sair',
-    
+    "nav.dashboard": "Painel",
+    "nav.patients": "Pacientes",
+    "nav.sessions": "Sessões",
+    "nav.reports": "Relatórios",
+    "nav.settings": "Configurações",
+    "nav.logout": "Sair",
+
     // Dashboard
-    'dashboard.patient.title': 'Portal do Paciente',
-    'dashboard.therapist.title': 'Painel do Terapeuta',
-    'dashboard.admin.title': 'Painel Administrativo',
-    'dashboard.welcome': 'Bem-vindo',
-    'dashboard.sessions.upcoming': 'Suas Próximas Sessões',
-    'dashboard.sessions.progress': 'Seu Progresso',
-    'dashboard.actions.quick': 'Ações Rápidas',
-    'dashboard.sessions.schedule': 'Agendar Nova Sessão',
-    'dashboard.sessions.message': 'Mensagem para Terapeuta',
-    'dashboard.timeout': 'Timeout da sessão',
-    'dashboard.admin.management': 'Administração do Sistema',
-    'dashboard.admin.tools': 'Ferramentas de gestão da plataforma estarão disponíveis aqui.',
-    
+    "dashboard.patient.title": "Portal do Paciente",
+    "dashboard.therapist.title": "Painel do Terapeuta",
+    "dashboard.admin.title": "Painel Administrativo",
+    "dashboard.welcome": "Bem-vindo",
+    "dashboard.sessions.upcoming": "Suas Próximas Sessões",
+    "dashboard.sessions.progress": "Seu Progresso",
+    "dashboard.actions.quick": "Ações Rápidas",
+    "dashboard.sessions.schedule": "Agendar Nova Sessão",
+    "dashboard.sessions.message": "Mensagem para Terapeuta",
+    "dashboard.timeout": "Timeout da sessão",
+    "dashboard.admin.management": "Administração do Sistema",
+    "dashboard.admin.tools":
+      "Ferramentas de gestão da plataforma estarão disponíveis aqui.",
+    "dashboard.mood.progress": "Progresso do Humor",
+    "dashboard.mood.improvement": "Mostrando melhoria",
+    "dashboard.mood.trending": "Tendência positiva",
+
     // Dashboard
-    'dashboard.title': 'Painel Clínico',
-    'dashboard.stats.patients': 'Total de Pacientes',
-    'dashboard.stats.sessions_today': 'Sessões Hoje',
-    'dashboard.stats.active_sessions': 'Sessões Ativas',
-    'dashboard.stats.alerts': 'Alertas Críticos',
-    
+    "dashboard.title": "Painel Clínico",
+    "dashboard.stats.patients": "Total de Pacientes",
+    "dashboard.stats.sessions_today": "Sessões Hoje",
+    "dashboard.stats.active_sessions": "Sessões Ativas",
+    "dashboard.stats.alerts": "Alertas Críticos",
+
     // Patients
-    'patients.title': 'Gestão de Pacientes',
-    'patients.search': 'Buscar pacientes...',
-    'patients.add_new': 'Adicionar Novo Paciente',
-    'patients.view_profile': 'Ver Perfil',
-    'patients.risk_level': 'Nível de Risco',
-    'patients.next_session': 'Próxima Sessão',
-    'patients.last_contact': 'Último Contato',
-    
+    "patients.title": "Gestão de Pacientes",
+    "patients.search": "Buscar pacientes...",
+    "patients.add_new": "Adicionar Novo Paciente",
+    "patients.view_profile": "Ver Perfil",
+    "patients.risk_level": "Nível de Risco",
+    "patients.next_session": "Próxima Sessão",
+    "patients.last_contact": "Último Contato",
+
     // Sessions
-    'sessions.title': 'Gestão de Sessões',
-    'sessions.upcoming': 'Próximas Sessões',
-    'sessions.active': 'Sessões Ativas',
-    'sessions.completed': 'Sessões Concluídas',
-    'sessions.start_session': 'Iniciar Sessão',
-    'sessions.join_session': 'Entrar na Sessão',
-    'sessions.end_session': 'Finalizar Sessão',
-    'sessions.recording': 'Gravação',
-    'sessions.duration': 'Duração',
-    
+    "sessions.title": "Gestão de Sessões",
+    "sessions.upcoming": "Próximas Sessões",
+    "sessions.active": "Sessões Ativas",
+    "sessions.completed": "Sessões Concluídas",
+    "sessions.start_session": "Iniciar Sessão",
+    "sessions.join_session": "Entrar na Sessão",
+    "sessions.end_session": "Finalizar Sessão",
+    "sessions.recording": "Gravação",
+    "sessions.duration": "Duração",
+
     // Emergency & Alerts
-    'emergency.title': 'Contato de Emergência',
-    'emergency.whatsapp': 'WhatsApp Emergência',
-    'emergency.call': 'Chamada de Emergência',
-    'emergency.critical_alert': 'Alerta Crítico',
-    'emergency.immediate_attention': 'Requer Atenção Imediata',
-    
+    "emergency.title": "Contato de Emergência",
+    "emergency.whatsapp": "WhatsApp Emergência",
+    "emergency.call": "Chamada de Emergência",
+    "emergency.critical_alert": "Alerta Crítico",
+    "emergency.immediate_attention": "Requer Atenção Imediata",
+
     // Theme & Language
-    'settings.theme': 'Tema',
-    'settings.language': 'Idioma',
-    'settings.dark_mode': 'Modo Escuro',
-    'settings.light_mode': 'Modo Claro',
-    
+    "settings.theme": "Tema",
+    "settings.language": "Idioma",
+    "settings.dark_mode": "Modo Escuro",
+    "settings.light_mode": "Modo Claro",
+
     // Common
-    'common.save': 'Salvar',
-    'common.cancel': 'Cancelar',
-    'common.delete': 'Excluir',
-    'common.edit': 'Editar',
-    'common.view': 'Visualizar',
-    'common.close': 'Fechar',
-    'common.loading': 'Carregando...',
-    'common.error': 'Erro',
-    'common.success': 'Sucesso',
-    'common.confirm': 'Confirmar',
-    
+    "common.save": "Salvar",
+    "common.cancel": "Cancelar",
+    "common.delete": "Excluir",
+    "common.edit": "Editar",
+    "common.view": "Visualizar",
+    "common.close": "Fechar",
+    "common.loading": "Carregando...",
+    "common.error": "Erro",
+    "common.success": "Sucesso",
+    "common.confirm": "Confirmar",
+
     // Login
-    'login.title': 'Login Therapy Engage',
-    'login.username': 'Usuário',
-    'login.password': 'Senha',
-    'login.sign_in': 'Entrar',
-    'login.demo_accounts': 'Contas Demo',
-    'login.therapist_demo': 'Demo Terapeuta (dr.smith)',
-    'login.patient_demo': 'Demo Paciente (rodrigo)',
-    
+    "login.title": "Login Therapy Engage",
+    "login.username": "Usuário",
+    "login.password": "Senha",
+    "login.sign_in": "Entrar",
+    "login.demo_accounts": "Contas Demo",
+    "login.therapist_demo": "Demo Terapeuta (dr.smith)",
+    "login.patient_demo": "Demo Paciente (rodrigo)",
+
     // Risk Levels
-    'risk.low': 'Risco Baixo',
-    'risk.moderate': 'Risco Moderado',
-    'risk.high': 'Risco Alto',
-    'risk.critical': 'Risco Crítico',
-    
+    "risk.low": "Risco Baixo",
+    "risk.moderate": "Risco Moderado",
+    "risk.high": "Risco Alto",
+    "risk.critical": "Risco Crítico",
+
     // Logout Confirmation
-    'logout.confirmTitle': 'Confirmar Logout',
-    'logout.confirmMessage': 'Tem certeza de que deseja sair? Qualquer trabalho não salvo ou sessões ativas serão perdidos.',
-    'logout.securityNote': 'Aviso de Segurança',
-    'logout.securityDetails': 'Fazer logout encerrará sua sessão atual e exigirá nova autenticação para acessar dados dos pacientes.',
-    'logout.confirm': 'Sim, Sair',
-    
+    "logout.confirmTitle": "Confirmar Logout",
+    "logout.confirmMessage":
+      "Tem certeza de que deseja sair? Qualquer trabalho não salvo ou sessões ativas serão perdidos.",
+    "logout.securityNote": "Aviso de Segurança",
+    "logout.securityDetails":
+      "Fazer logout encerrará sua sessão atual e exigirá nova autenticação para acessar dados dos pacientes.",
+    "logout.confirm": "Sim, Sair",
+
     // Tooltips
-    'tooltip.logout': 'Sair - Clique para confirmar o encerramento da sessão',
-    'tooltip.logout_preview': 'Solicitará confirmação antes de fazer logout',
-    'tooltip.theme_toggle': 'Alternar entre temas claro e escuro',
-    'tooltip.language_toggle': 'Alternar entre Inglês, Português e Espanhol',
-    'tooltip.profile': 'Ver informações do seu perfil',
-    'tooltip.settings': 'Acessar configurações do aplicativo',
-    'tooltip.emergency': 'Opções de contato de emergência para situações críticas'
+    "tooltip.logout": "Sair - Clique para confirmar o encerramento da sessão",
+    "tooltip.logout_preview": "Solicitará confirmação antes de fazer logout",
+    "tooltip.theme_toggle": "Alternar entre temas claro e escuro",
+    "tooltip.language_toggle": "Alternar entre Inglês, Português e Espanhol",
+    "tooltip.profile": "Ver informações do seu perfil",
+    "tooltip.settings": "Acessar configurações do aplicativo",
+    "tooltip.emergency":
+      "Opções de contato de emergência para situações críticas",
   },
-  
+
   es: {
     // Navigation
-    'nav.dashboard': 'Panel',
-    'nav.patients': 'Pacientes',
-    'nav.sessions': 'Sesiones',
-    'nav.reports': 'Reportes',
-    'nav.settings': 'Configuración',
-    'nav.logout': 'Cerrar Sesión',
-    
+    "nav.dashboard": "Panel",
+    "nav.patients": "Pacientes",
+    "nav.sessions": "Sesiones",
+    "nav.reports": "Reportes",
+    "nav.settings": "Configuración",
+    "nav.logout": "Cerrar Sesión",
+
     // Dashboard
-    'dashboard.patient.title': 'Portal del Paciente',
-    'dashboard.therapist.title': 'Panel del Terapeuta',
-    'dashboard.admin.title': 'Panel Administrativo',
-    'dashboard.welcome': 'Bienvenido',
-    'dashboard.sessions.upcoming': 'Sus Próximas Sesiones',
-    'dashboard.sessions.progress': 'Su Progreso',
-    'dashboard.actions.quick': 'Acciones Rápidas',
-    'dashboard.sessions.schedule': 'Programar Nueva Sesión',
-    'dashboard.sessions.message': 'Mensaje al Terapeuta',
-    'dashboard.timeout': 'Tiempo de espera de sesión',
-    'dashboard.admin.management': 'Administración del Sistema',
-    'dashboard.admin.tools': 'Las herramientas de gestión de la plataforma estarán disponibles aquí.',
-    
+    "dashboard.patient.title": "Portal del Paciente",
+    "dashboard.therapist.title": "Panel del Terapeuta",
+    "dashboard.admin.title": "Panel Administrativo",
+    "dashboard.welcome": "Bienvenido",
+    "dashboard.sessions.upcoming": "Sus Próximas Sesiones",
+    "dashboard.sessions.progress": "Su Progreso",
+    "dashboard.actions.quick": "Acciones Rápidas",
+    "dashboard.sessions.schedule": "Programar Nueva Sesión",
+    "dashboard.sessions.message": "Mensaje al Terapeuta",
+    "dashboard.timeout": "Tiempo de espera de sesión",
+    "dashboard.admin.management": "Administración del Sistema",
+    "dashboard.admin.tools":
+      "Las herramientas de gestión de la plataforma estarán disponibles aquí.",
+    "dashboard.mood.progress": "Progreso del Estado de Ánimo",
+    "dashboard.mood.improvement": "Mostrando mejora",
+    "dashboard.mood.trending": "Tendencia ascendente",
+
     // Dashboard
-    'dashboard.title': 'Panel Clínico',
-    'dashboard.stats.patients': 'Total de Pacientes',
-    'dashboard.stats.sessions_today': 'Sesiones Hoy',
-    'dashboard.stats.active_sessions': 'Sesiones Activas',
-    'dashboard.stats.alerts': 'Alertas Críticas',
-    
+    "dashboard.title": "Panel Clínico",
+    "dashboard.stats.patients": "Total de Pacientes",
+    "dashboard.stats.sessions_today": "Sesiones Hoy",
+    "dashboard.stats.active_sessions": "Sesiones Activas",
+    "dashboard.stats.alerts": "Alertas Críticas",
+
     // Patients
-    'patients.title': 'Gestión de Pacientes',
-    'patients.search': 'Buscar pacientes...',
-    'patients.add_new': 'Agregar Nuevo Paciente',
-    'patients.view_profile': 'Ver Perfil',
-    'patients.risk_level': 'Nivel de Riesgo',
-    'patients.next_session': 'Próxima Sesión',
-    'patients.last_contact': 'Último Contacto',
-    
+    "patients.title": "Gestión de Pacientes",
+    "patients.search": "Buscar pacientes...",
+    "patients.add_new": "Agregar Nuevo Paciente",
+    "patients.view_profile": "Ver Perfil",
+    "patients.risk_level": "Nivel de Riesgo",
+    "patients.next_session": "Próxima Sesión",
+    "patients.last_contact": "Último Contacto",
+
     // Sessions
-    'sessions.title': 'Gestión de Sesiones',
-    'sessions.upcoming': 'Próximas Sesiones',
-    'sessions.active': 'Sesiones Activas',
-    'sessions.completed': 'Sesiones Completadas',
-    'sessions.start_session': 'Iniciar Sesión',
-    'sessions.join_session': 'Unirse a Sesión',
-    'sessions.end_session': 'Finalizar Sesión',
-    'sessions.recording': 'Grabación',
-    'sessions.duration': 'Duración',
-    
+    "sessions.title": "Gestión de Sesiones",
+    "sessions.upcoming": "Próximas Sesiones",
+    "sessions.active": "Sesiones Activas",
+    "sessions.completed": "Sesiones Completadas",
+    "sessions.start_session": "Iniciar Sesión",
+    "sessions.join_session": "Unirse a Sesión",
+    "sessions.end_session": "Finalizar Sesión",
+    "sessions.recording": "Grabación",
+    "sessions.duration": "Duración",
+
     // Emergency & Alerts
-    'emergency.title': 'Contacto de Emergencia',
-    'emergency.whatsapp': 'WhatsApp Emergencia',
-    'emergency.call': 'Llamada de Emergencia',
-    'emergency.critical_alert': 'Alerta Crítica',
-    'emergency.immediate_attention': 'Requiere Atención Inmediata',
-    
+    "emergency.title": "Contacto de Emergencia",
+    "emergency.whatsapp": "WhatsApp Emergencia",
+    "emergency.call": "Llamada de Emergencia",
+    "emergency.critical_alert": "Alerta Crítica",
+    "emergency.immediate_attention": "Requiere Atención Inmediata",
+
     // Theme & Language
-    'settings.theme': 'Tema',
-    'settings.language': 'Idioma',
-    'settings.dark_mode': 'Modo Oscuro',
-    'settings.light_mode': 'Modo Claro',
-    
+    "settings.theme": "Tema",
+    "settings.language": "Idioma",
+    "settings.dark_mode": "Modo Oscuro",
+    "settings.light_mode": "Modo Claro",
+
     // Common
-    'common.save': 'Guardar',
-    'common.cancel': 'Cancelar',
-    'common.delete': 'Eliminar',
-    'common.edit': 'Editar',
-    'common.view': 'Ver',
-    'common.close': 'Cerrar',
-    'common.loading': 'Cargando...',
-    'common.error': 'Error',
-    'common.success': 'Éxito',
-    'common.confirm': 'Confirmar',
-    
+    "common.save": "Guardar",
+    "common.cancel": "Cancelar",
+    "common.delete": "Eliminar",
+    "common.edit": "Editar",
+    "common.view": "Ver",
+    "common.close": "Cerrar",
+    "common.loading": "Cargando...",
+    "common.error": "Error",
+    "common.success": "Éxito",
+    "common.confirm": "Confirmar",
+
     // Login
-    'login.title': 'Login Therapy Engage',
-    'login.username': 'Usuario',
-    'login.password': 'Contraseña',
-    'login.sign_in': 'Iniciar Sesión',
-    'login.demo_accounts': 'Cuentas Demo',
-    'login.therapist_demo': 'Demo Terapeuta (dr.smith)',
-    'login.patient_demo': 'Demo Paciente (rodrigo)',
-    
+    "login.title": "Login Therapy Engage",
+    "login.username": "Usuario",
+    "login.password": "Contraseña",
+    "login.sign_in": "Iniciar Sesión",
+    "login.demo_accounts": "Cuentas Demo",
+    "login.therapist_demo": "Demo Terapeuta (dr.smith)",
+    "login.patient_demo": "Demo Paciente (rodrigo)",
+
     // Risk Levels
-    'risk.low': 'Riesgo Bajo',
-    'risk.moderate': 'Riesgo Moderado',
-    'risk.high': 'Riesgo Alto',
-    'risk.critical': 'Riesgo Crítico',
-    
+    "risk.low": "Riesgo Bajo",
+    "risk.moderate": "Riesgo Moderado",
+    "risk.high": "Riesgo Alto",
+    "risk.critical": "Riesgo Crítico",
+
     // Logout Confirmation
-    'logout.confirmTitle': 'Confirmar Logout',
-    'logout.confirmMessage': '¿Está seguro de que desea cerrar sesión? Cualquier trabajo no guardado o sesiones activas se perderán.',
-    'logout.securityNote': 'Aviso de Seguridad',
-    'logout.securityDetails': 'Cerrar sesión terminará su sesión actual y requerirá nueva autenticación para acceder a datos de pacientes.',
-    'logout.confirm': 'Sí, Cerrar Sesión',
-    
+    "logout.confirmTitle": "Confirmar Logout",
+    "logout.confirmMessage":
+      "¿Está seguro de que desea cerrar sesión? Cualquier trabajo no guardado o sesiones activas se perderán.",
+    "logout.securityNote": "Aviso de Seguridad",
+    "logout.securityDetails":
+      "Cerrar sesión terminará su sesión actual y requerirá nueva autenticación para acceder a datos de pacientes.",
+    "logout.confirm": "Sí, Cerrar Sesión",
+
     // Tooltips
-    'tooltip.logout': 'Cerrar Sesión - Haga clic para confirmar el final de la sesión',
-    'tooltip.logout_preview': 'Solicitará confirmación antes de cerrar sesión',
-    'tooltip.theme_toggle': 'Alternar entre temas claro y oscuro',
-    'tooltip.language_toggle': 'Cambiar entre Inglés, Portugués y Español',
-    'tooltip.profile': 'Ver información de su perfil',
-    'tooltip.settings': 'Acceder a la configuración de la aplicación',
-    'tooltip.emergency': 'Opciones de contacto de emergencia para situaciones críticas'
-  }
-} as const
+    "tooltip.logout":
+      "Cerrar Sesión - Haga clic para confirmar el final de la sesión",
+    "tooltip.logout_preview": "Solicitará confirmación antes de cerrar sesión",
+    "tooltip.theme_toggle": "Alternar entre temas claro y oscuro",
+    "tooltip.language_toggle": "Cambiar entre Inglés, Portugués y Español",
+    "tooltip.profile": "Ver información de su perfil",
+    "tooltip.settings": "Acceder a la configuración de la aplicación",
+    "tooltip.emergency":
+      "Opciones de contacto de emergencia para situaciones críticas",
+  },
+} as const;
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeKV] = useKV<Theme>('app-theme', 'light')
-  const [language, setLanguageKV] = useKV<Language>('app-language', 'en')
+  const [theme, setThemeKV] = useKV<Theme>("app-theme", "light");
+  const [language, setLanguageKV] = useKV<Language>("app-language", "en");
 
   // Apply theme to document
   useEffect(() => {
-    const root = document.documentElement
-    root.classList.remove('light', 'dark')
-    root.classList.add(theme)
-    
+    const root = document.documentElement;
+    root.classList.remove("light", "dark");
+    root.classList.add(theme);
+
     // Set data attribute for theme-specific styling
-    root.setAttribute('data-theme', theme)
-  }, [theme])
+    root.setAttribute("data-theme", theme);
+  }, [theme]);
 
   // Apply language to document
   useEffect(() => {
-    document.documentElement.lang = language
-    
+    document.documentElement.lang = language;
+
     // Set direction for RTL languages (future support)
     // Currently only LTR languages are supported (en, pt, es)
-    document.documentElement.dir = 'ltr'
-  }, [language])
+    document.documentElement.dir = "ltr";
+  }, [language]);
 
   const setTheme = (newTheme: Theme) => {
-    setThemeKV(newTheme)
-  }
+    setThemeKV(newTheme);
+  };
 
   const setLanguage = (newLanguage: Language) => {
-    setLanguageKV(newLanguage)
-  }
+    setLanguageKV(newLanguage);
+  };
 
   const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light')
-  }
+    setTheme(theme === "light" ? "dark" : "light");
+  };
 
   const t = (key: string): string => {
-    const translation = translations[language]?.[key as keyof typeof translations['en']]
-    return translation || key // Fallback to key if translation not found
-  }
+    const translation =
+      translations[language]?.[key as keyof (typeof translations)["en"]];
+    return translation || key; // Fallback to key if translation not found
+  };
 
   const value: ThemeContextType = {
     theme,
@@ -387,20 +410,16 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     setTheme,
     setLanguage,
     toggleTheme,
-    t
-  }
+    t,
+  };
 
-  return React.createElement(
-    ThemeContext.Provider,
-    { value },
-    children
-  )
+  return React.createElement(ThemeContext.Provider, { value }, children);
 }
 
 export function useTheme(): ThemeContextType {
-  const context = useContext(ThemeContext)
+  const context = useContext(ThemeContext);
   if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider')
+    throw new Error("useTheme must be used within a ThemeProvider");
   }
-  return context
+  return context;
 }
