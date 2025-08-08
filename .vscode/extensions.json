@@ -1,0 +1,44 @@
+{
+  // Extensões recomendadas para o projeto Therapy Engage
+  "recommendations": [
+    // Essenciais para Next.js/TypeScript
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    "christian-kohler.npm-intellisense",
+
+    // React/Next.js específicas
+    "dsznajder.es7-react-js-snippets",
+    "pulkitgangwar.nextjs-snippets",
+
+    // AI/Copilot
+    "github.copilot",
+    "github.copilot-chat",
+    "visualstudioexptteam.vscodeintellicode",
+
+    // Desenvolvimento geral
+    "ms-python.python",
+    "ms-python.vscode-pylance"
+  ],
+
+  // Extensões não recomendadas (para evitar instalação acidental)
+  "unwantedRecommendations": [
+    // Azure extensions (consumem muita memória se não estiver usando)
+    "ms-azuretools.vscode-azurefunctions",
+    "ms-azuretools.vscode-azureresourcegroups",
+    "ms-azuretools.vscode-cosmosdb",
+    "ms-azuretools.vscode-azureappservice",
+    "ms-azuretools.vscode-containers",
+
+    // Kubernetes (se não estiver usando)
+    "ms-kubernetes-tools.vscode-kubernetes-tools",
+
+    // Extensões pesadas desnecessárias
+    "ms-toolsai.vscode-ai",
+    "ms-toolsai.vscode-ai-remote",
+    "redhat.java",
+    "vscjava.vscode-java-debug",
+    "vscjava.vscode-java-pack",
+    "ms-toolsai.jupyter"
+  ]
+}
