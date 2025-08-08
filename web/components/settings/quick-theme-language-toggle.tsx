@@ -8,7 +8,7 @@ export function QuickThemeLanguageToggle() {
   const { colorTheme, setColorTheme } = useColorTheme();
 
   const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
+    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   const getThemeIcon = () => {
