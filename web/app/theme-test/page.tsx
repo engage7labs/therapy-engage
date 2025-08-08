@@ -1,7 +1,7 @@
 'use client'
 
 import { useTheme } from '../../hooks/use-theme'
-import { QuickThemeLanguageToggle, InlineThemeLanguageControls } from '../../components/settings/quick-theme-language-toggle'
+import { QuickThemeLanguageToggle } from '../../components/settings/quick-theme-language-toggle'
 import { Button } from '../../components/ui/button'
 import { Card } from '../../components/ui/card'
 
@@ -46,7 +46,7 @@ export default function ThemeTestPage() {
         {/* Controles inline alternativos */}
         <div className="border rounded-lg p-6">
           <h3 className="text-lg font-semibold mb-4">Alternative Controls</h3>
-          <InlineThemeLanguageControls />
+          <QuickThemeLanguageToggle />
         </div>
 
         {/* Demonstração de traduções */}

@@ -1,13 +1,15 @@
 "use client";
 
-import { useTheme } from "@/contexts/theme-context";
 import { useColorTheme } from "@/hooks/use-color-theme";
-import { useTheme as useThemeWithLanguage } from "@/hooks/use-theme";
+import { useTheme } from "@/hooks/use-theme";
 
 export function QuickThemeLanguageToggle() {
-  const { theme, toggleTheme } = useTheme();
-  const { language, setLanguage } = useThemeWithLanguage();
+  const { theme, setTheme, language, setLanguage } = useTheme();
   const { colorTheme, setColorTheme } = useColorTheme();
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
 
   const getThemeIcon = () => {
     return theme === "dark" ? "🌙" : "☀️";

@@ -93,8 +93,7 @@ export function ColorThemeProvider({
     });
 
     // Aplicar background gradiente baseado no tema
-    const backgroundGradient =
-      colors.gradients.background || colors.gradients.primary;
+    const backgroundGradient = colors.gradients.primary;
     root.style.setProperty("--theme-background-gradient", backgroundGradient);
 
     // Aplicar cor do tema principal para backgrounds sutis
