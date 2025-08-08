@@ -85,19 +85,7 @@ export default function AppShell({
               )}
 
               {/* Logo */}
-              <button
-                onClick={() => {
-                  if (user?.role === "therapist") {
-                    router.push("/dashboard");
-                  } else if (user?.role === "patient") {
-                    router.push("/patient");
-                  } else {
-                    router.push("/");
-                  }
-                }}
-                className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
-                aria-label="Go to home"
-              >
+              <div className="flex items-center space-x-2">
                 <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
                   <span className="text-primary-foreground font-bold text-sm">
                     T
@@ -106,7 +94,7 @@ export default function AppShell({
                 <span className="font-semibold text-lg hidden sm:block">
                   TherapyEngage
                 </span>
-              </button>
+              </div>
             </div>
 
             {/* Right Side - User Actions */}

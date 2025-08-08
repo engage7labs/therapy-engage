@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-app
+  labels:
+    app: backend-app
+spec:
+  replicas: {{ .Values.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app: backend-app
+  template:
+    metadata:
+      labels:
+        app: backend-app
+        azure.workload.identity/use: "true"
+    spec:
+      serviceAccountName: {{ .Values.serviceAccount.name | default "backend-workload-identity" }}
+      {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: backend
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}"
+          ports:
+            - containerPort: {{ .Values.service.targetPort | default 3000 }}
+          env:
+            {{- with .Values.env }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+            # Azure OpenAI Configuration
+            - name: AZURE_OPENAI_ENDPOINT
+              value: {{ .Values.azureOpenAI.endpoint | quote }}
+            - name: AZURE_OPENAI_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: therapy-engage-app-secrets
+                  key: AZURE_OPENAI_KEY
+            # CosmosDB Configuration
+            - name: COSMOSDB_ENDPOINT
+              value: {{ .Values.cosmosdb.endpoint | quote }}
+            - name: COSMOSDB_DATABASE_NAME
+              value: {{ .Values.cosmosdb.databaseName | quote }}
+            - name: COSMOSDB_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: therapy-engage-app-secrets
+                  key: COSMOSDB_CONNECTION_STRING
+            - name: COSMOSDB_PRIMARY_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: therapy-engage-app-secrets
+                  key: COSMOSDB_PRIMARY_KEY
+            # SignalR Configuration
+            - name: SIGNALR_CONNECTION_STRING
+              valueFrom:
+                secretKeyRef:
+                  name: therapy-engage-app-secrets
+                  key: SIGNALR_CONNECTION_STRING
+            # Storage Account Configuration
+            - name: STORAGE_ACCOUNT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: therapy-engage-app-secrets
+                  key: STORAGE_ACCOUNT_KEY
+            # Application Insights Configuration
+            - name: APPLICATION_INSIGHTS_INSTRUMENTATION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: therapy-engage-app-secrets
+                  key: APPLICATION_INSIGHTS_INSTRUMENTATION_KEY
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: secrets-store
+              mountPath: "/mnt/secrets-store"
+              readOnly: true
+      volumes:
+        - name: secrets-store
+          csi:
+            driver: secrets-store.csi.k8s.io
+            readOnly: true
+            volumeAttributes:
+              secretProviderClass: "therapy-engage-secrets"

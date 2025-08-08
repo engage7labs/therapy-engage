@@ -1,6 +1,6 @@
 "use client";
 
-export default function DashboardLayout({
+export default function PatientLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

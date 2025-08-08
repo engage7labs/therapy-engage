@@ -1,19 +1,18 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
   Calendar,
   FileText,
   Home,
   MessageSquare,
-  Mic,
+  Mic2,
   Settings,
   User,
-  Video,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 interface PatientSidebarProps {
   isCollapsed: boolean;
@@ -35,15 +34,9 @@ export default function PatientSidebar({
     },
     {
       name: "Record Diary",
-      href: "/patient/record",
-      icon: Video,
-      current: pathname === "/patient/record",
-    },
-    {
-      name: "Audio Diary", 
-      href: "/patient/audio",
-      icon: Mic,
-      current: pathname === "/patient/audio",
+      href: "/demo/media-upload",
+      icon: Mic2,
+      current: pathname === "/demo/media-upload",
     },
     {
       name: "Sessions",
@@ -86,7 +79,7 @@ export default function PatientSidebar({
           className="fixed inset-0 bg-black/20 lg:hidden z-30"
           onClick={onToggleCollapse}
           onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
+            if (e.key === "Enter" || e.key === " ") {
               onToggleCollapse();
             }
           }}

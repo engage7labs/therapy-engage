@@ -1,5 +1,6 @@
 "use client";
 
+import AppShell from "@/components/layout/app-shell";
 import { AlertTriangle, Calendar, Clock, Users } from "lucide-react";
 import { useTheme } from "../../hooks/use-theme";
 
@@ -54,7 +55,8 @@ export default function DashboardPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <AppShell>
+      <div className="space-y-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-foreground">
@@ -229,6 +231,7 @@ export default function DashboardPage() {
           </button>
         </div>
       </div>
-    </div>
+      </div>
+    </AppShell>
   );
 }

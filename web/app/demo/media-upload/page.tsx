@@ -1,54 +1,71 @@
 "use client";
 
-import { useState } from "react";
 import MediaUpload from "@/components/media/media-upload";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, FileText } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function MediaUploadDemo() {
-  const [uploadResults, setUploadResults] = useState<Array<{
-    fileName: string;
-    type: 'video' | 'audio';
-    status: 'success' | 'error';
-    message: string;
-    timestamp: Date;
-  }>>([]);
+  const [uploadResults, setUploadResults] = useState<
+    Array<{
+      fileName: string;
+      type: "video" | "audio";
+      status: "success" | "error";
+      message: string;
+      timestamp: Date;
+    }>
+  >([]);
 
-  const handleMediaUpload = async (file: File, type: 'video' | 'audio'): Promise<void> => {
+  const handleMediaUpload = async (
+    file: File,
+    type: "video" | "audio"
+  ): Promise<void> => {
     // Simulate upload process
-    console.log(`Uploading ${type} file:`, file.name, `Size: ${(file.size / (1024 * 1024)).toFixed(2)}MB`);
-    
+    console.log(
+      `Uploading ${type} file:`,
+      file.name,
+      `Size: ${(file.size / (1024 * 1024)).toFixed(2)}MB`
+    );
+
     try {
       // Simulate network delay
-      await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 3000));
-      
+      await new Promise((resolve) =>
+        setTimeout(resolve, 2000 + Math.random() * 3000)
+      );
+
       // Simulate occasional failures for demo
       if (Math.random() < 0.1) {
-        throw new Error('Simulated upload failure');
+        throw new Error("Simulated upload failure");
       }
 
       // Success - add to results
-      setUploadResults(prev => [...prev, {
-        fileName: file.name,
-        type,
-        status: 'success',
-        message: `Successfully uploaded ${type} file`,
-        timestamp: new Date()
-      }]);
+      setUploadResults((prev) => [
+        ...prev,
+        {
+          fileName: file.name,
+          type,
+          status: "success",
+          message: `Successfully uploaded ${type} file`,
+          timestamp: new Date(),
+        },
+      ]);
 
       console.log(`Upload successful: ${file.name}`);
     } catch (error) {
       // Error - add to results
-      setUploadResults(prev => [...prev, {
-        fileName: file.name,
-        type,
-        status: 'error',
-        message: error instanceof Error ? error.message : 'Upload failed',
-        timestamp: new Date()
-      }]);
+      setUploadResults((prev) => [
+        ...prev,
+        {
+          fileName: file.name,
+          type,
+          status: "error",
+          message: error instanceof Error ? error.message : "Upload failed",
+          timestamp: new Date(),
+        },
+      ]);
 
       console.error(`Upload failed: ${file.name}`, error);
       throw error; // Re-throw to let the component handle the error
@@ -74,7 +91,8 @@ export default function MediaUploadDemo() {
           </div>
           <h1 className="text-3xl font-bold">Media Upload Demo</h1>
           <p className="text-muted-foreground mt-2">
-            Test video and audio upload functionality with file selection and recording capabilities.
+            Test video and audio upload functionality with file selection and
+            recording capabilities.
           </p>
         </div>
 
@@ -84,11 +102,17 @@ export default function MediaUploadDemo() {
             <MediaUpload
               onUpload={handleMediaUpload}
               acceptedTypes={{
-                video: ['video/mp4', 'video/webm', 'video/avi', 'video/mov'],
-                audio: ['audio/mp3', 'audio/wav', 'audio/webm', 'audio/m4a', 'audio/aac']
+                video: ["video/mp4", "video/webm", "video/avi", "video/mov"],
+                audio: [
+                  "audio/mp3",
+                  "audio/wav",
+                  "audio/webm",
+                  "audio/m4a",
+                  "audio/aac",
+                ],
               }}
               maxSizeVideo={500} // 500MB
-              maxSizeAudio={50}  // 50MB
+              maxSizeAudio={50} // 50MB
               className="w-full"
             />
           </div>
@@ -103,11 +127,7 @@ export default function MediaUploadDemo() {
                   Upload Results
                 </CardTitle>
                 {uploadResults.length > 0 && (
-                  <Button 
-                    onClick={clearResults}
-                    variant="outline" 
-                    size="sm"
-                  >
+                  <Button onClick={clearResults} variant="outline" size="sm">
                     Clear
                   </Button>
                 )}
@@ -115,25 +135,42 @@ export default function MediaUploadDemo() {
               <CardContent className="space-y-3">
                 {uploadResults.length === 0 ? (
                   <p className="text-sm text-muted-foreground text-center py-4">
-                    No uploads yet. Upload or record some media to see results here.
+                    No uploads yet. Upload or record some media to see results
+                    here.
                   </p>
                 ) : (
                   <div className="space-y-3 max-h-96 overflow-y-auto">
-                    {uploadResults.slice().reverse().map((result, index) => (
-                      <div key={index} className="p-3 border rounded-lg space-y-2">
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium text-sm truncate">{result.fileName}</span>
-                          <Badge variant={result.status === 'success' ? 'default' : 'destructive'}>
-                            {result.status}
-                          </Badge>
+                    {uploadResults
+                      .slice()
+                      .reverse()
+                      .map((result, index) => (
+                        <div
+                          key={index}
+                          className="p-3 border rounded-lg space-y-2"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="font-medium text-sm truncate">
+                              {result.fileName}
+                            </span>
+                            <Badge
+                              variant={
+                                result.status === "success"
+                                  ? "default"
+                                  : "destructive"
+                              }
+                            >
+                              {result.status}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center justify-between text-xs text-muted-foreground">
+                            <span className="capitalize">{result.type}</span>
+                            <span>{result.timestamp.toLocaleTimeString()}</span>
+                          </div>
+                          <p className="text-xs text-muted-foreground">
+                            {result.message}
+                          </p>
                         </div>
-                        <div className="flex items-center justify-between text-xs text-muted-foreground">
-                          <span className="capitalize">{result.type}</span>
-                          <span>{result.timestamp.toLocaleTimeString()}</span>
-                        </div>
-                        <p className="text-xs text-muted-foreground">{result.message}</p>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 )}
               </CardContent>
@@ -154,7 +191,7 @@ export default function MediaUploadDemo() {
                     <li>• Progress tracking</li>
                   </ul>
                 </div>
-                
+
                 <div>
                   <h4 className="font-medium mb-2">Video Recording</h4>
                   <ul className="space-y-1 text-muted-foreground">
@@ -164,7 +201,7 @@ export default function MediaUploadDemo() {
                     <li>• Automatic file generation</li>
                   </ul>
                 </div>
-                
+
                 <div>
                   <h4 className="font-medium mb-2">Audio Recording</h4>
                   <ul className="space-y-1 text-muted-foreground">
@@ -199,15 +236,21 @@ export default function MediaUploadDemo() {
                 </div>
                 <div>
                   <span className="font-medium">Audio Formats:</span>
-                  <p className="text-muted-foreground">MP3, WAV, WebM, M4A, AAC</p>
+                  <p className="text-muted-foreground">
+                    MP3, WAV, WebM, M4A, AAC
+                  </p>
                 </div>
                 <div>
                   <span className="font-medium">Max File Sizes:</span>
-                  <p className="text-muted-foreground">Video: 500MB, Audio: 50MB</p>
+                  <p className="text-muted-foreground">
+                    Video: 500MB, Audio: 50MB
+                  </p>
                 </div>
                 <div>
                   <span className="font-medium">Recording Quality:</span>
-                  <p className="text-muted-foreground">VP9/Opus codec, adaptive bitrate</p>
+                  <p className="text-muted-foreground">
+                    VP9/Opus codec, adaptive bitrate
+                  </p>
                 </div>
               </CardContent>
             </Card>

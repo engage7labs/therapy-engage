@@ -1,5 +1,6 @@
 "use client";
 
+import AppShell from "@/components/layout/app-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -274,7 +275,8 @@ export default function SentimentAnalysisPage() {
   };
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <AppShell>
+      <div className="container mx-auto p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
@@ -572,6 +574,7 @@ export default function SentimentAnalysisPage() {
           </div>
         </DialogContent>
       </Dialog>
-    </div>
+      </div>
+    </AppShell>
   );
 }

@@ -1,6 +1,6 @@
 image:
   repository: ghcr.io/therapyengageorg/backend
-  tag: v1.0.8  # GraphQL CORS fix
+  tag: v1.0.8 # GraphQL CORS fix
   pullSecrets:
     - name: ghcr-secret
 
@@ -12,20 +12,20 @@ serviceAccount:
   name: backend-workload-identity
 
 workloadIdentity:
-  clientId: ""  # Managed Identity Client ID from Terraform
-  tenantId: ""  # Azure Tenant ID
+  clientId: "" # Managed Identity Client ID from Terraform
+  tenantId: "" # Azure Tenant ID
 
 # Azure Services Configuration
 azureOpenAI:
-  endpoint: ""  # From Terraform output
+  endpoint: "" # From Terraform output
 
 cosmosdb:
-  endpoint: ""      # From Terraform output
-  databaseName: ""  # From Terraform output
+  endpoint: "" # From Terraform output
+  databaseName: "" # From Terraform output
 
 keyVault:
-  name: ""          # From Terraform output
-  tenantId: ""      # Azure Tenant ID
+  name: "" # From Terraform output
+  tenantId: "" # Azure Tenant ID
 
 # Azure KeyVault CSI Configuration
 secretProviderClass:

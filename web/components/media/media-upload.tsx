@@ -1,14 +1,14 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
-import { Upload, Video, Mic, X, Square } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
+import { Mic, Square, Upload, Video, X } from "lucide-react";
+import { useCallback, useRef, useState } from "react";
 
 interface MediaUploadProps {
-  onUpload?: (file: File, type: 'video' | 'audio') => Promise<void>;
+  onUpload?: (file: File, type: "video" | "audio") => Promise<void>;
   acceptedTypes?: {
     video?: string[];
     audio?: string[];
@@ -29,266 +29,298 @@ interface RecordingState {
 export default function MediaUpload({
   onUpload,
   acceptedTypes = {
-    video: ['video/mp4', 'video/webm', 'video/avi'],
-    audio: ['audio/mp3', 'audio/wav', 'audio/webm', 'audio/m4a']
+    video: ["video/mp4", "video/webm", "video/avi"],
+    audio: ["audio/mp3", "audio/wav", "audio/webm", "audio/m4a"],
   },
   maxSizeVideo = 500, // 500MB default
-  maxSizeAudio = 50,  // 50MB default
-  className
+  maxSizeAudio = 50, // 50MB default
+  className,
 }: MediaUploadProps) {
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadedFiles, setUploadedFiles] = useState<Array<{
-    id: string;
-    name: string;
-    type: 'video' | 'audio';
-    size: number;
-    url?: string;
-  }>>([]);
-  
+  const [uploadedFiles, setUploadedFiles] = useState<
+    Array<{
+      id: string;
+      name: string;
+      type: "video" | "audio";
+      size: number;
+      url?: string;
+    }>
+  >([]);
+
   const [videoRecording, setVideoRecording] = useState<RecordingState>({
     isRecording: false,
     recordedChunks: [],
-    duration: 0
+    duration: 0,
   });
-  
+
   const [audioRecording, setAudioRecording] = useState<RecordingState>({
     isRecording: false,
     recordedChunks: [],
-    duration: 0
+    duration: 0,
   });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoPreviewRef = useRef<HTMLVideoElement>(null);
 
   // File validation helper
-  const validateFile = useCallback((file: File): { valid: boolean; error?: string } => {
-    const isVideo = file.type.startsWith('video/');
-    const isAudio = file.type.startsWith('audio/');
-    
-    if (!isVideo && !isAudio) {
-      return { valid: false, error: 'Please select a video or audio file' };
-    }
+  const validateFile = useCallback(
+    (file: File): { valid: boolean; error?: string } => {
+      const isVideo = file.type.startsWith("video/");
+      const isAudio = file.type.startsWith("audio/");
 
-    const acceptedVideoTypes = acceptedTypes.video || [];
-    const acceptedAudioTypes = acceptedTypes.audio || [];
-    
-    if (isVideo && !acceptedVideoTypes.includes(file.type)) {
-      return { valid: false, error: `Video type ${file.type} not supported. Accepted: ${acceptedVideoTypes.join(', ')}` };
-    }
-    
-    if (isAudio && !acceptedAudioTypes.includes(file.type)) {
-      return { valid: false, error: `Audio type ${file.type} not supported. Accepted: ${acceptedAudioTypes.join(', ')}` };
-    }
+      if (!isVideo && !isAudio) {
+        return { valid: false, error: "Please select a video or audio file" };
+      }
 
-    const maxSize = isVideo ? maxSizeVideo : maxSizeAudio;
-    const fileSizeMB = file.size / (1024 * 1024);
-    
-    if (fileSizeMB > maxSize) {
-      return { valid: false, error: `File size (${fileSizeMB.toFixed(2)}MB) exceeds maximum allowed (${maxSize}MB)` };
-    }
+      const acceptedVideoTypes = acceptedTypes.video || [];
+      const acceptedAudioTypes = acceptedTypes.audio || [];
 
-    return { valid: true };
-  }, [acceptedTypes, maxSizeVideo, maxSizeAudio]);
+      if (isVideo && !acceptedVideoTypes.includes(file.type)) {
+        return {
+          valid: false,
+          error: `Video type ${
+            file.type
+          } not supported. Accepted: ${acceptedVideoTypes.join(", ")}`,
+        };
+      }
+
+      if (isAudio && !acceptedAudioTypes.includes(file.type)) {
+        return {
+          valid: false,
+          error: `Audio type ${
+            file.type
+          } not supported. Accepted: ${acceptedAudioTypes.join(", ")}`,
+        };
+      }
+
+      const maxSize = isVideo ? maxSizeVideo : maxSizeAudio;
+      const fileSizeMB = file.size / (1024 * 1024);
+
+      if (fileSizeMB > maxSize) {
+        return {
+          valid: false,
+          error: `File size (${fileSizeMB.toFixed(
+            2
+          )}MB) exceeds maximum allowed (${maxSize}MB)`,
+        };
+      }
+
+      return { valid: true };
+    },
+    [acceptedTypes, maxSizeVideo, maxSizeAudio]
+  );
 
   // File upload handler
-  const handleFileSelect = useCallback(async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
+  const handleFileSelect = useCallback(
+    async (files: FileList | null) => {
+      if (!files || files.length === 0) return;
 
-    const file = files[0];
-    const validation = validateFile(file);
-    
-    if (!validation.valid) {
-      alert(validation.error);
-      return;
-    }
+      const file = files[0];
+      const validation = validateFile(file);
 
-    // Add to uploaded files list
-    const fileEntry = {
-      id: Date.now().toString(),
-      name: file.name,
-      type: file.type.startsWith('video/') ? 'video' as const : 'audio' as const,
-      size: file.size,
-      url: URL.createObjectURL(file)
-    };
-
-    setUploadedFiles(prev => [...prev, fileEntry]);
-
-    // Call upload handler if provided
-    if (onUpload) {
-      setIsUploading(true);
-      setUploadProgress(0);
-      
-      try {
-        // Simulate upload progress
-        const progressInterval = setInterval(() => {
-          setUploadProgress(prev => {
-            if (prev >= 90) {
-              clearInterval(progressInterval);
-              return 90;
-            }
-            return prev + 10;
-          });
-        }, 200);
-
-        await onUpload(file, fileEntry.type);
-        
-        clearInterval(progressInterval);
-        setUploadProgress(100);
-        
-        setTimeout(() => {
-          setUploadProgress(0);
-          setIsUploading(false);
-        }, 1000);
-      } catch (error) {
-        setIsUploading(false);
-        setUploadProgress(0);
-        alert('Upload failed. Please try again.');
-        console.error('Upload error:', error);
+      if (!validation.valid) {
+        alert(validation.error);
+        return;
       }
-    }
-  }, [validateFile, onUpload]);
+
+      // Add to uploaded files list
+      const fileEntry = {
+        id: Date.now().toString(),
+        name: file.name,
+        type: file.type.startsWith("video/")
+          ? ("video" as const)
+          : ("audio" as const),
+        size: file.size,
+        url: URL.createObjectURL(file),
+      };
+
+      setUploadedFiles((prev) => [...prev, fileEntry]);
+
+      // Call upload handler if provided
+      if (onUpload) {
+        setIsUploading(true);
+        setUploadProgress(0);
+
+        try {
+          // Simulate upload progress
+          const progressInterval = setInterval(() => {
+            setUploadProgress((prev) => {
+              if (prev >= 90) {
+                clearInterval(progressInterval);
+                return 90;
+              }
+              return prev + 10;
+            });
+          }, 200);
+
+          await onUpload(file, fileEntry.type);
+
+          clearInterval(progressInterval);
+          setUploadProgress(100);
+
+          setTimeout(() => {
+            setUploadProgress(0);
+            setIsUploading(false);
+          }, 1000);
+        } catch (error) {
+          setIsUploading(false);
+          setUploadProgress(0);
+          alert("Upload failed. Please try again.");
+          console.error("Upload error:", error);
+        }
+      }
+    },
+    [validateFile, onUpload]
+  );
 
   // Recording handlers
-  const startRecording = useCallback(async (type: 'video' | 'audio') => {
-    try {
-      const constraints = type === 'video' 
-        ? { video: true, audio: true }
-        : { audio: true };
-        
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: type === 'video' 
-          ? 'video/webm;codecs=vp9,opus' 
-          : 'audio/webm;codecs=opus'
-      });
+  const startRecording = useCallback(
+    async (type: "video" | "audio") => {
+      try {
+        const constraints =
+          type === "video" ? { video: true, audio: true } : { audio: true };
 
-      const recordedChunks: Blob[] = [];
-      
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          recordedChunks.push(event.data);
-        }
-      };
-
-      mediaRecorder.onstop = () => {
-        const blob = new Blob(recordedChunks, {
-          type: type === 'video' ? 'video/webm' : 'audio/webm'
-        });
-        
-        const file = new File([blob], `recorded-${type}-${Date.now()}.webm`, {
-          type: blob.type
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
+        const mediaRecorder = new MediaRecorder(stream, {
+          mimeType:
+            type === "video"
+              ? "video/webm;codecs=vp9,opus"
+              : "audio/webm;codecs=opus",
         });
 
-        // Add to uploaded files
-        const fileEntry = {
-          id: Date.now().toString(),
-          name: file.name,
-          type,
-          size: file.size,
-          url: URL.createObjectURL(blob)
+        const recordedChunks: Blob[] = [];
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            recordedChunks.push(event.data);
+          }
         };
 
-        setUploadedFiles(prev => [...prev, fileEntry]);
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(recordedChunks, {
+            type: type === "video" ? "video/webm" : "audio/webm",
+          });
 
-        // Call upload handler
-        if (onUpload) {
-          onUpload(file, type);
-        }
-      };
+          const file = new File([blob], `recorded-${type}-${Date.now()}.webm`, {
+            type: blob.type,
+          });
 
-      mediaRecorder.start();
+          // Add to uploaded files
+          const fileEntry = {
+            id: Date.now().toString(),
+            name: file.name,
+            type,
+            size: file.size,
+            url: URL.createObjectURL(blob),
+          };
 
-      const recordingState = {
-        isRecording: true,
-        mediaRecorder,
-        stream,
-        recordedChunks,
-        duration: 0
-      };
+          setUploadedFiles((prev) => [...prev, fileEntry]);
 
-      if (type === 'video') {
-        setVideoRecording(recordingState);
-        if (videoPreviewRef.current) {
-          videoPreviewRef.current.srcObject = stream;
-        }
-      } else {
-        setAudioRecording(recordingState);
-      }
+          // Call upload handler
+          if (onUpload) {
+            onUpload(file, type);
+          }
+        };
 
-      // Start duration timer
-      const startTime = Date.now();
-      const durationInterval = setInterval(() => {
-        const elapsed = Math.floor((Date.now() - startTime) / 1000);
-        if (type === 'video') {
-          setVideoRecording(prev => ({ ...prev, duration: elapsed }));
+        mediaRecorder.start();
+
+        const recordingState = {
+          isRecording: true,
+          mediaRecorder,
+          stream,
+          recordedChunks,
+          duration: 0,
+        };
+
+        if (type === "video") {
+          setVideoRecording(recordingState);
+          if (videoPreviewRef.current) {
+            videoPreviewRef.current.srcObject = stream;
+          }
         } else {
-          setAudioRecording(prev => ({ ...prev, duration: elapsed }));
+          setAudioRecording(recordingState);
         }
-      }, 1000);
 
-      // Store interval reference
-      if (type === 'video') {
-        setVideoRecording(prev => ({ ...prev, durationInterval }));
-      } else {
-        setAudioRecording(prev => ({ ...prev, durationInterval }));
-      }
+        // Start duration timer
+        const startTime = Date.now();
+        const durationInterval = setInterval(() => {
+          const elapsed = Math.floor((Date.now() - startTime) / 1000);
+          if (type === "video") {
+            setVideoRecording((prev) => ({ ...prev, duration: elapsed }));
+          } else {
+            setAudioRecording((prev) => ({ ...prev, duration: elapsed }));
+          }
+        }, 1000);
 
-    } catch (error) {
-      console.error('Error starting recording:', error);
-      alert('Could not start recording. Please check your camera/microphone permissions.');
-    }
-  }, [onUpload]);
-
-  const stopRecording = useCallback((type: 'video' | 'audio') => {
-    const recording = type === 'video' ? videoRecording : audioRecording;
-    
-    if (recording.mediaRecorder && recording.isRecording) {
-      recording.mediaRecorder.stop();
-      
-      // Stop all tracks
-      if (recording.stream) {
-        recording.stream.getTracks().forEach(track => track.stop());
-      }
-
-      // Clear duration interval
-      if ((recording as any).durationInterval) {
-        clearInterval((recording as any).durationInterval);
-      }
-
-      // Reset recording state
-      const resetState = {
-        isRecording: false,
-        recordedChunks: [],
-        duration: 0
-      };
-
-      if (type === 'video') {
-        setVideoRecording(resetState);
-        if (videoPreviewRef.current) {
-          videoPreviewRef.current.srcObject = null;
+        // Store interval reference
+        if (type === "video") {
+          setVideoRecording((prev) => ({ ...prev, durationInterval }));
+        } else {
+          setAudioRecording((prev) => ({ ...prev, durationInterval }));
         }
-      } else {
-        setAudioRecording(resetState);
+      } catch (error) {
+        console.error("Error starting recording:", error);
+        alert(
+          "Could not start recording. Please check your camera/microphone permissions."
+        );
       }
-    }
-  }, [videoRecording, audioRecording]);
+    },
+    [onUpload]
+  );
+
+  const stopRecording = useCallback(
+    (type: "video" | "audio") => {
+      const recording = type === "video" ? videoRecording : audioRecording;
+
+      if (recording.mediaRecorder && recording.isRecording) {
+        recording.mediaRecorder.stop();
+
+        // Stop all tracks
+        if (recording.stream) {
+          recording.stream.getTracks().forEach((track) => track.stop());
+        }
+
+        // Clear duration interval
+        if ((recording as any).durationInterval) {
+          clearInterval((recording as any).durationInterval);
+        }
+
+        // Reset recording state
+        const resetState = {
+          isRecording: false,
+          recordedChunks: [],
+          duration: 0,
+        };
+
+        if (type === "video") {
+          setVideoRecording(resetState);
+          if (videoPreviewRef.current) {
+            videoPreviewRef.current.srcObject = null;
+          }
+        } else {
+          setAudioRecording(resetState);
+        }
+      }
+    },
+    [videoRecording, audioRecording]
+  );
 
   // Format duration helper
   const formatDuration = useCallback((seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins}:${secs.toString().padStart(2, '0')}`;
+    return `${mins}:${secs.toString().padStart(2, "0")}`;
   }, []);
 
   // Remove uploaded file
   const removeFile = useCallback((id: string) => {
-    setUploadedFiles(prev => {
-      const file = prev.find(f => f.id === id);
+    setUploadedFiles((prev) => {
+      const file = prev.find((f) => f.id === id);
       if (file?.url) {
         URL.revokeObjectURL(file.url);
       }
-      return prev.filter(f => f.id !== id);
+      return prev.filter((f) => f.id !== id);
     });
   }, []);
 
@@ -308,7 +340,10 @@ export default function MediaUpload({
             <input
               ref={fileInputRef}
               type="file"
-              accept={[...(acceptedTypes.video || []), ...(acceptedTypes.audio || [])].join(',')}
+              accept={[
+                ...(acceptedTypes.video || []),
+                ...(acceptedTypes.audio || []),
+              ].join(",")}
               onChange={(e) => handleFileSelect(e.target.files)}
               className="hidden"
             />
@@ -368,7 +403,7 @@ export default function MediaUpload({
               <div className="flex items-center gap-2">
                 {videoRecording.isRecording ? (
                   <Button
-                    onClick={() => stopRecording('video')}
+                    onClick={() => stopRecording("video")}
                     variant="destructive"
                     size="sm"
                   >
@@ -376,16 +411,13 @@ export default function MediaUpload({
                     Stop
                   </Button>
                 ) : (
-                  <Button
-                    onClick={() => startRecording('video')}
-                    size="sm"
-                  >
+                  <Button onClick={() => startRecording("video")} size="sm">
                     <Video className="w-4 h-4 mr-1" />
                     Record
                   </Button>
                 )}
               </div>
-              
+
               {videoRecording.isRecording && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
@@ -415,7 +447,7 @@ export default function MediaUpload({
                       className="w-2 bg-primary rounded-full animate-pulse"
                       style={{
                         height: `${20 + Math.random() * 40}px`,
-                        animationDelay: `${i * 0.1}s`
+                        animationDelay: `${i * 0.1}s`,
                       }}
                     />
                   ))}
@@ -423,7 +455,9 @@ export default function MediaUpload({
               ) : (
                 <div className="text-center">
                   <Mic className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
-                  <p className="text-sm text-muted-foreground">Ready to record</p>
+                  <p className="text-sm text-muted-foreground">
+                    Ready to record
+                  </p>
                 </div>
               )}
             </div>
@@ -433,7 +467,7 @@ export default function MediaUpload({
               <div className="flex items-center gap-2">
                 {audioRecording.isRecording ? (
                   <Button
-                    onClick={() => stopRecording('audio')}
+                    onClick={() => stopRecording("audio")}
                     variant="destructive"
                     size="sm"
                   >
@@ -441,16 +475,13 @@ export default function MediaUpload({
                     Stop
                   </Button>
                 ) : (
-                  <Button
-                    onClick={() => startRecording('audio')}
-                    size="sm"
-                  >
+                  <Button onClick={() => startRecording("audio")} size="sm">
                     <Mic className="w-4 h-4 mr-1" />
                     Record
                   </Button>
                 )}
               </div>
-              
+
               {audioRecording.isRecording && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
@@ -471,10 +502,13 @@ export default function MediaUpload({
           <CardContent>
             <div className="space-y-3">
               {uploadedFiles.map((file) => (
-                <div key={file.id} className="flex items-center justify-between p-3 border rounded-lg">
+                <div
+                  key={file.id}
+                  className="flex items-center justify-between p-3 border rounded-lg"
+                >
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
-                      {file.type === 'video' ? (
+                      {file.type === "video" ? (
                         <Video className="w-5 h-5" />
                       ) : (
                         <Mic className="w-5 h-5" />
@@ -483,29 +517,34 @@ export default function MediaUpload({
                     <div>
                       <p className="font-medium text-sm">{file.name}</p>
                       <p className="text-xs text-muted-foreground">
-                        {file.type} • {(file.size / (1024 * 1024)).toFixed(2)} MB
+                        {file.type} • {(file.size / (1024 * 1024)).toFixed(2)}{" "}
+                        MB
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-2">
                     {file.url && (
                       <>
-                        {file.type === 'video' ? (
-                          <video 
-                            src={file.url} 
-                            controls 
+                        {file.type === "video" ? (
+                          <video
+                            src={file.url}
+                            controls
                             className="w-20 h-12 object-cover rounded"
                           >
-                            <track kind="captions" src="" label="No captions available" />
+                            <track
+                              kind="captions"
+                              src=""
+                              label="No captions available"
+                            />
                           </video>
                         ) : (
-                          <audio 
-                            src={file.url} 
-                            controls 
-                            className="w-32"
-                          >
-                            <track kind="captions" src="" label="No captions available" />
+                          <audio src={file.url} controls className="w-32">
+                            <track
+                              kind="captions"
+                              src=""
+                              label="No captions available"
+                            />
                           </audio>
                         )}
                       </>
