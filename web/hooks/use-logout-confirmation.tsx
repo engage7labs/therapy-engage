@@ -68,13 +68,13 @@ export function useLogoutConfirmation() {
         <AlertDialogFooter className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 mt-6">
           <AlertDialogCancel
             onClick={cancelLogout}
-            className="w-full sm:w-auto border border-border bg-background text-foreground hover:bg-secondary dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700"
+            className="w-full sm:w-auto border border-border bg-background text-foreground hover:bg-secondary dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700 px-4 py-2 rounded-md"
           >
             {t("common.cancel")}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={confirmLogout}
-            className="w-full sm:w-auto bg-gradient-to-r from-orange-600 to-orange-700 hover:from-orange-700 hover:to-orange-800 dark:from-orange-600 dark:to-orange-700 dark:hover:from-orange-700 dark:hover:to-orange-800 text-white dark:text-white border-0"
+            className="w-full sm:w-auto !bg-gradient-to-r !from-orange-600 !to-orange-700 hover:!from-orange-700 hover:!to-orange-800 !text-white !border-0 px-4 py-2 rounded-md font-medium shadow-sm hover:shadow-md transition-all duration-200"
           >
             <LogOut className="h-4 w-4 mr-2" />
             {t("logout.confirm")}
