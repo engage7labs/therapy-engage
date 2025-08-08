@@ -1,0 +1,67 @@
+# Values específicos para ambiente DEV
+image:
+  repository: ghcr.io/therapyengageorg/backend
+  tag: v1.0.8 # GraphQL CORS fix
+  pullSecrets:
+    - name: ghcr-secret
+
+# Configurações de desenvolvimento
+replicaCount: 1
+
+resources:
+  requests:
+    memory: "128Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+# Health checks para ambiente dev
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 3001 # Porta atualizada para 3001
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 3001 # Porta atualizada para 3001
+  initialDelaySeconds: 10
+  periodSeconds: 5
+
+# Variáveis de ambiente base
+env:
+  - name: NODE_ENV
+    value: "development"
+  - name: PORT
+    value: "3001"
+
+# Configurações do CosmosDB para DEV
+cosmosdb:
+  endpoint: "https://therapyengage-cosmosdb-dev.documents.azure.com:443/"
+  database: "therapyengage"
+  container: "patient_videos"
+  key: "CHAVE_LOCAL_TESTE" # ⚠️ NUNCA commitar valor real - usar --set cosmosdb.key=... no deploy
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3001 # Porta atualizada para 3001
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  hosts:
+    - host: therapyengage-api-dev.azurewebsites.net
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: backend-tls
+      hosts:
+        - therapyengage-api-dev.azurewebsites.net

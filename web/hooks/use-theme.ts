@@ -28,6 +28,7 @@ const translations = {
     "nav.settings": "Settings",
     "nav.logout": "Logout",
     "nav.insights": "Insights",
+    "nav.sentiment_analysis": "Sentiment Analysis",
 
     // Dashboard
     "dashboard.patient.title": "Patient Portal",
@@ -191,6 +192,7 @@ const translations = {
     "nav.settings": "Configurações",
     "nav.logout": "Sair",
     "nav.insights": "Insights",
+    "nav.sentiment_analysis": "Análise de Sentimento",
 
     // Dashboard
     "dashboard.patient.title": "Portal do Paciente",
@@ -355,6 +357,7 @@ const translations = {
     "nav.settings": "Configuración",
     "nav.logout": "Cerrar Sesión",
     "nav.insights": "Insights",
+    "nav.sentiment_analysis": "Análisis de Sentimiento",
 
     // Dashboard
     "dashboard.patient.title": "Portal del Paciente",

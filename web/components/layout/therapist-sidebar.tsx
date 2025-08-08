@@ -5,6 +5,7 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
+  Heart,
   LayoutDashboard,
   Settings,
   Users,
@@ -81,6 +82,12 @@ const TherapistSidebar: React.FC<SidebarProps> = ({
       icon: Brain,
       label: t("nav.insights"),
       translationKey: "nav.insights",
+    },
+    {
+      id: "sentiment-analysis",
+      icon: Heart,
+      label: t("nav.sentiment_analysis"),
+      translationKey: "nav.sentiment_analysis",
     },
     {
       id: "settings",

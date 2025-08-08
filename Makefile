@@ -1,25 +1,29 @@
 # Makefile for safe Terraform operations
 # Therapy Engage Platform - Infrastructure Automation
 
-.PHONY: help check-env init plan-dev apply-dev destroy-dev fmt validate
+.PHONY: help check-env init plan-dev apply-dev destroy-dev fmt validate deploy-backend-dev deploy-backend-dev-secure
 
 help:
 	@echo "=== Therapy Engage Platform - Infrastructure ==="
 	@echo ""
 	@echo "Available targets:"
-	@echo "  check-env     - Check environment and Azure login"
-	@echo "  init          - Initialize Terraform"
-	@echo "  fmt           - Format Terraform files"
-	@echo "  validate      - Validate Terraform configuration"
-	@echo "  plan-dev      - Plan dev environment (Ireland)"
-	@echo "  apply-dev     - Apply dev environment (Ireland)"
-	@echo "  destroy-dev   - Destroy dev environment (Ireland)"
+	@echo "  check-env            - Check environment and Azure login"
+	@echo "  init                 - Initialize Terraform"
+	@echo "  fmt                  - Format Terraform files"
+	@echo "  validate             - Validate Terraform configuration"
+	@echo "  plan-dev             - Plan dev environment (Ireland)"
+	@echo "  apply-dev            - Apply dev environment (Ireland)"
+	@echo "  destroy-dev          - Destroy dev environment (Ireland)"
+	@echo "  deploy-backend-dev   - Deploy backend with test CosmosDB key"
+	@echo "  deploy-backend-dev-secure - Deploy backend with secure CosmosDB key"
 	@echo ""
 	@echo "Required environment variables:"
 	@echo "  ARM_SUBSCRIPTION_ID - Azure subscription ID"
+	@echo "  COSMOSDB_KEY        - CosmosDB key (for secure deploy)"
 	@echo ""
 	@echo "Example workflow:"
 	@echo "  make check-env && make plan-dev && make apply-dev"
+	@echo "  make deploy-backend-dev-secure  # with COSMOSDB_KEY set"
 
 # Check environment variables and Azure login
 check-env:
@@ -82,3 +86,33 @@ destroy-dev: check-env
 	else \
 		echo "[CANCELLED] Must type exactly 'DESTROY'"; \
 	fi
+
+# Backend deployment commands
+deploy-backend-dev:
+	@echo "Deploying backend to DEV with test CosmosDB credentials..."
+	@echo "[WARNING] Using test credentials - not for production!"
+	helm upgrade --install backend-app charts/backend-app/ \
+		-f charts/backend-app/values.dev.yaml \
+		--set cosmosdb.key="CHAVE_LOCAL_TESTE" \
+		--namespace default \
+		--create-namespace
+
+deploy-backend-dev-secure:
+	@echo "Deploying backend to DEV with secure CosmosDB credentials..."
+	@if [ -z "$$COSMOSDB_KEY" ]; then \
+		echo "[ERROR] COSMOSDB_KEY environment variable not set"; \
+		echo "Usage: COSMOSDB_KEY=\"your-real-key\" make deploy-backend-dev-secure"; \
+		exit 1; \
+	fi
+	@echo "[OK] COSMOSDB_KEY is set - deploying securely..."
+	helm upgrade --install backend-app charts/backend-app/ \
+		-f charts/backend-app/values.dev.yaml \
+		--set cosmosdb.key="$$COSMOSDB_KEY" \
+		--namespace default \
+		--create-namespace
+	@echo "[SUCCESS] Backend deployed with secure credentials"
+
+# Helper command to get CosmosDB key from Azure
+get-cosmosdb-key:
+	@echo "Retrieving CosmosDB key from Azure..."
+	@az cosmosdb keys list --name therapyengage-cosmosdb-dev --resource-group rg-therapy-dev --query primaryMasterKey -o tsv

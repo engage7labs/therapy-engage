@@ -22,8 +22,14 @@
 - **Main Branch:** All coursework code is in the `dev` branch (default)
 - **Live Demo:** Backend API available at **https://20.82.234.39.sslip.io/graphql**
 - **Test Query:** `{ hello, health }` to verify functionality
-- **Documentation:** Complete ADRs in `/docs/adr/` folder
+- **Documentation:** Complete documentation in `/docs/` folder
 - **Infrastructure:** Terraform code in `/infra/` folder
+
+**📚 Key Documentation Files:**
+
+- **[docs/PROJECT_IMPLEMENTATION_SUMMARY.md](./docs/PROJECT_IMPLEMENTATION_SUMMARY.md)** - Complete implementation overview
+- **[docs/FINAL_SUMMARY.md](./docs/FINAL_SUMMARY.md)** - Executive summary and results
+- **[docs/README.md](./docs/README.md)** - Documentation index and navigation
 
 **🚀 Quick Evaluation Setup:**
 
@@ -111,6 +117,43 @@ graph TB
 | **Web Portal**     | Next.js + TypeScript           | 🚧 **IN PROGRESS** | Ireland (AKS)          |
 | **Mobile App**     | Flutter                        | 📋 **PLANNED**     | Cross-platform         |
 | **AI Integration** | Azure OpenAI + Dragon Copilot  | 📋 **PLANNED**     | Multi-region           |
+
+---
+
+## 📈 Recent Updates (August 2025)
+
+### 🎯 Sentiment Analysis Dashboard - COMPLETED ✅
+
+**Implementation Date:** August 8, 2025
+
+**New Features:**
+
+- **📊 Interactive Media Table** - View all patient audio/video uploads with sentiment analysis
+- **📈 Sentiment Trend Charts** - Recharts visualization of emotional patterns over time
+- **🚨 Clinical Alert System** - Automatic detection of negative sentiment patterns
+- **🎵 Media Player Integration** - In-app audio/video playback with transcriptions
+- **🔍 Advanced Filtering** - Filter by patient, media type, and sentiment
+- **📱 Responsive Design** - Mobile-first interface with dark/light mode support
+- **🌐 Multi-language Support** - Portuguese, English, and Spanish translations
+
+**Technical Implementation:**
+
+- **Frontend**: Next.js 14 with TypeScript and Tailwind CSS
+- **Components**: 5 new React components with shadcn/ui integration
+- **Data Layer**: Custom hooks with mock data for demonstration
+- **Navigation**: Seamless integration with existing therapist dashboard
+- **Performance**: Optimized with React best practices and Next.js features
+
+**Demo Access:**
+
+1. Login as therapist: `dr.smith / demo123`
+2. Navigate to "Análise de Sentimentos" in sidebar
+3. Explore interactive charts, filters, and media playback
+
+**📋 Documentation:**
+
+- Complete guide: [`docs/SENTIMENT_ANALYSIS_DASHBOARD.md`](./docs/SENTIMENT_ANALYSIS_DASHBOARD.md)
+- Technical specs: [`docs/SENTIMENT_ANALYSIS_IMPLEMENTATION.md`](./docs/SENTIMENT_ANALYSIS_IMPLEMENTATION.md)
 
 ---
 

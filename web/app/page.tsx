@@ -1,6 +1,7 @@
 "use client";
 
 import { LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import TherapistSidebar from "../components/layout/therapist-sidebar";
 import { DebugThemeLanguageToggle } from "../components/settings/debug-theme-language-toggle";
@@ -424,6 +425,7 @@ function TherapistDashboard() {
   const { requestLogout, LogoutConfirmationDialog } = useLogoutConfirmation();
   const { t } = useTheme();
   const { getButtonStyle } = useColorTheme();
+  const router = useRouter();
 
   // Estado do sidebar
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
@@ -433,14 +435,37 @@ function TherapistDashboard() {
     return false;
   });
 
+  // Estado da seção ativa
+  const [activeSection, setActiveSection] = useState("dashboard");
+
   const toggleSidebar = () => {
     setIsSidebarCollapsed(!isSidebarCollapsed);
   };
+
+  const handleSectionChange = (section: string) => {
+    setActiveSection(section);
+    // Navegar para diferentes seções usando Next.js router
+    if (section === "sentiment-analysis") {
+      router.push("/dashboard/sentiment-analysis");
+      return;
+    }
+    if (section === "video-communication") {
+      router.push("/dashboard/video-communication");
+      return;
+    }
+  };
+
+  // Se a seção ativa não for dashboard, não renderizar o conteúdo do dashboard
+  if (activeSection !== "dashboard") {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 lg:flex">
       {/* Sidebar */}
       <TherapistSidebar
+        activeSection={activeSection}
+        onSectionChange={handleSectionChange}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={toggleSidebar}
       />

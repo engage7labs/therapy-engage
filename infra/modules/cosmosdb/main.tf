@@ -9,7 +9,7 @@ resource "azurerm_cosmosdb_account" "this" {
   kind                = "GlobalDocumentDB"
 
   # Free tier is enabled automatically when possible
-  public_network_access_enabled   = true
+  public_network_access_enabled = true
 
   consistency_policy {
     consistency_level = "Session"

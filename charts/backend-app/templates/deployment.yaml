@@ -22,11 +22,34 @@ spec:
         - name: backend
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default "latest" }}"
           ports:
-            - containerPort: 3000
-          {{- with .Values.env }}
+            - containerPort: {{ .Values.service.targetPort | default 3000 }}
           env:
+            {{- with .Values.env }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
+            {{- end }}
+            {{- if .Values.cosmosdb }}
+            # CosmosDB credentials from Secret
+            - name: COSMOSDB_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: COSMOSDB_ENDPOINT
+            - name: COSMOSDB_DATABASE_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: COSMOSDB_DATABASE_NAME
+            - name: COSMOSDB_CONTAINER_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: COSMOSDB_CONTAINER_NAME
+            - name: COSMOSDB_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: backend-secrets
+                  key: COSMOSDB_KEY
+            {{- end }}
           {{- with .Values.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
