@@ -1,3 +1,0 @@
-# Therapy Engage Platform
-
-...existing code moved from root...
