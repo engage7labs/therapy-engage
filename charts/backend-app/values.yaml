@@ -7,6 +7,31 @@ image:
 # Configurações adicionais recomendadas
 replicaCount: 1
 
+# Azure Workload Identity Configuration
+serviceAccount:
+  name: backend-workload-identity
+
+workloadIdentity:
+  clientId: ""  # Managed Identity Client ID from Terraform
+  tenantId: ""  # Azure Tenant ID
+
+# Azure Services Configuration
+azureOpenAI:
+  endpoint: ""  # From Terraform output
+
+cosmosdb:
+  endpoint: ""      # From Terraform output
+  databaseName: ""  # From Terraform output
+
+keyVault:
+  name: ""          # From Terraform output
+  tenantId: ""      # Azure Tenant ID
+
+# Azure KeyVault CSI Configuration
+secretProviderClass:
+  name: therapy-engage-secrets
+  enabled: true
+
 resources:
   requests:
     memory: "128Mi"

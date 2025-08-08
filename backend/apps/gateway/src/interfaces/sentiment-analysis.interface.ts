@@ -1,9 +1,9 @@
 export interface SentimentResult {
-  label: 'POSITIVO' | 'NEGATIVO' | 'NEUTRO';
+  label: "POSITIVO" | "NEGATIVO" | "NEUTRO";
   confidence: number; // 0-1
   score: number; // -1 to 1
   summary: string;
-  provider: 'dragon' | 'azure-openai' | 'openai' | 'fallback';
+  provider: "dragon" | "azure-openai" | "openai" | "fallback";
   metadata?: {
     model?: string;
     processingTime?: number;

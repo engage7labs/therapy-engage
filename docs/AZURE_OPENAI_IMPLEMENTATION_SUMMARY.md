@@ -9,12 +9,14 @@ Implementação completa do sistema de análise de sentimentos com Azure OpenAI 
 ## 🧱 **Parte 1: Infraestrutura (Terraform) - ✅ CONCLUÍDA**
 
 ### 📦 **Módulo Azure OpenAI Criado**
+
 - **Localização**: `infra/modules/azure_openai/`
 - **Recursos**: `azurerm_cognitive_account` (Kind: OpenAI, SKU: S0)
 - **Segurança**: Network ACLs, Diagnostic Settings, Lifecycle policies
 - **Outputs**: Endpoint, chaves, configurações estruturadas
 
 ### 🔧 **Integração no Main.tf**
+
 ```hcl
 module "azure_openai" {
   source              = "./modules/azure_openai"
@@ -26,6 +28,7 @@ module "azure_openai" {
 ```
 
 ### 🚀 **Scripts de Deployment**
+
 - `deploy-azure-openai-models.sh` (Linux/macOS)
 - `deploy-azure-openai-models.ps1` (Windows)
 - **Modelos**: GPT-4, GPT-4-Turbo, GPT-3.5-Turbo, Whisper
@@ -35,6 +38,7 @@ module "azure_openai" {
 ## 🧠 **Parte 2: Backend NestJS - ✅ CONCLUÍDA**
 
 ### 🎯 **SentimentAnalysisService Implementado**
+
 ```typescript
 @Injectable()
 export class SentimentAnalysisService {
@@ -46,12 +50,14 @@ export class SentimentAnalysisService {
 ```
 
 ### 🔄 **Estratégia de Fallback**
+
 1. **🐉 Dragon API** (Prioridade 1) - `DRAGON_API_KEY`
 2. **☁️ Azure OpenAI** (Prioridade 2) - `AZURE_OPENAI_ENDPOINT`
 3. **🤖 OpenAI.com** (Prioridade 3) - `OPENAI_API_KEY`
 4. **📝 Análise Local** (Fallback) - Sempre disponível
 
 ### 📡 **APIs Expostas**
+
 - **REST**: `POST /sentiment/analyze`
 - **GraphQL**: `mutation analyzeSentiment`
 - **Health Check**: `GET /sentiment/health`
@@ -64,6 +70,7 @@ export class SentimentAnalysisService {
 ### 📁 **Arquivos Criados/Modificados**
 
 #### **Infraestrutura**:
+
 - `infra/modules/azure_openai/main.tf`
 - `infra/modules/azure_openai/variables.tf`
 - `infra/modules/azure_openai/outputs.tf`
@@ -71,6 +78,7 @@ export class SentimentAnalysisService {
 - `infra/main.tf` (atualizado)
 
 #### **Backend**:
+
 - `src/interfaces/sentiment-analysis.interface.ts`
 - `src/services/sentiment-analysis.service.ts`
 - `src/controllers/sentiment.controller.ts`
@@ -81,6 +89,7 @@ export class SentimentAnalysisService {
 - `.env.example` (configurações expandidas)
 
 #### **Scripts e Documentação**:
+
 - `deploy-azure-openai-models.sh`
 - `deploy-azure-openai-models.ps1`
 - `docs/AZURE_OPENAI_FALLBACK_IMPLEMENTATION.md`
@@ -90,6 +99,7 @@ export class SentimentAnalysisService {
 ## 🔧 **Configuração Requerida**
 
 ### **Variáveis de Ambiente**:
+
 ```bash
 # Prioridade 1: Dragon API
 DRAGON_API_KEY=your_dragon_api_key
@@ -113,6 +123,7 @@ SENTIMENT_RETRY_ATTEMPTS=2
 ## 🚀 **Como Usar**
 
 ### **1. Deployer Infraestrutura**:
+
 ```bash
 cd infra
 terraform plan -var-file="dev-eu-ie.tfvars"
@@ -120,6 +131,7 @@ terraform apply
 ```
 
 ### **2. Configurar Modelos Azure OpenAI**:
+
 ```bash
 # Windows
 .\deploy-azure-openai-models.ps1
@@ -129,6 +141,7 @@ terraform apply
 ```
 
 ### **3. Configurar Backend**:
+
 ```bash
 # Obter configurações
 terraform output backend_environment_variables
@@ -140,6 +153,7 @@ az cognitiveservices account keys list \
 ```
 
 ### **4. Testar API**:
+
 ```bash
 curl -X POST http://localhost:3000/sentiment/analyze \
   -H "Content-Type: application/json" \
@@ -152,11 +166,11 @@ curl -X POST http://localhost:3000/sentiment/analyze \
 
 ```typescript
 interface SentimentResult {
-  label: 'POSITIVO' | 'NEGATIVO' | 'NEUTRO';
+  label: "POSITIVO" | "NEGATIVO" | "NEUTRO";
   confidence: number; // 0-1
-  score: number; // -1 to 1  
+  score: number; // -1 to 1
   summary: string;
-  provider: 'dragon' | 'azure-openai' | 'openai' | 'fallback';
+  provider: "dragon" | "azure-openai" | "openai" | "fallback";
   metadata: {
     model?: string;
     processingTime: number;
@@ -166,6 +180,7 @@ interface SentimentResult {
 ```
 
 ### **Exemplo de Uso**:
+
 ```json
 {
   "label": "POSITIVO",
@@ -185,12 +200,14 @@ interface SentimentResult {
 ## ✅ **Funcionalidades Implementadas**
 
 ### **🤖 Múltiplos Provedores de IA**:
+
 - ✅ Dragon API (prioridade máxima)
 - ✅ Azure OpenAI (provisionado via Terraform)
 - ✅ OpenAI.com (fallback)
 - ✅ Análise local por palavras-chave
 
 ### **🛡️ Robustez e Confiabilidade**:
+
 - ✅ Fallback automático entre provedores
 - ✅ Timeout e retry configuráveis
 - ✅ Validação de entrada robusta
@@ -198,18 +215,21 @@ interface SentimentResult {
 - ✅ Logging detalhado
 
 ### **📡 APIs Múltiplas**:
+
 - ✅ REST endpoints
 - ✅ GraphQL resolvers
 - ✅ Health checks
 - ✅ Status de provedores
 
 ### **🔍 Monitoramento**:
+
 - ✅ Health checks por provedor
 - ✅ Métricas de performance
 - ✅ Logs estruturados
 - ✅ Diagnostic settings (Azure)
 
 ### **🧪 Qualidade de Código**:
+
 - ✅ Testes unitários completos
 - ✅ TypeScript strict mode
 - ✅ Interfaces bem definidas
@@ -220,6 +240,7 @@ interface SentimentResult {
 ## 🎉 **Resultado Final**
 
 ### **✨ Sistema Completamente Funcional**:
+
 1. **Infraestrutura Azure OpenAI** provisionada via Terraform
 2. **Backend NestJS** com fallback inteligente entre 4 provedores
 3. **APIs REST e GraphQL** prontas para uso
@@ -228,8 +249,9 @@ interface SentimentResult {
 6. **Configuração flexível** via variáveis de ambiente
 
 ### **🚀 Pronto para Produção**:
+
 - ✅ Segurança implementada
-- ✅ Monitoramento configurado  
+- ✅ Monitoramento configurado
 - ✅ Escalabilidade considerada
 - ✅ Fallback garantido
 - ✅ Performance otimizada

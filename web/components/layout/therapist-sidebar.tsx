@@ -11,7 +11,6 @@ import {
   Users,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useTheme } from "../../hooks/use-theme";
 
 interface SidebarProps {
   activeSection?: string;
@@ -35,13 +34,8 @@ const TherapistSidebar: React.FC<SidebarProps> = ({
   });
 
   // Usar estado externo se fornecido, senão usar interno
-  const isCollapsed =
-    externalIsCollapsed !== undefined
-      ? externalIsCollapsed
-      : internalIsCollapsed;
+  const isCollapsed = externalIsCollapsed ?? internalIsCollapsed;
   const setIsCollapsed = onToggleCollapse || setInternalIsCollapsed;
-
-  const { t } = useTheme();
 
   // Monitorar mudanças no tamanho da tela
   useEffect(() => {
@@ -62,37 +56,37 @@ const TherapistSidebar: React.FC<SidebarProps> = ({
     {
       id: "dashboard",
       icon: LayoutDashboard,
-      label: t("nav.dashboard"),
+      label: "Dashboard",
       translationKey: "nav.dashboard",
     },
     {
       id: "clients",
       icon: Users,
-      label: t("nav.patients"),
+      label: "Patients",
       translationKey: "nav.patients",
     },
     {
       id: "sessions",
       icon: Calendar,
-      label: t("nav.sessions"),
+      label: "Sessions",
       translationKey: "nav.sessions",
     },
     {
       id: "insights",
       icon: Brain,
-      label: t("nav.insights"),
+      label: "Insights",
       translationKey: "nav.insights",
     },
     {
       id: "sentiment-analysis",
       icon: Heart,
-      label: t("nav.sentiment_analysis"),
+      label: "Sentiment Analysis",
       translationKey: "nav.sentiment_analysis",
     },
     {
       id: "settings",
       icon: Settings,
-      label: t("nav.settings"),
+      label: "Settings",
       translationKey: "nav.settings",
     },
   ];

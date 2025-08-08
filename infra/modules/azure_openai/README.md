@@ -12,17 +12,17 @@ Este módulo provisiona um recurso Azure OpenAI Service no Azure, configurado pa
 ```hcl
 module "azure_openai" {
   source = "./modules/azure_openai"
-  
+
   name                = "therapyengage-openai-dev"
   location            = "North Europe"
   resource_group_name = module.aks.resource_group_name
-  
+
   tags = {
     Environment = "development"
     Project     = "therapy-engage"
     Component   = "ai-services"
   }
-  
+
   # Opcional: habilitar diagnósticos
   enable_diagnostics          = true
   log_analytics_workspace_id  = module.monitoring.log_analytics_workspace_id
@@ -31,37 +31,38 @@ module "azure_openai" {
 
 ## Entradas
 
-| Nome | Descrição | Tipo | Padrão | Obrigatório |
-|------|-----------|------|---------|:-----------:|
-| name | Nome do recurso Azure OpenAI | `string` | n/a | sim |
-| location | Localização do recurso Azure | `string` | `"North Europe"` | não |
-| resource_group_name | Nome do grupo de recursos | `string` | n/a | sim |
-| tags | Tags para aplicar ao recurso | `map(string)` | `{}` | não |
-| enable_diagnostics | Habilitar configurações de diagnóstico | `bool` | `false` | não |
-| log_analytics_workspace_id | ID do workspace do Log Analytics | `string` | `null` | não |
-| sku_name | SKU do Azure OpenAI | `string` | `"S0"` | não |
-| public_network_access_enabled | Permitir acesso público | `bool` | `true` | não |
-| custom_subdomain_name | Nome do subdomínio customizado | `string` | `null` | não |
+| Nome                          | Descrição                              | Tipo          | Padrão           | Obrigatório |
+| ----------------------------- | -------------------------------------- | ------------- | ---------------- | :---------: |
+| name                          | Nome do recurso Azure OpenAI           | `string`      | n/a              |     sim     |
+| location                      | Localização do recurso Azure           | `string`      | `"North Europe"` |     não     |
+| resource_group_name           | Nome do grupo de recursos              | `string`      | n/a              |     sim     |
+| tags                          | Tags para aplicar ao recurso           | `map(string)` | `{}`             |     não     |
+| enable_diagnostics            | Habilitar configurações de diagnóstico | `bool`        | `false`          |     não     |
+| log_analytics_workspace_id    | ID do workspace do Log Analytics       | `string`      | `null`           |     não     |
+| sku_name                      | SKU do Azure OpenAI                    | `string`      | `"S0"`           |     não     |
+| public_network_access_enabled | Permitir acesso público                | `bool`        | `true`           |     não     |
+| custom_subdomain_name         | Nome do subdomínio customizado         | `string`      | `null`           |     não     |
 
 ## Saídas
 
-| Nome | Descrição |
-|------|-----------|
-| azure_openai_endpoint | Endpoint do Azure OpenAI |
-| azure_openai_id | ID do recurso Azure OpenAI |
-| azure_openai_name | Nome do recurso Azure OpenAI |
-| azure_openai_location | Localização do Azure OpenAI |
-| azure_openai_primary_access_key | Chave primária de acesso (sensível) |
+| Nome                              | Descrição                             |
+| --------------------------------- | ------------------------------------- |
+| azure_openai_endpoint             | Endpoint do Azure OpenAI              |
+| azure_openai_id                   | ID do recurso Azure OpenAI            |
+| azure_openai_name                 | Nome do recurso Azure OpenAI          |
+| azure_openai_location             | Localização do Azure OpenAI           |
+| azure_openai_primary_access_key   | Chave primária de acesso (sensível)   |
 | azure_openai_secondary_access_key | Chave secundária de acesso (sensível) |
-| azure_openai_custom_subdomain | Subdomínio customizado |
-| azure_openai_config | Configuração completa para aplicações |
-| environment_variables | Variáveis de ambiente recomendadas |
+| azure_openai_custom_subdomain     | Subdomínio customizado                |
+| azure_openai_config               | Configuração completa para aplicações |
+| environment_variables             | Variáveis de ambiente recomendadas    |
 
 ## Deployment de Modelos
 
 ⚠️ **Importante**: O Terraform não suporta nativamente o deployment de modelos do Azure OpenAI. Após provisionar o recurso, você deve deployar os modelos manualmente:
 
 ### Via Azure CLI:
+
 ```bash
 az cognitiveservices account deployment create \
   --resource-group myResourceGroup \
@@ -75,6 +76,7 @@ az cognitiveservices account deployment create \
 ```
 
 ### Via Portal Azure:
+
 1. Acesse o recurso Azure OpenAI no portal
 2. Vá para "Model deployments"
 3. Clique em "Create new deployment"

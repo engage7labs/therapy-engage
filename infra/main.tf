@@ -67,66 +67,6 @@ module "networking" {
   tags            = var.tags
 }
 
-output "portal_public_ip" {
-  value = module.networking.portal_public_ip
-}
-
-output "api_domain" {
-  value = module.app_service.api_domain
-}
-
-output "portal_domain" {
-  value = module.app_service.portal_domain
-}
-
-output "api_url" {
-  value = module.app_service.api_url
-}
-
-# CosmosDB outputs
-output "cosmosdb_endpoint" {
-  description = "CosmosDB endpoint URL"
-  value       = module.cosmosdb.endpoint
-}
-
-output "cosmosdb_account_name" {
-  description = "CosmosDB account name"
-  value       = module.cosmosdb.account_name
-}
-
-output "cosmosdb_database_name" {
-  description = "CosmosDB database name"
-  value       = module.cosmosdb.database_name
-}
-
-# Azure OpenAI outputs
-output "azure_openai_endpoint" {
-  description = "Azure OpenAI endpoint URL"
-  value       = module.azure_openai.azure_openai_endpoint
-}
-
-output "azure_openai_name" {
-  description = "Azure OpenAI resource name"
-  value       = module.azure_openai.azure_openai_name
-}
-
-output "azure_openai_config" {
-  description = "Azure OpenAI configuration for applications"
-  value       = module.azure_openai.azure_openai_config
-}
-
-# Environment variables for backend configuration
-output "backend_environment_variables" {
-  description = "Environment variables for backend configuration"
-  value = merge(
-    module.azure_openai.environment_variables,
-    {
-      COSMOSDB_ENDPOINT      = module.cosmosdb.endpoint
-      COSMOSDB_DATABASE_NAME = module.cosmosdb.database_name
-    }
-  )
-}
-
 # Note: Backend IP (20.13.251.223) is managed by AKS LoadBalancer
 # App Service domains will redirect to AKS Ingress
 

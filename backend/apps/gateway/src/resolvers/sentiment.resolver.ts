@@ -1,6 +1,6 @@
-import { Resolver, Mutation, Query, Args } from '@nestjs/graphql';
-import { SentimentAnalysisService } from '../services/sentiment-analysis.service';
-import { SentimentResult } from '../interfaces/sentiment-analysis.interface';
+import { Args, Mutation, Query, Resolver } from "@nestjs/graphql";
+import { SentimentResult } from "../interfaces/sentiment-analysis.interface";
+import { SentimentAnalysisService } from "../services/sentiment-analysis.service";
 
 // GraphQL Types
 class SentimentResultType {
@@ -24,15 +24,13 @@ export class SentimentResolver {
   constructor(private readonly sentimentService: SentimentAnalysisService) {}
 
   @Mutation(() => SentimentResultType)
-  async analyzeSentiment(
-    @Args('text') text: string,
-  ): Promise<SentimentResult> {
+  async analyzeSentiment(@Args("text") text: string): Promise<SentimentResult> {
     if (!text || text.trim().length === 0) {
-      throw new Error('Text cannot be empty');
+      throw new Error("Text cannot be empty");
     }
 
     if (text.length > 5000) {
-      throw new Error('Text too long (max 5000 characters)');
+      throw new Error("Text too long (max 5000 characters)");
     }
 
     return await this.sentimentService.analyze(text);
@@ -46,7 +44,7 @@ export class SentimentResolver {
   @Query(() => [String])
   async availableSentimentProviders(): Promise<string[]> {
     const status = await this.sentimentService.getHealthStatus();
-    
+
     return Object.entries(status)
       .filter(([, available]) => available)
       .map(([provider]) => provider);

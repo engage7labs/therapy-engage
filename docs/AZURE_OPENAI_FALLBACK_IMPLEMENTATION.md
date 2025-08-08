@@ -5,12 +5,14 @@ Esta implementação fornece um sistema robusto de análise de sentimentos com m
 ## 🎯 Objetivos Alcançados
 
 ### ✅ Infraestrutura (Terraform)
+
 - **Azure OpenAI Service** provisionado via Terraform
 - Módulo reutilizável em `infra/modules/azure_openai/`
 - Configuração de segurança e monitoramento
 - Outputs estruturados para configuração de aplicações
 
 ### ✅ Backend NestJS
+
 - **SentimentAnalysisService** com fallback inteligente
 - Suporte a 3 provedores + fallback local
 - APIs REST e GraphQL disponíveis
@@ -19,6 +21,7 @@ Esta implementação fornece um sistema robusto de análise de sentimentos com m
 ## 🧱 Arquitetura
 
 ### Estratégia de Fallback
+
 ```
 1. 🐉 Dragon API (Prioridade 1)
    ↓ (falha)
@@ -30,6 +33,7 @@ Esta implementação fornece um sistema robusto de análise de sentimentos com m
 ```
 
 ### Fluxo de Decisão
+
 ```mermaid
 graph TD
     A[Texto para Análise] --> B{Dragon API?}
@@ -39,7 +43,7 @@ graph TD
     D -->|Indisponível| F{OpenAI.com?}
     F -->|Disponível| G[Usar OpenAI]
     F -->|Indisponível| H[Usar Fallback Local]
-    
+
     C --> I[Retornar Resultado]
     E --> I
     G --> I
@@ -51,6 +55,7 @@ graph TD
 ### 1. Infraestrutura
 
 #### Terraform Module: `infra/modules/azure_openai/`
+
 ```hcl
 module "azure_openai" {
   source              = "./modules/azure_openai"
@@ -62,6 +67,7 @@ module "azure_openai" {
 ```
 
 #### Recursos Criados:
+
 - `azurerm_cognitive_account` (Azure OpenAI Service)
 - `azurerm_monitor_diagnostic_setting` (Monitoramento)
 - Configurações de segurança e rede
@@ -69,6 +75,7 @@ module "azure_openai" {
 ### 2. Backend Services
 
 #### SentimentAnalysisService
+
 ```typescript
 @Injectable()
 export class SentimentAnalysisService {
@@ -83,6 +90,7 @@ export class SentimentAnalysisService {
 ```
 
 #### APIs Disponíveis:
+
 - **REST**: `POST /sentiment/analyze`
 - **GraphQL**: `mutation analyzeSentiment`
 - **Health**: `GET /sentiment/health`
@@ -90,6 +98,7 @@ export class SentimentAnalysisService {
 ## 🔧 Configuração
 
 ### Variáveis de Ambiente
+
 ```bash
 # Prioridade 1: Dragon API
 DRAGON_API_KEY=your_dragon_api_key
@@ -111,6 +120,7 @@ SENTIMENT_RETRY_ATTEMPTS=2
 ### Deployment Azure OpenAI
 
 #### 1. Provisionar Infraestrutura
+
 ```bash
 cd infra
 terraform plan -var-file="dev-eu-ie.tfvars"
@@ -118,6 +128,7 @@ terraform apply
 ```
 
 #### 2. Deployar Modelos
+
 ```bash
 # Linux/macOS
 ./deploy-azure-openai-models.sh
@@ -127,6 +138,7 @@ terraform apply
 ```
 
 #### 3. Configurar Backend
+
 ```bash
 # Obter configurações do Terraform
 terraform output backend_environment_variables
@@ -140,6 +152,7 @@ az cognitiveservices account keys list \
 ## 📊 Monitoramento
 
 ### Health Checks
+
 ```bash
 # Verificar status dos provedores
 GET /sentiment/health
@@ -155,6 +168,7 @@ GET /sentiment/health
 ```
 
 ### Métricas de Performance
+
 - **processingTime**: Tempo de processamento em ms
 - **provider**: Provedor utilizado na análise
 - **confidence**: Nível de confiança do resultado
@@ -163,13 +177,14 @@ GET /sentiment/health
 ## 🎯 Resultados
 
 ### Formato de Resposta
+
 ```typescript
 interface SentimentResult {
-  label: 'POSITIVO' | 'NEGATIVO' | 'NEUTRO';
+  label: "POSITIVO" | "NEGATIVO" | "NEUTRO";
   confidence: number; // 0-1
   score: number; // -1 to 1
   summary: string;
-  provider: 'dragon' | 'azure-openai' | 'openai' | 'fallback';
+  provider: "dragon" | "azure-openai" | "openai" | "fallback";
   metadata: {
     model?: string;
     processingTime: number;
@@ -179,13 +194,14 @@ interface SentimentResult {
 ```
 
 ### Exemplo de Uso
+
 ```typescript
 // REST API
 const response = await fetch('/sentiment/analyze', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ 
-    text: "Hoje me sinto muito melhor, consegui dormir bem." 
+  body: JSON.stringify({
+    text: "Hoje me sinto muito melhor, consegui dormir bem."
   })
 });
 
@@ -206,6 +222,7 @@ const response = await fetch('/sentiment/analyze', {
 ## 🛡️ Segurança
 
 ### Práticas Implementadas
+
 - **API Keys**: Armazenadas como variáveis de ambiente
 - **Rate Limiting**: Configurado nos provedores
 - **Timeout**: Previne bloqueios longos
@@ -214,6 +231,7 @@ const response = await fetch('/sentiment/analyze', {
 - **Error Handling**: Logs detalhados sem exposição de dados sensíveis
 
 ### Azure OpenAI Security
+
 - **Managed Identity**: Suportado (opcional)
 - **Network ACLs**: Configurável via Terraform
 - **Diagnostic Settings**: Auditoria completa
@@ -222,12 +240,14 @@ const response = await fetch('/sentiment/analyze', {
 ## 📈 Escalabilidade
 
 ### Estratégias de Otimização
+
 1. **Cache de Resultados**: Implementar Redis para análises repetidas
 2. **Batch Processing**: Processar múltiplos textos simultaneamente
 3. **Model Selection**: Usar modelos mais rápidos quando apropriado
 4. **Geographic Distribution**: Múltiplas regiões Azure OpenAI
 
 ### Limites e Quotas
+
 - **Azure OpenAI**: Configurável via SKU
 - **OpenAI.com**: Baseado no plano contratado
 - **Fallback**: Sem limites (processamento local)
@@ -235,11 +255,14 @@ const response = await fetch('/sentiment/analyze', {
 ## 🚨 Troubleshooting
 
 ### Problemas Comuns
+
 1. **"No AI providers configured"**
+
    - Verificar variáveis de ambiente
    - Validar chaves de API
 
 2. **"Azure OpenAI deployment not found"**
+
    - Executar script de deployment de modelos
    - Verificar nome do deployment
 
@@ -248,6 +271,7 @@ const response = await fetch('/sentiment/analyze', {
    - Verificar conectividade de rede
 
 ### Logs e Debugging
+
 ```bash
 # Verificar logs do backend
 kubectl logs -f deployment/backend-app
@@ -261,6 +285,7 @@ curl -X POST http://localhost:3000/sentiment/analyze \
 ## 🎉 Próximos Passos
 
 ### Melhorias Futuras
+
 1. **Cache Redis**: Implementar cache distribuído
 2. **Batch API**: Suporte a análise em lote
 3. **Webhooks**: Notificações de análises críticas
@@ -268,6 +293,7 @@ curl -X POST http://localhost:3000/sentiment/analyze \
 5. **A/B Testing**: Comparar eficácia entre provedores
 
 ### Integrações
+
 - **Cosmos DB**: Persistir resultados históricos
 - **Event Grid**: Processar análises assíncronas
 - **Application Insights**: Monitoramento avançado
