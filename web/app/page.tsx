@@ -419,18 +419,54 @@ function TherapistDashboard() {
   const { requestLogout, LogoutConfirmationDialog } = useLogoutConfirmation();
   const { t } = useTheme();
 
+  // Estado do sidebar
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.innerWidth < 1024; // lg breakpoint
+    }
+    return false;
+  });
+
+  const toggleSidebar = () => {
+    setIsSidebarCollapsed(!isSidebarCollapsed);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 lg:flex">
       {/* Sidebar */}
-      <TherapistSidebar />
+      <TherapistSidebar
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={toggleSidebar}
+      />
 
       {/* Main Content Area */}
-      <div className="lg:ml-0 lg:flex-1">
+      <div className="flex-1 lg:ml-0">
         {/* Header - Always visible */}
         <div className="bg-card/80 backdrop-blur shadow border-b">
           <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16">
               <div className="flex items-center space-x-3">
+                {/* Botão Menu para Mobile */}
+                <button
+                  onClick={toggleSidebar}
+                  className="lg:hidden p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-accent"
+                  aria-label="Abrir menu"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 6h16M4 12h16M4 18h16"
+                    />
+                  </svg>
+                </button>
+
                 <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full flex items-center justify-center">
                   <span className="text-white font-bold text-sm">TE</span>
                 </div>
