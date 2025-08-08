@@ -4,6 +4,7 @@ import { LogOut } from "lucide-react";
 import { useState } from "react";
 import TherapistSidebar from "../components/layout/therapist-sidebar";
 import { DebugThemeLanguageToggle } from "../components/settings/debug-theme-language-toggle";
+import { useColorTheme } from "../hooks/use-color-theme";
 import { useLogoutConfirmation } from "../hooks/use-logout-confirmation";
 import { useTheme } from "../hooks/use-theme";
 import { useAuth } from "./contexts/auth-context";
@@ -12,6 +13,7 @@ import { useAuth } from "./contexts/auth-context";
 function LoginPage() {
   const { login } = useAuth();
   const { t } = useTheme();
+  const { getButtonStyle } = useColorTheme();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -91,7 +93,8 @@ function LoginPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400"
+            className="w-full px-4 py-2 rounded-md font-medium transition-all duration-200 flex items-center justify-center gap-2 text-white border-0 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+            style={getButtonStyle("primary")}
           >
             {isLoading ? "Signing in..." : "Sign In"}
           </button>
@@ -184,7 +187,7 @@ function PatientDashboard() {
           {/* Quick Status Cards */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             {/* Como estou hoje */}
-            <div className="bg-card rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow">
+            <div className="bg-card rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow theme-accent-bg">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
                   <span className="text-2xl">😊</span>
@@ -217,16 +220,18 @@ function PatientDashboard() {
               </div>
             </div>
 
-            {/* Objetivos */}
+            {/* Gravar Diário */}
             <div className="bg-card rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
-                  <span className="text-2xl">🎯</span>
+                  <span className="text-2xl">�️</span>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">Objetivos</h3>
+                  <h3 className="font-semibold text-foreground">
+                    {t("cards.record_diary")}
+                  </h3>
                   <p className="text-sm text-muted-foreground">
-                    Acompanhe seu progresso
+                    {t("cards.record_diary_subtitle")}
                   </p>
                 </div>
               </div>
@@ -359,17 +364,17 @@ function PatientDashboard() {
                 </div>
               </div>
 
-              {/* Metas de Progresso */}
+              {/* Gravar Diário Digital */}
               <div className="bg-card rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow cursor-pointer">
                 <div className="text-center">
                   <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-3xl">🎯</span>
+                    <span className="text-3xl">�️</span>
                   </div>
                   <h4 className="font-semibold text-foreground mb-2">
-                    Metas de Progresso
+                    {t("cards.record_diary")}
                   </h4>
                   <p className="text-sm text-muted-foreground">
-                    Acompanhe objetivos definidos com seu terapeuta
+                    {t("cards.record_diary_description")}
                   </p>
                 </div>
               </div>
@@ -418,6 +423,7 @@ function TherapistDashboard() {
   const { user } = useAuth();
   const { requestLogout, LogoutConfirmationDialog } = useLogoutConfirmation();
   const { t } = useTheme();
+  const { getButtonStyle } = useColorTheme();
 
   // Estado do sidebar
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
@@ -595,7 +601,10 @@ function TherapistDashboard() {
                         {t("cards.depression")} • {t("cards.session")} 8/12
                       </p>
                     </div>
-                    <button className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-colors text-sm">
+                    <button
+                      className="px-4 py-2 rounded-md font-medium transition-all duration-200 flex items-center gap-2 text-white border-0 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 text-sm"
+                      style={getButtonStyle("primary")}
+                    >
                       {t("cards.start_session")}
                     </button>
                   </div>

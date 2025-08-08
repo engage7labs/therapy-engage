@@ -11,12 +11,14 @@ import {
 import { LogOut, Shield } from "lucide-react";
 import { useState } from "react";
 import { useAuth } from "../app/contexts/auth-context";
+import { useColorTheme } from "./use-color-theme";
 import { useTheme } from "./use-theme";
 
 export function useLogoutConfirmation() {
   const [isOpen, setIsOpen] = useState(false);
   const { logout } = useAuth();
   const { t } = useTheme();
+  const { getButtonClasses, getButtonStyle } = useColorTheme();
 
   const requestLogout = () => {
     setIsOpen(true);
@@ -68,13 +70,14 @@ export function useLogoutConfirmation() {
         <AlertDialogFooter className="flex flex-col-reverse sm:flex-row gap-2 sm:gap-3 mt-6">
           <AlertDialogCancel
             onClick={cancelLogout}
-            className="w-full sm:w-auto border border-border bg-background text-foreground hover:bg-secondary dark:bg-slate-800 dark:border-slate-600 dark:text-slate-200 dark:hover:bg-slate-700 px-4 py-2 rounded-md"
+            className="px-4 py-2 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700 transition-all duration-200 flex items-center gap-2 shadow-sm hover:shadow focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
           >
             {t("common.cancel")}
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={confirmLogout}
-            className="w-full sm:w-auto !bg-gradient-to-r !from-orange-600 !to-orange-700 hover:!from-orange-700 hover:!to-orange-800 !text-white !border-0 px-4 py-2 rounded-md font-medium shadow-sm hover:shadow-md transition-all duration-200"
+            className="px-4 py-2 rounded-md font-medium transition-all duration-200 flex items-center gap-2 text-white border-0 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+            style={getButtonStyle("danger")}
           >
             <LogOut className="h-4 w-4 mr-2" />
             {t("logout.confirm")}

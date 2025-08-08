@@ -87,6 +87,12 @@ const translations = {
     "settings.dark_mode": "Dark Mode",
     "settings.light_mode": "Light Mode",
 
+    // Color Themes
+    "themes.current": "Current color theme",
+    "themes.ocean": "Ocean",
+    "themes.nature": "Nature",
+    "themes.accessibility": "High Contrast",
+
     // Common
     "common.save": "Save",
     "common.cancel": "Cancel",
@@ -162,6 +168,10 @@ const translations = {
       "of your patients showed progress this week",
     "cards.mood_improving": "General patient mood is improving",
     "cards.patients_need_followup": "patients need extra follow-up",
+    "cards.record_diary": "Record Diary",
+    "cards.record_diary_subtitle": "Audio or video for analysis",
+    "cards.record_diary_description":
+      "Record audio or video for transcription and sentiment analysis",
     "cards.individual_therapy": "Individual Therapy",
     "cards.anxiety_therapy": "Anxiety Therapy",
     "cards.family_therapy": "Family Therapy",
@@ -240,6 +250,12 @@ const translations = {
     "settings.dark_mode": "Modo Escuro",
     "settings.light_mode": "Modo Claro",
 
+    // Color Themes
+    "themes.current": "Tema de cores atual",
+    "themes.ocean": "Oceano",
+    "themes.nature": "Natureza",
+    "themes.accessibility": "Alto Contraste",
+
     // Common
     "common.save": "Salvar",
     "common.cancel": "Cancelar",
@@ -316,6 +332,10 @@ const translations = {
     "cards.mood_improving": "Humor geral dos pacientes está melhorando",
     "cards.patients_need_followup":
       "pacientes precisam de acompanhamento extra",
+    "cards.record_diary": "Gravar Diário",
+    "cards.record_diary_subtitle": "Áudio ou vídeo para análise",
+    "cards.record_diary_description":
+      "Grave áudio ou vídeo para transcrição e análise de sentimentos",
     "cards.individual_therapy": "Terapia Individual",
     "cards.anxiety_therapy": "Terapia de Ansiedade",
     "cards.family_therapy": "Terapia Familiar",
@@ -394,6 +414,12 @@ const translations = {
     "settings.dark_mode": "Modo Oscuro",
     "settings.light_mode": "Modo Claro",
 
+    // Color Themes
+    "themes.current": "Tema Actual",
+    "themes.ocean": "Océano",
+    "themes.nature": "Naturaleza",
+    "themes.accessibility": "Accesibilidad",
+
     // Common
     "common.save": "Guardar",
     "common.cancel": "Cancelar",
@@ -471,6 +497,10 @@ const translations = {
     "cards.mood_improving":
       "El estado de ánimo general de los pacientes está mejorando",
     "cards.patients_need_followup": "pacientes necesitan seguimiento adicional",
+    "cards.record_diary": "Grabar Diario",
+    "cards.record_diary_subtitle": "Audio o video para análisis",
+    "cards.record_diary_description":
+      "Graba audio o video para transcripción y análisis de sentimientos",
     "cards.individual_therapy": "Terapia Individual",
     "cards.anxiety_therapy": "Terapia de Ansiedad",
     "cards.family_therapy": "Terapia Familiar",

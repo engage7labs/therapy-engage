@@ -1,190 +1,86 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useTheme } from '../../hooks/use-theme'
-import { Button } from '../ui/button'
-import { Switch } from '../ui/switch'
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '../ui/dropdown-menu'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '../ui/tooltip'
-import { Moon, Sun, Globe, Check } from 'lucide-react'
-
-type Language = 'en' | 'pt' | 'es'
+import { useTheme } from "@/contexts/theme-context";
+import { useColorTheme } from "@/hooks/use-color-theme";
+import { useTheme as useThemeWithLanguage } from "@/hooks/use-theme";
 
 export function QuickThemeLanguageToggle() {
-  const { theme, language, setTheme, setLanguage, t } = useTheme()
-  const [showThemeSuccess, setShowThemeSuccess] = useState(false)
-  const [showLanguageSuccess, setShowLanguageSuccess] = useState(false)
+  const { theme, toggleTheme } = useTheme();
+  const { language, setLanguage } = useThemeWithLanguage();
+  const { colorTheme, setColorTheme } = useColorTheme();
 
-  const handleThemeToggle = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light'
-    setTheme(newTheme)
-    setShowThemeSuccess(true)
-    setTimeout(() => setShowThemeSuccess(false), 1500)
-  }
+  const getThemeIcon = () => {
+    return theme === "dark" ? "🌙" : "☀️";
+  };
 
-  const handleLanguageChange = (newLanguage: Language) => {
-    setLanguage(newLanguage)
-    setShowLanguageSuccess(true)
-    setTimeout(() => setShowLanguageSuccess(false), 1500)
-  }
+  const getColorThemeIcon = () => {
+    switch (colorTheme) {
+      case "ocean":
+        return "🌊";
+      case "nature":
+        return "🌿";
+      case "accessibility":
+        return "♿";
+      default:
+        return "🌊";
+    }
+  };
 
-  const languageOptions = [
-    { value: 'en', label: 'English', flag: '🇺🇸', short: 'EN' },
-    { value: 'pt', label: 'Português', flag: '🇧🇷', short: 'PT' },
-    { value: 'es', label: 'Español', flag: '🇪🇸', short: 'ES' }
-  ]
+  const getLanguageIcon = () => {
+    switch (language) {
+      case "en":
+        return "🇺🇸";
+      case "pt":
+        return "🇧🇷";
+      case "es":
+        return "🇪🇸";
+      default:
+        return "🇺🇸";
+    }
+  };
 
-  const currentLanguage = languageOptions.find(lang => lang.value === language)
+  const handleLanguageToggle = () => {
+    const languages = ["en", "pt", "es"] as const;
+    const currentIndex = languages.indexOf(language);
+    const nextIndex = (currentIndex + 1) % languages.length;
+    setLanguage(languages[nextIndex]);
+  };
 
-  return (
-    <TooltipProvider>
-      <div className="flex items-center gap-2">
-        {/* Theme Toggle */}
-        <div className="flex items-center gap-2 p-1 bg-muted/50 rounded-lg">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleThemeToggle}
-                className="theme-toggle h-8 w-8 p-0 relative"
-              >
-                {theme === 'light' ? (
-                  <Sun className="h-4 w-4 text-yellow-500" />
-                ) : (
-                  <Moon className="h-4 w-4 text-blue-400" />
-                )}
-                {showThemeSuccess && (
-                  <div className="absolute -top-1 -right-1">
-                    <Check className="h-3 w-3 text-green-500 animate-in fade-in-0 duration-300" />
-                  </div>
-                )}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{t('tooltip.theme_toggle')}</p>
-              <p className="text-xs opacity-70">
-                {theme === 'light' ? t('settings.dark_mode') : t('settings.light_mode')}
-              </p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
-
-        {/* Language Dropdown */}
-        <DropdownMenu>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  className="language-indicator h-8 px-2 gap-1 bg-muted/50 hover:bg-muted relative"
-                >
-                  <span className="text-sm">{currentLanguage?.flag}</span>
-                  <span className="text-xs font-medium">{currentLanguage?.short}</span>
-                  <Globe className="h-3 w-3 opacity-70" />
-                  {showLanguageSuccess && (
-                    <div className="absolute -top-1 -right-1">
-                      <Check className="h-3 w-3 text-green-500 animate-in fade-in-0 duration-300" />
-                    </div>
-                  )}
-                </Button>
-              </DropdownMenuTrigger>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>{t('tooltip.language_toggle')}</p>
-              <p className="text-xs opacity-70">
-                Current: {currentLanguage?.label}
-              </p>
-            </TooltipContent>
-          </Tooltip>
-          <DropdownMenuContent align="end" className="w-40">
-            <DropdownMenuLabel className="text-xs">
-              {t('settings.language')}
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            {languageOptions.map((option) => (
-              <DropdownMenuItem
-                key={option.value}
-                onClick={() => handleLanguageChange(option.value as Language)}
-                className="flex items-center justify-between cursor-pointer"
-              >
-                <div className="flex items-center gap-2">
-                  <span>{option.flag}</span>
-                  <span className="text-sm">{option.label}</span>
-                </div>
-                {language === option.value && (
-                  <Check className="h-3 w-3 text-primary" />
-                )}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </TooltipProvider>
-  )
-}
-
-// Alternative compact inline version
-export function InlineThemeLanguageControls() {
-  const { theme, language, setTheme, setLanguage } = useTheme()
-
-  const handleThemeChange = (checked: boolean) => {
-    setTheme(checked ? 'dark' : 'light')
-  }
-
-  const handleLanguageChange = (newLanguage: Language) => {
-    setLanguage(newLanguage)
-  }
-
-  const languageOptions = [
-    { value: 'en', flag: '🇺🇸', label: 'EN' },
-    { value: 'pt', flag: '🇧🇷', label: 'PT' },
-    { value: 'es', flag: '🇪🇸', label: 'ES' }
-  ]
+  const handleColorThemeToggle = () => {
+    const themes = ["ocean", "nature", "accessibility"] as const;
+    const currentIndex = themes.indexOf(colorTheme);
+    const nextIndex = (currentIndex + 1) % themes.length;
+    setColorTheme(themes[nextIndex]);
+  };
 
   return (
-    <div className="flex items-center gap-4 p-2 bg-muted/30 rounded-lg">
-      {/* Theme Switch */}
-      <div className="flex items-center gap-2">
-        <Sun className="h-3 w-3 text-yellow-500" />
-        <Switch
-          checked={theme === 'dark'}
-          onCheckedChange={handleThemeChange}
-          className="scale-75 data-[state=checked]:bg-primary"
-        />
-        <Moon className="h-3 w-3 text-blue-400" />
-      </div>
+    <div className="flex items-center gap-2">
+      {/* Color Theme Toggle */}
+      <button
+        onClick={handleColorThemeToggle}
+        className="flex items-center justify-center w-8 h-8 rounded-md border border-gray-300 hover:border-gray-400 transition-colors bg-white/80 hover:bg-white/90 backdrop-blur-sm"
+        title={`Current theme: ${colorTheme}`}
+      >
+        <span className="text-lg">{getColorThemeIcon()}</span>
+      </button>
 
-      <div className="h-4 w-px bg-border" />
+      {/* Dark/Light Mode Toggle */}
+      <button
+        onClick={toggleTheme}
+        className="flex items-center justify-center w-8 h-8 rounded-md border border-gray-300 hover:border-gray-400 transition-colors bg-white/80 hover:bg-white/90 backdrop-blur-sm"
+        title={`Current mode: ${theme}`}
+      >
+        <span className="text-lg">{getThemeIcon()}</span>
+      </button>
 
-      {/* Language Buttons */}
-      <div className="flex items-center gap-1">
-        {languageOptions.map((option) => (
-          <Button
-            key={option.value}
-            variant={language === option.value ? "default" : "ghost"}
-            size="sm"
-            onClick={() => handleLanguageChange(option.value as Language)}
-            className="h-6 px-2 text-xs"
-          >
-            <span className="mr-1">{option.flag}</span>
-            {option.label}
-          </Button>
-        ))}
-      </div>
+      {/* Language Toggle */}
+      <button
+        onClick={handleLanguageToggle}
+        className="flex items-center justify-center w-8 h-8 rounded-md border border-gray-300 hover:border-gray-400 transition-colors bg-white/80 hover:bg-white/90 backdrop-blur-sm"
+        title={`Current language: ${language}`}
+      >
+        <span className="text-lg">{getLanguageIcon()}</span>
+      </button>
     </div>
-  )
+  );
 }

@@ -53,7 +53,13 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    /* Removemos bg-background para permitir que os temas funcionem */
+  }
+
+  /* Background padrão quando nenhum tema está aplicado */
+  body:not(.theme-bg-ocean):not(.theme-bg-nature):not(.theme-bg-accessibility) {
+    @apply bg-background;
   }
 }
 
@@ -67,7 +73,8 @@
 }
 
 .card-shadow-lg {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 /* Scroll bar styling */
@@ -123,7 +130,8 @@
 
 /* Pulse animation */
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -133,4 +141,244 @@
 
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Color Theme Animations */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes oceanWave {
+  0% {
+    background-position: 0% 50%, 100% 50%, 50% 0%, 0% 100%;
+  }
+  25% {
+    background-position: 25% 75%, 75% 25%, 75% 25%, 25% 75%;
+  }
+  50% {
+    background-position: 50% 100%, 50% 0%, 100% 50%, 50% 50%;
+  }
+  75% {
+    background-position: 75% 25%, 25% 75%, 25% 75%, 75% 25%;
+  }
+  100% {
+    background-position: 100% 50%, 0% 50%, 0% 100%, 100% 0%;
+  }
+}
+
+.gradient-shift {
+  animation: gradientShift 3s ease infinite;
+}
+
+.ocean-wave {
+  animation: oceanWave 8s ease-in-out infinite;
+}
+
+/* Theme Background Styles - Applied to wrapper div */
+.theme-bg-ocean {
+  background: 
+    /* Geometric shapes overlay with ocean wave animation */ radial-gradient(
+      circle at 20% 80%,
+      rgba(60, 197, 208, 0.3) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(124, 157, 160, 0.4) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 40% 40%,
+      rgba(201, 216, 208, 0.2) 0%,
+      transparent 50%
+    ),
+    /* Main ocean gradient inspired by the image */
+      linear-gradient(
+        135deg,
+        #3ac5d0 0%,
+        /* Tiffany Blue */ #7c9da0 25%,
+        /* Slate */ #c9d8d0 50%,
+        /* Pewter */ #2187b0 75%,
+        /* Blue Grotto */ #3ac5d0 100% /* Back to Tiffany Blue */
+      ) !important;
+  background-size: 200% 200%, 300% 300%, 250% 250%, 400% 400% !important;
+  background-attachment: fixed !important;
+  position: relative !important;
+  animation: oceanWave 12s ease-in-out infinite !important;
+  min-height: 100vh !important;
+}
+
+.theme-bg-ocean::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    /* Subtle geometric pattern inspired by the window frame */ linear-gradient(
+      45deg,
+      transparent 48%,
+      rgba(255, 255, 255, 0.1) 49%,
+      rgba(255, 255, 255, 0.1) 51%,
+      transparent 52%
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 48%,
+      rgba(255, 255, 255, 0.05) 49%,
+      rgba(255, 255, 255, 0.05) 51%,
+      transparent 52%
+    ),
+    radial-gradient(
+      circle at 15% 30%,
+      rgba(255, 255, 255, 0.1) 2px,
+      transparent 2px
+    ),
+    radial-gradient(
+      circle at 85% 70%,
+      rgba(255, 255, 255, 0.1) 1px,
+      transparent 1px
+    );
+  background-size: 120px 120px, 120px 120px, 100px 100px, 150px 150px;
+  pointer-events: none;
+  opacity: 0.4;
+  z-index: -1;
+}
+
+.theme-bg-nature {
+  background: linear-gradient(
+    135deg,
+    #f7fee7 0%,
+    #ecfccb 50%,
+    #d9f99d 100%
+  ) !important;
+  min-height: 100vh !important;
+}
+
+.theme-bg-accessibility {
+  background: linear-gradient(
+    135deg,
+    #f8fafc 0%,
+    #f1f5f9 50%,
+    #e2e8f0 100%
+  ) !important;
+  min-height: 100vh !important;
+}
+
+/* Dark theme variants */
+.dark .theme-bg-ocean {
+  background: 
+    /* Darker geometric shapes overlay with ocean wave animation */ radial-gradient(
+      circle at 20% 80%,
+      rgba(33, 135, 176, 0.5) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 20%,
+      rgba(58, 197, 208, 0.4) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 40% 40%,
+      rgba(124, 157, 160, 0.3) 0%,
+      transparent 50%
+    ),
+    /* Dark ocean gradient with deeper blues */
+      linear-gradient(
+        135deg,
+        #1a6d8e 0%,
+        /* Darker Blue Grotto */ #2187b0 20%,
+        /* Blue Grotto */ #16607d 40%,
+        /* Deep Slate */ #7c9da0 60%,
+        /* Slate */ #32b3bd 80%,
+        /* Darker Tiffany Blue */ #1a6d8e 100% /* Back to darker blue */
+      ) !important;
+  background-size: 200% 200%, 300% 300%, 250% 250%, 400% 400% !important;
+  background-attachment: fixed !important;
+  animation: oceanWave 12s ease-in-out infinite !important;
+}
+
+.dark .theme-bg-ocean::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    /* Geometric patterns for dark theme */ linear-gradient(
+      45deg,
+      transparent 48%,
+      rgba(255, 255, 255, 0.05) 49%,
+      rgba(255, 255, 255, 0.05) 51%,
+      transparent 52%
+    ),
+    linear-gradient(
+      -45deg,
+      transparent 48%,
+      rgba(255, 255, 255, 0.03) 49%,
+      rgba(255, 255, 255, 0.03) 51%,
+      transparent 52%
+    ),
+    radial-gradient(
+      circle at 15% 30%,
+      rgba(255, 255, 255, 0.1) 1px,
+      transparent 1px
+    ),
+    radial-gradient(
+      circle at 85% 70%,
+      rgba(255, 255, 255, 0.05) 2px,
+      transparent 2px
+    );
+  background-size: 120px 120px, 120px 120px, 100px 100px, 150px 150px;
+  pointer-events: none;
+  opacity: 0.3;
+  z-index: -1;
+}
+
+.dark .theme-bg-nature {
+  background: linear-gradient(
+    135deg,
+    #365314 0%,
+    #4d7c0f 50%,
+    #65a30d 100%
+  ) !important;
+  min-height: 100vh !important;
+}
+
+.dark .theme-bg-accessibility {
+  background: linear-gradient(
+    135deg,
+    #1e293b 0%,
+    #334155 50%,
+    #475569 100%
+  ) !important;
+  min-height: 100vh !important;
+}
+
+/* Subtle accent backgrounds for cards */
+.theme-accent-bg {
+  background: linear-gradient(
+    135deg,
+    var(--theme-accent-light, #f0f9ff) 0%,
+    rgba(255, 255, 255, 0.5) 100%
+  );
+  border-left: 4px solid var(--theme-accent-color, #0ea5e9);
+}
+
+.dark .theme-accent-bg {
+  background: linear-gradient(
+    135deg,
+    var(--theme-accent-dark, #0c4a6e) 0%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
 }
