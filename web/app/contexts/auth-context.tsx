@@ -1,161 +1,164 @@
-'use client'
+"use client";
 
-import React, { createContext, useContext, useState, useEffect } from 'react'
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface User {
-  id: string
-  username: string
-  role: 'therapist' | 'patient' | 'admin'
-  name: string
-  email?: string
-  sessionTimeout?: number
+  id: string;
+  username: string;
+  role: "therapist" | "patient" | "admin";
+  name: string;
+  email?: string;
+  sessionTimeout?: number;
   profile?: {
-    avatar?: string
-    specialization?: string
-    license?: string
-    phone?: string
-    emergencyContact?: string
-  }
+    avatar?: string;
+    specialization?: string;
+    license?: string;
+    phone?: string;
+    emergencyContact?: string;
+  };
 }
 
 export interface AuthContextType {
-  user: User | null
-  isAuthenticated: boolean
-  login: (username: string, password: string) => Promise<boolean>
-  logout: () => void
-  updateLastActivity: () => void
-  lastActivity: Date | null
+  user: User | null;
+  isAuthenticated: boolean;
+  login: (username: string, password: string) => Promise<boolean>;
+  logout: () => void;
+  updateLastActivity: () => void;
+  lastActivity: Date | null;
 }
 
-const AuthContext = createContext<AuthContextType | null>(null)
+const AuthContext = createContext<AuthContextType | null>(null);
 
 // Mock users for demonstration
 const mockUsers: Record<string, { password: string; user: User }> = {
-  'dr.smith': {
-    password: 'demo123',
+  "dr.smith": {
+    password: "demo123",
     user: {
-      id: 'user-001',
-      username: 'dr.smith',
-      role: 'therapist',
-      name: 'Dr. Ego Smith',
-      email: 'dr.smith@therapyengage.com',
+      id: "user-001",
+      username: "dr.smith",
+      role: "therapist",
+      name: "Dr. Ego Smith",
+      email: "dr.smith@therapyengage.com",
       sessionTimeout: 30, // 30 minutes for therapists
       profile: {
-        specialization: 'Cognitive Behavioral Therapy',
-        license: 'PSY-12345',
-        phone: '+1 (555) 123-4567'
-      }
-    }
+        specialization: "Cognitive Behavioral Therapy",
+        license: "PSY-12345",
+        phone: "+1 (555) 123-4567",
+      },
+    },
   },
-  'rodrigo': {
-    password: 'demo123',
+  rodrigo: {
+    password: "demo123",
     user: {
-      id: 'user-002',
-      username: 'rodrigo',
-      role: 'patient',
-      name: 'Rodrigo Marques',
-      email: 'rodrigo@email.com',
+      id: "user-002",
+      username: "rodrigo",
+      role: "patient",
+      name: "Rodrigo Marques",
+      email: "rodrigo@email.com",
       sessionTimeout: 60, // 60 minutes for patients
       profile: {
-        phone: '+55 11 99999-1234',
-        emergencyContact: '+55 11 99999-5678'
-      }
-    }
+        phone: "+55 11 99999-1234",
+        emergencyContact: "+55 11 99999-5678",
+      },
+    },
   },
-  'admin': {
-    password: 'admin123',
+  admin: {
+    password: "admin123",
     user: {
-      id: 'user-admin',
-      username: 'admin',
-      role: 'admin',
-      name: 'System Administrator',
-      email: 'admin@therapyengage.com',
-      sessionTimeout: 45 // 45 minutes for admin
-    }
-  }
-}
+      id: "user-admin",
+      username: "admin",
+      role: "admin",
+      name: "System Administrator",
+      email: "admin@therapyengage.com",
+      sessionTimeout: 45, // 45 minutes for admin
+    },
+  },
+};
 
 interface AuthProviderProps {
-  children: React.ReactNode
+  children: React.ReactNode;
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(null)
-  const [lastActivity, setLastActivity] = useState<Date | null>(null)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [user, setUser] = useState<User | null>(null);
+  const [lastActivity, setLastActivity] = useState<Date | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   // Load user from localStorage on mount
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const storedUser = localStorage.getItem('therapy-user')
-      const storedActivity = localStorage.getItem('therapy-last-activity')
-      
+    if (typeof window !== "undefined") {
+      const storedUser = localStorage.getItem("therapy-user");
+      const storedActivity = localStorage.getItem("therapy-last-activity");
+
       if (storedUser) {
         try {
-          const userData = JSON.parse(storedUser)
-          setUser(userData)
-          setIsAuthenticated(true)
+          const userData = JSON.parse(storedUser);
+          setUser(userData);
+          setIsAuthenticated(true);
         } catch (error) {
-          console.error('Error parsing stored user:', error)
-          localStorage.removeItem('therapy-user')
+          console.error("Error parsing stored user:", error);
+          localStorage.removeItem("therapy-user");
         }
       }
-      
+
       if (storedActivity) {
         try {
-          setLastActivity(new Date(storedActivity))
+          setLastActivity(new Date(storedActivity));
         } catch (error) {
-          console.error('Error parsing stored activity:', error)
-          localStorage.removeItem('therapy-last-activity')
+          console.error("Error parsing stored activity:", error);
+          localStorage.removeItem("therapy-last-activity");
         }
       }
     }
-  }, [])
+  }, []);
 
-  const login = async (username: string, password: string): Promise<boolean> => {
+  const login = async (
+    username: string,
+    password: string
+  ): Promise<boolean> => {
     // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
-    const userData = mockUsers[username.toLowerCase()]
-    
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    const userData = mockUsers[username.toLowerCase()];
+
     if (userData && userData.password === password) {
-      const authenticatedUser = userData.user
-      setUser(authenticatedUser)
-      setIsAuthenticated(true)
-      updateLastActivity()
-      
+      const authenticatedUser = userData.user;
+      setUser(authenticatedUser);
+      setIsAuthenticated(true);
+      updateLastActivity();
+
       // Store in localStorage
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('therapy-user', JSON.stringify(authenticatedUser))
+      if (typeof window !== "undefined") {
+        localStorage.setItem("therapy-user", JSON.stringify(authenticatedUser));
       }
-      
-      return true
+
+      return true;
     }
-    
-    return false
-  }
+
+    return false;
+  };
 
   const logout = () => {
-    setUser(null)
-    setIsAuthenticated(false)
-    setLastActivity(null)
-    
+    setUser(null);
+    setIsAuthenticated(false);
+    setLastActivity(null);
+
     // Clear localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('therapy-user')
-      localStorage.removeItem('therapy-last-activity')
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("therapy-user");
+      localStorage.removeItem("therapy-last-activity");
     }
-  }
+  };
 
   const updateLastActivity = () => {
-    const now = new Date()
-    setLastActivity(now)
-    
+    const now = new Date();
+    setLastActivity(now);
+
     // Store in localStorage
-    if (typeof window !== 'undefined') {
-      localStorage.setItem('therapy-last-activity', now.toISOString())
+    if (typeof window !== "undefined") {
+      localStorage.setItem("therapy-last-activity", now.toISOString());
     }
-  }
+  };
 
   const value: AuthContextType = {
     user,
@@ -163,22 +166,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     login,
     logout,
     updateLastActivity,
-    lastActivity
-  }
+    lastActivity,
+  };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
-  const context = useContext(AuthContext)
+  const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider')
+    throw new Error("useAuth must be used within an AuthProvider");
   }
-  return context
+  return context;
 }
 
-export { AuthContext }
+export { AuthContext };

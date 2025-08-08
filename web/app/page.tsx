@@ -2,8 +2,8 @@
 
 import { LogOut } from "lucide-react";
 import { useState } from "react";
-import { DebugThemeLanguageToggle } from "../components/settings/debug-theme-language-toggle";
 import TherapistSidebar from "../components/layout/therapist-sidebar";
+import { DebugThemeLanguageToggle } from "../components/settings/debug-theme-language-toggle";
 import { useLogoutConfirmation } from "../hooks/use-logout-confirmation";
 import { useTheme } from "../hooks/use-theme";
 import { useAuth } from "./contexts/auth-context";
@@ -423,16 +423,16 @@ function TherapistDashboard() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex">
       {/* Sidebar */}
       <TherapistSidebar />
-      
+
       {/* Main Content Area */}
-      <div className="flex-1 lg:ml-64">
-        {/* Header */}
-        <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow border-b lg:hidden">
-          <div className="px-4 sm:px-6">
+      <div className="flex-1 ml-0 lg:ml-64">
+        {/* Header - Always visible */}
+        <div className="bg-card/80 backdrop-blur shadow border-b">
+          <div className="px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16">
-              <div className="flex items-center space-x-4">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">TE</span>
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">TE</span>
                 </div>
                 <h1 className="text-xl font-semibold text-foreground">
                   {t("dashboard.therapist.title")}
@@ -440,7 +440,7 @@ function TherapistDashboard() {
               </div>
               <div className="flex items-center space-x-4">
                 <span className="text-sm text-muted-foreground">
-                  {t("dashboard.welcome")}, {user?.name}
+                  {t("dashboard.welcome")}, Dr. {user?.name}
                 </span>
                 <DebugThemeLanguageToggle />
                 <button
@@ -477,7 +477,7 @@ function TherapistDashboard() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-foreground">
-                    Pacientes Ativos
+                    {t("cards.active_patients")}
                   </h3>
                   <p className="text-2xl font-bold text-foreground">42</p>
                   <p className="text-sm text-green-600">+3 este mês</p>
@@ -493,11 +493,11 @@ function TherapistDashboard() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-foreground">
-                    Sessões Hoje
+                    {t("cards.sessions_today")}
                   </h3>
                   <p className="text-2xl font-bold text-foreground">4</p>
                   <p className="text-sm text-muted-foreground">
-                    de 6 agendadas
+                    {t("cards.of")} 6 {t("cards.scheduled")}
                   </p>
                 </div>
               </div>
@@ -511,7 +511,7 @@ function TherapistDashboard() {
                 </div>
                 <div>
                   <h3 className="font-semibold text-foreground">
-                    Taxa de Melhoria
+                    {t("cards.success_rate")}
                   </h3>
                   <p className="text-2xl font-bold text-foreground">85%</p>
                   <p className="text-sm text-green-600">+5% vs mês passado</p>
@@ -542,7 +542,7 @@ function TherapistDashboard() {
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border overflow-hidden">
               <div className="p-6 border-b border-border">
                 <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                  📅 Próximas Sessões de Hoje
+                  📅 {t("cards.upcoming_sessions")}
                 </h3>
               </div>
               <div className="p-6 space-y-4">
@@ -553,14 +553,14 @@ function TherapistDashboard() {
                         Maria Silva
                       </h4>
                       <p className="text-sm text-muted-foreground">
-                        🕐 09:00 - 09:50 • Terapia Individual
+                        🕐 09:00 - 09:50 • {t("cards.individual_therapy")}
                       </p>
                       <p className="text-xs text-blue-600 dark:text-blue-400">
-                        Depressão • Sessão 8/12
+                        {t("cards.depression")} • {t("cards.session")} 8/12
                       </p>
                     </div>
                     <button className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-colors text-sm">
-                      Iniciar Sessão
+                      {t("cards.start_session")}
                     </button>
                   </div>
                 </div>
@@ -572,10 +572,10 @@ function TherapistDashboard() {
                         João Santos
                       </h4>
                       <p className="text-sm text-muted-foreground">
-                        🕐 11:00 - 11:50 • Terapia de Casal
+                        🕐 11:00 - 11:50 • {t("cards.family_therapy")}
                       </p>
                       <p className="text-xs text-green-600 dark:text-green-400">
-                        Relacionamento • Sessão 3/8
+                        Relacionamento • {t("cards.session")} 3/8
                       </p>
                     </div>
                     <span className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded-full text-xs font-medium">
@@ -591,10 +591,10 @@ function TherapistDashboard() {
                         Ana Costa
                       </h4>
                       <p className="text-sm text-muted-foreground">
-                        🕐 14:00 - 14:50 • Terapia Individual
+                        🕐 14:00 - 14:50 • {t("cards.individual_therapy")}
                       </p>
                       <p className="text-xs text-purple-600 dark:text-purple-400">
-                        Ansiedade • Sessão 5/10
+                        {t("cards.anxiety_therapy")} • {t("cards.session")} 5/10
                       </p>
                     </div>
                     <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-xs font-medium">
@@ -609,7 +609,7 @@ function TherapistDashboard() {
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border overflow-hidden">
               <div className="p-6 border-b border-border">
                 <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-                  🧠 Insights e Análises
+                  🧠 {t("cards.ai_insights")}
                 </h3>
               </div>
               <div className="p-6 space-y-4">

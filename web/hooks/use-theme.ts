@@ -134,8 +134,41 @@ const translations = {
     "tooltip.emergency": "Emergency contact options for critical situations",
 
     // Dashboard new elements
-    "dashboard.patient.subtitle": "How are you feeling today? Let's track your progress together.",
-    "dashboard.therapist.subtitle": "You have 4 sessions scheduled for today. Here's a summary of your activities.",
+    "dashboard.patient.subtitle":
+      "How are you feeling today? Let's track your progress together.",
+    "dashboard.therapist.subtitle":
+      "You have 4 sessions scheduled for today. Here's a summary of your activities.",
+
+    // Therapist Dashboard Cards
+    "cards.active_patients": "Active Patients",
+    "cards.sessions_today": "Sessions Today",
+    "cards.success_rate": "Success Rate",
+    "cards.monthly_revenue": "Monthly Revenue",
+    "cards.scheduled": "scheduled",
+    "cards.of": "of",
+    "cards.upcoming_sessions": "Upcoming Sessions",
+    "cards.ai_insights": "AI Insights",
+    "cards.quick_actions": "Quick Actions",
+    "cards.schedule_session": "Schedule Session",
+    "cards.view_reports": "View Reports",
+    "cards.send_message": "Send Message",
+    "cards.create_session_patient": "Create new session for patient",
+    "cards.analyze_patient_progress": "Analyze patient progress",
+    "cards.communicate_patients": "Communicate with patients",
+    "cards.patients_improvement": "Patients with improvement",
+    "cards.positive_trend": "Positive trend",
+    "cards.attention_needed": "Attention needed",
+    "cards.patients_showed_progress": "of your patients showed progress this week",
+    "cards.mood_improving": "General patient mood is improving",
+    "cards.patients_need_followup": "patients need extra follow-up",
+    "cards.individual_therapy": "Individual Therapy",
+    "cards.anxiety_therapy": "Anxiety Therapy",
+    "cards.family_therapy": "Family Therapy",
+    "cards.depression": "Depression",
+    "cards.session": "Session",
+    "cards.today": "Today",
+    "cards.tomorrow": "Tomorrow",
+    "cards.start_session": "Start Session",
   },
 
   pt: {
@@ -253,8 +286,41 @@ const translations = {
       "Opções de contato de emergência para situações críticas",
 
     // Dashboard new elements
-    "dashboard.patient.subtitle": "Como você está se sentindo hoje? Vamos acompanhar seu progresso juntos.",
-    "dashboard.therapist.subtitle": "Você tem 4 sessões agendadas para hoje. Aqui está um resumo das suas atividades.",
+    "dashboard.patient.subtitle":
+      "Como você está se sentindo hoje? Vamos acompanhar seu progresso juntos.",
+    "dashboard.therapist.subtitle":
+      "Você tem 4 sessões agendadas para hoje. Aqui está um resumo das suas atividades.",
+
+    // Therapist Dashboard Cards
+    "cards.active_patients": "Pacientes Ativos",
+    "cards.sessions_today": "Sessões Hoje",
+    "cards.success_rate": "Taxa de Sucesso",
+    "cards.monthly_revenue": "Receita Mensal",
+    "cards.scheduled": "agendadas",
+    "cards.of": "de",
+    "cards.upcoming_sessions": "Próximas Sessões",
+    "cards.ai_insights": "AI Insights",
+    "cards.quick_actions": "Ações Rápidas",
+    "cards.schedule_session": "Agendar Sessão",
+    "cards.view_reports": "Ver Relatórios",
+    "cards.send_message": "Enviar Mensagem",
+    "cards.create_session_patient": "Criar nova sessão para paciente",
+    "cards.analyze_patient_progress": "Analisar progresso dos pacientes",
+    "cards.communicate_patients": "Comunicar com pacientes",
+    "cards.patients_improvement": "Pacientes com melhoria",
+    "cards.positive_trend": "Tendência positiva",
+    "cards.attention_needed": "Atenção necessária",
+    "cards.patients_showed_progress": "dos seus pacientes mostraram progresso esta semana",
+    "cards.mood_improving": "Humor geral dos pacientes está melhorando",
+    "cards.patients_need_followup": "pacientes precisam de acompanhamento extra",
+    "cards.individual_therapy": "Terapia Individual",
+    "cards.anxiety_therapy": "Terapia de Ansiedade",
+    "cards.family_therapy": "Terapia Familiar",
+    "cards.depression": "Depressão",
+    "cards.session": "Sessão",
+    "cards.today": "Hoje",
+    "cards.tomorrow": "Amanhã",
+    "cards.start_session": "Iniciar Sessão",
   },
 
   es: {
@@ -373,8 +439,41 @@ const translations = {
       "Opciones de contacto de emergencia para situaciones críticas",
 
     // Dashboard new elements
-    "dashboard.patient.subtitle": "¿Cómo te sientes hoy? Vamos a hacer un seguimiento de tu progreso juntos.",
-    "dashboard.therapist.subtitle": "Tienes 4 sesiones programadas para hoy. Aquí tienes un resumen de tus actividades.",
+    "dashboard.patient.subtitle":
+      "¿Cómo te sientes hoy? Vamos a hacer un seguimiento de tu progreso juntos.",
+    "dashboard.therapist.subtitle":
+      "Tienes 4 sesiones programadas para hoy. Aquí tienes un resumen de tus actividades.",
+
+    // Therapist Dashboard Cards
+    "cards.active_patients": "Pacientes Activos",
+    "cards.sessions_today": "Sesiones Hoy",
+    "cards.success_rate": "Tasa de Éxito",
+    "cards.monthly_revenue": "Ingresos Mensuales",
+    "cards.scheduled": "programadas",
+    "cards.of": "de",
+    "cards.upcoming_sessions": "Próximas Sesiones",
+    "cards.ai_insights": "AI Insights",
+    "cards.quick_actions": "Acciones Rápidas",
+    "cards.schedule_session": "Programar Sesión",
+    "cards.view_reports": "Ver Informes",
+    "cards.send_message": "Enviar Mensaje",
+    "cards.create_session_patient": "Crear nueva sesión para paciente",
+    "cards.analyze_patient_progress": "Analizar progreso de pacientes",
+    "cards.communicate_patients": "Comunicar con pacientes",
+    "cards.patients_improvement": "Pacientes con mejora",
+    "cards.positive_trend": "Tendencia positiva",
+    "cards.attention_needed": "Atención necesaria",
+    "cards.patients_showed_progress": "de tus pacientes mostraron progreso esta semana",
+    "cards.mood_improving": "El estado de ánimo general de los pacientes está mejorando",
+    "cards.patients_need_followup": "pacientes necesitan seguimiento adicional",
+    "cards.individual_therapy": "Terapia Individual",
+    "cards.anxiety_therapy": "Terapia de Ansiedad",
+    "cards.family_therapy": "Terapia Familiar",
+    "cards.depression": "Depresión",
+    "cards.session": "Sesión",
+    "cards.today": "Hoy",
+    "cards.tomorrow": "Mañana",
+    "cards.start_session": "Iniciar Sesión",
   },
 } as const;
 

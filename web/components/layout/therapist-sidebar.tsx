@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
-import { 
-  LayoutDashboard, 
-  Users, 
-  Calendar, 
-  Brain, 
-  Settings, 
+import {
+  Brain,
+  Calendar,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  LayoutDashboard,
+  Settings,
+  Users,
 } from "lucide-react";
+import React, { useState } from "react";
 import { useTheme } from "../../hooks/use-theme";
 
 interface SidebarProps {
@@ -17,9 +17,9 @@ interface SidebarProps {
   onSectionChange?: (section: string) => void;
 }
 
-const TherapistSidebar: React.FC<SidebarProps> = ({ 
-  activeSection = "dashboard", 
-  onSectionChange 
+const TherapistSidebar: React.FC<SidebarProps> = ({
+  activeSection = "dashboard",
+  onSectionChange,
 }) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { t } = useTheme();
@@ -29,32 +29,32 @@ const TherapistSidebar: React.FC<SidebarProps> = ({
       id: "dashboard",
       icon: LayoutDashboard,
       label: t("nav.dashboard"),
-      translationKey: "nav.dashboard"
+      translationKey: "nav.dashboard",
     },
     {
       id: "clients",
       icon: Users,
       label: t("nav.patients"),
-      translationKey: "nav.patients"
+      translationKey: "nav.patients",
     },
     {
       id: "sessions",
       icon: Calendar,
       label: t("nav.sessions"),
-      translationKey: "nav.sessions"
+      translationKey: "nav.sessions",
     },
     {
       id: "insights",
       icon: Brain,
       label: t("nav.insights"),
-      translationKey: "nav.insights"
+      translationKey: "nav.insights",
     },
     {
       id: "settings",
       icon: Settings,
       label: t("nav.settings"),
-      translationKey: "nav.settings"
-    }
+      translationKey: "nav.settings",
+    },
   ];
 
   const handleSectionClick = (sectionId: string) => {
@@ -64,10 +64,11 @@ const TherapistSidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <div className={`${
-      isCollapsed ? "w-16" : "w-64"
-    } transition-all duration-300 bg-white dark:bg-gray-900 border-r border-border flex flex-col h-full`}>
-      
+    <div
+      className={`${
+        isCollapsed ? "w-16" : "w-64"
+      } transition-all duration-300 bg-white dark:bg-gray-900 border-r border-border flex flex-col h-full`}
+    >
       {/* Header with Logo and Collapse Button */}
       <div className="p-4 border-b border-border">
         <div className="flex items-center justify-between">
@@ -76,10 +77,12 @@ const TherapistSidebar: React.FC<SidebarProps> = ({
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full flex items-center justify-center">
                 <span className="text-white font-bold text-sm">TE</span>
               </div>
-              <span className="font-semibold text-foreground">Therapy Engage</span>
+              <span className="font-semibold text-foreground">
+                Therapy Engage
+              </span>
             </div>
           )}
-          
+
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
             className="p-1.5 rounded-lg hover:bg-secondary transition-colors"
@@ -100,13 +103,15 @@ const TherapistSidebar: React.FC<SidebarProps> = ({
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeSection === item.id;
-            
+
             return (
               <li key={item.id}>
                 <button
                   onClick={() => handleSectionClick(item.id)}
                   className={`w-full flex items-center ${
-                    isCollapsed ? "justify-center p-3" : "justify-start p-3 space-x-3"
+                    isCollapsed
+                      ? "justify-center p-3"
+                      : "justify-start p-3 space-x-3"
                   } rounded-lg transition-colors ${
                     isActive
                       ? "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300"
