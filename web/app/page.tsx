@@ -2,10 +2,6 @@
 
 import { Heart, LogOut } from "lucide-react";
 import { useState } from "react";
-import TherapistLayout from "../components/layout/therapist-layout";
-import { PatientVideoCallSelector } from "../components/session/PatientVideoCallSelector";
-import { SessionManager } from "../components/session/SessionManager";
-import { UpcomingSessions } from "../components/session/UpcomingSessions";
 import { DebugThemeLanguageToggle } from "../components/settings/debug-theme-language-toggle";
 import { useLogoutConfirmation } from "../hooks/use-logout-confirmation";
 import { useTheme } from "../hooks/use-theme";
@@ -118,6 +114,18 @@ function LoginPage() {
             Clear Storage & Reload (Debug)
           </button>
         </div>
+
+        {/* Platform Information */}
+        <div className="mt-8 text-center border-t border-border pt-6">
+          <div className="space-y-1">
+            <h3 className="text-lg font-semibold text-foreground">
+              Therapy Engage Platform v2.0
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              Customer Engagement & AI – NCI MSc Project
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -129,55 +137,16 @@ function PatientDashboard() {
   const { requestLogout, LogoutConfirmationDialog } = useLogoutConfirmation();
   const { t } = useTheme();
 
-  // Demo data for patient's upcoming sessions
-  const patientSessions = [
-    {
-      id: "session-patient-001",
-      therapistName: "Dr. Sarah Johnson",
-      date: "2025-01-15T14:00:00Z",
-      type: "Follow-up Session",
-      duration: 50,
-      status: "scheduled",
-      isVideoSession: true,
-    },
-    {
-      id: "session-patient-002",
-      therapistName: "Dr. Sarah Johnson",
-      date: "2025-01-22T14:00:00Z",
-      type: "CBT Session",
-      duration: 45,
-      status: "scheduled",
-      isVideoSession: false,
-    },
-  ];
-
-  const formatSessionTime = (dateString: string) => {
-    const date = new Date(dateString);
-    const today = new Date();
-    const isToday = date.toDateString() === today.toDateString();
-
-    if (isToday) {
-      return `Today at ${date.toLocaleTimeString("en-US", {
-        hour: "2-digit",
-        minute: "2-digit",
-      })}`;
-    }
-
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  };
-
   return (
-    <div className="min-h-screen bg-background">
-      <div className="bg-card shadow border-b">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+      {/* Header */}
+      <div className="bg-card/80 backdrop-blur shadow border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex items-center">
+            <div className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-sm">TE</span>
+              </div>
               <h1 className="text-xl font-semibold text-foreground">
                 {t("dashboard.patient.title")}
               </h1>
@@ -198,117 +167,241 @@ function PatientDashboard() {
           </div>
         </div>
       </div>
+      {/* Main Content */}
       <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="px-4 py-6 sm:px-0">
-          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-            {/* Upcoming Sessions */}
-            <div className="bg-card overflow-hidden shadow rounded-lg border">
-              <div className="p-6">
-                <h3 className="text-lg font-medium text-foreground mb-4">
-                  {t("dashboard.sessions.upcoming")}
-                </h3>
-                <div className="space-y-4">
-                  {patientSessions.map((session) => (
-                    <div key={session.id} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h4 className="font-semibold">
-                            {session.therapistName}
-                          </h4>
-                          <p className="text-sm text-muted-foreground">
-                            {session.type} • {session.duration} minutes
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {formatSessionTime(session.date)}
-                          </p>
-                          <div className="flex items-center gap-2 mt-2">
-                            <span
-                              className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                session.isVideoSession
-                                  ? "bg-green-100 text-green-800"
-                                  : "bg-blue-100 text-blue-800"
-                              }`}
-                            >
-                              {session.isVideoSession
-                                ? "Video Session"
-                                : "In-Person"}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex flex-col gap-2">
-                          {session.isVideoSession && (
-                            <button className="bg-green-500 text-white px-3 py-1 rounded text-sm hover:bg-green-600">
-                              Join Video
-                            </button>
-                          )}
-                          <button className="bg-secondary text-secondary-foreground px-3 py-1 rounded text-sm hover:bg-secondary/80">
-                            Reschedule
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+          {/* Welcome Message */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              Bem-vindo de volta, {user?.name}! 👋
+            </h1>
+            <p className="text-muted-foreground">
+              Como você está se sentindo hoje? Vamos acompanhar seu progresso
+              juntos.
+            </p>
+          </div>
 
-                  {patientSessions.length === 0 && (
-                    <div className="text-center py-8 text-muted-foreground">
-                      No upcoming sessions scheduled
-                    </div>
-                  )}
+          {/* Quick Status Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            {/* Como estou hoje */}
+            <div className="bg-card rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">😊</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">
+                    Como estou hoje?
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Registre seu humor e sentimentos
+                  </p>
                 </div>
               </div>
             </div>
 
-            {/* Quick Actions & Progress */}
-            <div className="bg-card overflow-hidden shadow rounded-lg border">
-              <div className="p-6">
-                <h3 className="text-lg font-medium text-foreground mb-4">
-                  {t("dashboard.sessions.progress")}
+            {/* Próxima Sessão */}
+            <div className="bg-card rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">📅</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">
+                    Próxima Sessão
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    2025-08-06 às 14:00
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Objetivos */}
+            <div className="bg-card rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">🎯</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Objetivos</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Acompanhe seu progresso
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Humor Médio */}
+            <div className="bg-card rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-pink-600 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">❤️</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Humor Médio</h3>
+                  <p className="text-sm text-muted-foreground">
+                    3.6/5.0 (últimos 5 dias)
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Histórico de Humor */}
+            <div className="bg-card rounded-xl shadow-lg border overflow-hidden">
+              <div className="p-6 border-b border-border">
+                <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                  ❤️ Histórico de Humor
                 </h3>
-
-                <div className="space-y-4">
-                  <div className="bg-blue-50 rounded-lg p-4">
-                    <h4 className="font-medium text-blue-900">
-                      Sessions Completed
-                    </h4>
-                    <p className="text-2xl font-bold text-blue-600">8 / 12</p>
-                    <div className="w-full bg-blue-200 rounded-full h-2 mt-2">
-                      <div className="bg-blue-600 h-2 rounded-full w-2/3"></div>
+              </div>
+              <div className="p-6 space-y-4">
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg border border-green-200 dark:border-green-800">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-2xl">😊</span>
+                    <div>
+                      <div className="font-medium text-foreground">
+                        05/08/2025
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Sessão muito produtiva hoje
+                      </div>
+                      <div className="text-xs text-green-600 dark:text-green-400">
+                        Excelente progresso!
+                      </div>
                     </div>
                   </div>
-
-                  <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
-                    <h4 className="font-medium text-green-900 dark:text-green-100">
-                      {t("dashboard.mood.progress")}
-                    </h4>
-                    <p className="text-sm text-green-700 dark:text-green-300">
-                      {t("dashboard.mood.improvement")}
-                    </p>
-                    <div className="flex items-center gap-1 mt-2">
-                      <span className="text-green-600 dark:text-green-400">
-                        📈
-                      </span>
-                      <span className="text-sm text-green-600 dark:text-green-400">
-                        {t("dashboard.mood.trending")}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <h4 className="font-medium text-foreground">
-                      {t("dashboard.actions.quick")}
-                    </h4>
-                    <button className="w-full bg-primary text-primary-foreground py-2 rounded hover:bg-primary/90">
-                      {t("dashboard.sessions.schedule")}
-                    </button>
-                    <button className="w-full bg-secondary text-secondary-foreground py-2 rounded hover:bg-secondary/80">
-                      {t("dashboard.sessions.message")}
-                    </button>
+                  <div className="text-right">
+                    <div className="font-bold text-foreground">4/5</div>
                   </div>
                 </div>
 
-                <p className="text-sm text-muted-foreground mt-4">
-                  {t("dashboard.timeout")}: {user?.sessionTimeout || 60} minutes
-                </p>
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-yellow-50 to-yellow-100 dark:from-yellow-900/20 dark:to-yellow-800/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-2xl">😐</span>
+                    <div>
+                      <div className="font-medium text-foreground">
+                        02/08/2025
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        Dia difícil
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-bold text-foreground">2/5</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg border border-green-200 dark:border-green-800">
+                  <div className="flex items-center space-x-3">
+                    <span className="text-2xl">😊</span>
+                    <div>
+                      <div className="font-medium text-foreground">
+                        01/08/2025
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="font-bold text-foreground">4/5</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Próximas Sessões */}
+            <div className="bg-card rounded-xl shadow-lg border overflow-hidden">
+              <div className="p-6 border-b border-border">
+                <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                  📅 Próximas Sessões
+                </h3>
+              </div>
+              <div className="p-6 space-y-4">
+                <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <h4 className="font-semibold text-foreground">
+                        Dr. Zé Deleta
+                      </h4>
+                      <p className="text-sm text-muted-foreground">
+                        📅 06/08/2025 🕐 14:00 • Individual
+                      </p>
+                    </div>
+                    <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-xs font-medium">
+                      Agendado
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Recursos de Apoio */}
+          <div className="mt-8">
+            <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+              📚 Recursos de Apoio
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Exercícios de Relaxamento */}
+              <div className="bg-card rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow cursor-pointer">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl">🧘</span>
+                  </div>
+                  <h4 className="font-semibold text-foreground mb-2">
+                    Exercícios de Relaxamento
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Técnicas de respiração e mindfulness para momentos difíceis
+                  </p>
+                </div>
+              </div>
+
+              {/* Metas de Progresso */}
+              <div className="bg-card rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow cursor-pointer">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gradient-to-r from-pink-500 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl">🎯</span>
+                  </div>
+                  <h4 className="font-semibold text-foreground mb-2">
+                    Metas de Progresso
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Acompanhe objetivos definidos com seu terapeuta
+                  </p>
+                </div>
+              </div>
+
+              {/* Diário de Reflexões */}
+              <div className="bg-card rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow cursor-pointer">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gradient-to-r from-teal-500 to-teal-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl">📝</span>
+                  </div>
+                  <h4 className="font-semibold text-foreground mb-2">
+                    Diário de Reflexões
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Espaço privado para seus pensamentos e insights
+                  </p>
+                </div>
+              </div>
+
+              {/* Contatos de Emergência */}
+              <div className="bg-card rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow cursor-pointer bg-gradient-to-r from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 border-red-200 dark:border-red-800">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl">🚨</span>
+                  </div>
+                  <h4 className="font-semibold text-red-800 dark:text-red-200 mb-2">
+                    Contatos de Emergência
+                  </h4>
+                  <p className="text-sm text-red-700 dark:text-red-300">
+                    Números importantes para momentos de crise
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -324,87 +417,329 @@ function PatientDashboard() {
 function TherapistDashboard() {
   const { user } = useAuth();
   const { requestLogout, LogoutConfirmationDialog } = useLogoutConfirmation();
-  const { t } = useTheme();
-  const [activeTab, setActiveTab] = useState<"sessions" | "upcoming" | "video">(
-    "sessions"
-  );
 
   return (
-    <TherapistLayout
-      currentUser={{
-        name: user?.name || "Dr. Professional",
-        role: "Licensed Therapist",
-      }}
-      notifications={3}
-      onLogout={requestLogout}
-    >
-      <div className="space-y-6">
-        {/* Professional Dashboard Header */}
-        <div className="bg-card rounded-lg border p-6">
-          <h1 className="text-2xl font-bold text-foreground mb-2">
-            {t("dashboard.therapist.title")}
-          </h1>
-          <p className="text-muted-foreground">
-            Welcome back, {user?.name}. You have 4 sessions scheduled for today.
-          </p>
-        </div>
-
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          <div className="px-4 py-6 sm:px-0">
-            {/* Tab Navigation */}
-            <div className="mb-6">
-              <nav className="flex space-x-8">
-                <button
-                  onClick={() => setActiveTab("sessions")}
-                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                    activeTab === "sessions"
-                      ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Session Management
-                </button>
-                <button
-                  onClick={() => setActiveTab("upcoming")}
-                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                    activeTab === "upcoming"
-                      ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Upcoming Sessions
-                </button>
-                <button
-                  onClick={() => setActiveTab("video")}
-                  className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                    activeTab === "video"
-                      ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  Video Calls
-                </button>
-              </nav>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
+      {/* Header */}
+      <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center space-x-4">
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-lg">T</span>
+              </div>
+              <h1 className="text-xl font-semibold text-foreground">
+                Dashboard do Terapeuta
+              </h1>
             </div>
-
-            {/* Tab Content */}
-            <div className="space-y-6">
-              {activeTab === "sessions" && <SessionManager />}
-
-              {activeTab === "upcoming" && <UpcomingSessions />}
-
-              {activeTab === "video" && <PatientVideoCallSelector />}
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-muted-foreground">
+                Olá, {user?.name}
+              </span>
+              <DebugThemeLanguageToggle />
+              <button
+                onClick={requestLogout}
+                className="text-sm text-primary hover:text-primary/80 flex items-center gap-1"
+                title="Logout"
+              >
+                <LogOut className="h-4 w-4" />
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Logout Confirmation Modal */}
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="px-4 py-6 sm:px-0">
+          {/* Welcome Message */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              Bem-vindo de volta, Dr. {user?.name}! 👩‍⚕️
+            </h1>
+            <p className="text-muted-foreground">
+              Você tem 4 sessões agendadas para hoje. Aqui está um resumo das
+              suas atividades.
+            </p>
+          </div>
+
+          {/* Statistics Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            {/* Pacientes Ativos */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">👥</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">
+                    Pacientes Ativos
+                  </h3>
+                  <p className="text-2xl font-bold text-foreground">42</p>
+                  <p className="text-sm text-green-600">+3 este mês</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Sessões Hoje */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">📅</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">
+                    Sessões Hoje
+                  </h3>
+                  <p className="text-2xl font-bold text-foreground">4</p>
+                  <p className="text-sm text-muted-foreground">
+                    de 6 agendadas
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Taxa de Melhoria */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">📈</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">
+                    Taxa de Melhoria
+                  </h3>
+                  <p className="text-2xl font-bold text-foreground">85%</p>
+                  <p className="text-sm text-green-600">+5% vs mês passado</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Satisfação */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-pink-600 rounded-full flex items-center justify-center">
+                  <span className="text-2xl">⭐</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-foreground">Satisfação</h3>
+                  <p className="text-2xl font-bold text-foreground">4.8/5</p>
+                  <p className="text-sm text-muted-foreground">
+                    Avaliação média
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Próximas Sessões */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border overflow-hidden">
+              <div className="p-6 border-b border-border">
+                <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                  📅 Próximas Sessões de Hoje
+                </h3>
+              </div>
+              <div className="p-6 space-y-4">
+                <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <h4 className="font-semibold text-foreground">
+                        Maria Silva
+                      </h4>
+                      <p className="text-sm text-muted-foreground">
+                        🕐 09:00 - 09:50 • Terapia Individual
+                      </p>
+                      <p className="text-xs text-blue-600 dark:text-blue-400">
+                        Depressão • Sessão 8/12
+                      </p>
+                    </div>
+                    <button className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-colors text-sm">
+                      Iniciar Sessão
+                    </button>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg border border-green-200 dark:border-green-800">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <h4 className="font-semibold text-foreground">
+                        João Santos
+                      </h4>
+                      <p className="text-sm text-muted-foreground">
+                        🕐 11:00 - 11:50 • Terapia de Casal
+                      </p>
+                      <p className="text-xs text-green-600 dark:text-green-400">
+                        Relacionamento • Sessão 3/8
+                      </p>
+                    </div>
+                    <span className="px-3 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded-full text-xs font-medium">
+                      Aguardando
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <h4 className="font-semibold text-foreground">
+                        Ana Costa
+                      </h4>
+                      <p className="text-sm text-muted-foreground">
+                        🕐 14:00 - 14:50 • Terapia Individual
+                      </p>
+                      <p className="text-xs text-purple-600 dark:text-purple-400">
+                        Ansiedade • Sessão 5/10
+                      </p>
+                    </div>
+                    <span className="px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-xs font-medium">
+                      Agendado
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Insights e Análises */}
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border overflow-hidden">
+              <div className="p-6 border-b border-border">
+                <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                  🧠 Insights e Análises
+                </h3>
+              </div>
+              <div className="p-6 space-y-4">
+                <div className="p-4 bg-gradient-to-r from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-800/20 rounded-lg border border-indigo-200 dark:border-indigo-800">
+                  <div className="flex items-start space-x-3">
+                    <span className="text-2xl">🤖</span>
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-2">
+                        IA Assistente
+                      </h4>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        Paciente Maria Silva mostra sinais de melhoria
+                        significativa. Considere reduzir frequência das sessões.
+                      </p>
+                      <span className="text-xs bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200 px-2 py-1 rounded">
+                        Recomendação de IA
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-gradient-to-r from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                  <div className="flex items-start space-x-3">
+                    <span className="text-2xl">⚠️</span>
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-2">
+                        Alerta de Atenção
+                      </h4>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        João Santos faltou na última sessão. Considere fazer
+                        contato.
+                      </p>
+                      <span className="text-xs bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 px-2 py-1 rounded">
+                        Requer atenção
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg border border-green-200 dark:border-green-800">
+                  <div className="flex items-start space-x-3">
+                    <span className="text-2xl">📊</span>
+                    <div>
+                      <h4 className="font-semibold text-foreground mb-2">
+                        Progresso Geral
+                      </h4>
+                      <p className="text-sm text-muted-foreground mb-2">
+                        75% dos seus pacientes mostram melhoria mensurável este
+                        mês.
+                      </p>
+                      <span className="text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded">
+                        Excelente performance
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="mt-8">
+            <h3 className="text-lg font-semibold text-foreground mb-6 flex items-center gap-2">
+              ⚡ Ações Rápidas
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Agendar Sessão */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow cursor-pointer">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl">📅</span>
+                  </div>
+                  <h4 className="font-semibold text-foreground mb-2">
+                    Agendar Sessão
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Marque nova sessão com paciente
+                  </p>
+                </div>
+              </div>
+
+              {/* Relatórios */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow cursor-pointer">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gradient-to-r from-green-500 to-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl">📊</span>
+                  </div>
+                  <h4 className="font-semibold text-foreground mb-2">
+                    Relatórios
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Gerar relatórios de progresso
+                  </p>
+                </div>
+              </div>
+
+              {/* Notas da Sessão */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow cursor-pointer">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl">📝</span>
+                  </div>
+                  <h4 className="font-semibold text-foreground mb-2">
+                    Notas da Sessão
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Acessar notas de sessões anteriores
+                  </p>
+                </div>
+              </div>
+
+              {/* Configurações */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border hover:shadow-xl transition-shadow cursor-pointer">
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span className="text-3xl">⚙️</span>
+                  </div>
+                  <h4 className="font-semibold text-foreground mb-2">
+                    Configurações
+                  </h4>
+                  <p className="text-sm text-muted-foreground">
+                    Gerenciar preferências do sistema
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <LogoutConfirmationDialog />
-    </TherapistLayout>
+    </div>
   );
 }
-
 function AdminDashboard() {
   const { user } = useAuth();
   const { requestLogout, LogoutConfirmationDialog } = useLogoutConfirmation();
