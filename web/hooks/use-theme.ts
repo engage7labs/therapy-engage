@@ -27,6 +27,7 @@ const translations = {
     "nav.reports": "Reports",
     "nav.settings": "Settings",
     "nav.logout": "Logout",
+    "nav.insights": "Insights",
 
     // Dashboard
     "dashboard.patient.title": "Patient Portal",
@@ -131,6 +132,10 @@ const translations = {
     "tooltip.profile": "View your profile information",
     "tooltip.settings": "Access application settings",
     "tooltip.emergency": "Emergency contact options for critical situations",
+
+    // Dashboard new elements
+    "dashboard.patient.subtitle": "How are you feeling today? Let's track your progress together.",
+    "dashboard.therapist.subtitle": "You have 4 sessions scheduled for today. Here's a summary of your activities.",
   },
 
   pt: {
@@ -141,6 +146,7 @@ const translations = {
     "nav.reports": "Relatórios",
     "nav.settings": "Configurações",
     "nav.logout": "Sair",
+    "nav.insights": "Insights",
 
     // Dashboard
     "dashboard.patient.title": "Portal do Paciente",
@@ -245,6 +251,10 @@ const translations = {
     "tooltip.settings": "Acessar configurações do aplicativo",
     "tooltip.emergency":
       "Opções de contato de emergência para situações críticas",
+
+    // Dashboard new elements
+    "dashboard.patient.subtitle": "Como você está se sentindo hoje? Vamos acompanhar seu progresso juntos.",
+    "dashboard.therapist.subtitle": "Você tem 4 sessões agendadas para hoje. Aqui está um resumo das suas atividades.",
   },
 
   es: {
@@ -255,6 +265,7 @@ const translations = {
     "nav.reports": "Reportes",
     "nav.settings": "Configuración",
     "nav.logout": "Cerrar Sesión",
+    "nav.insights": "Insights",
 
     // Dashboard
     "dashboard.patient.title": "Portal del Paciente",
@@ -360,6 +371,10 @@ const translations = {
     "tooltip.settings": "Acceder a la configuración de la aplicación",
     "tooltip.emergency":
       "Opciones de contacto de emergencia para situaciones críticas",
+
+    // Dashboard new elements
+    "dashboard.patient.subtitle": "¿Cómo te sientes hoy? Vamos a hacer un seguimiento de tu progreso juntos.",
+    "dashboard.therapist.subtitle": "Tienes 4 sesiones programadas para hoy. Aquí tienes un resumen de tus actividades.",
   },
 } as const;
 

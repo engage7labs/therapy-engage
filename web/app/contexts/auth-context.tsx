@@ -53,7 +53,7 @@ const mockUsers: Record<string, { password: string; user: User }> = {
       id: 'user-002',
       username: 'rodrigo',
       role: 'patient',
-      name: 'Rodrigo Silva',
+      name: 'Rodrigo Marques',
       email: 'rodrigo@email.com',
       sessionTimeout: 60, // 60 minutes for patients
       profile: {

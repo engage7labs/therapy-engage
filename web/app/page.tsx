@@ -1,8 +1,9 @@
 "use client";
 
-import { Heart, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useState } from "react";
 import { DebugThemeLanguageToggle } from "../components/settings/debug-theme-language-toggle";
+import TherapistSidebar from "../components/layout/therapist-sidebar";
 import { useLogoutConfirmation } from "../hooks/use-logout-confirmation";
 import { useTheme } from "../hooks/use-theme";
 import { useAuth } from "./contexts/auth-context";
@@ -41,8 +42,8 @@ function LoginPage() {
       <div className="max-w-md w-full space-y-8 p-8 bg-card rounded-lg shadow-md border">
         <div>
           <div className="flex items-center justify-center mb-4">
-            <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mr-3">
-              <Heart className="h-6 w-6 text-white" />
+            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full flex items-center justify-center mr-3">
+              <span className="text-white font-bold text-lg">TE</span>
             </div>
             <h2 className="text-3xl font-bold text-foreground">
               Therapy Engage
@@ -173,11 +174,10 @@ function PatientDashboard() {
           {/* Welcome Message */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-foreground mb-2">
-              Bem-vindo de volta, {user?.name}! 👋
+              {t("dashboard.welcome")}, {user?.name}! 👋
             </h1>
             <p className="text-muted-foreground">
-              Como você está se sentindo hoje? Vamos acompanhar seu progresso
-              juntos.
+              {t("dashboard.patient.subtitle")}
             </p>
           </div>
 
@@ -323,7 +323,7 @@ function PatientDashboard() {
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <h4 className="font-semibold text-foreground">
-                        Dr. Zé Deleta
+                        Dr. Ego Smith
                       </h4>
                       <p className="text-sm text-muted-foreground">
                         📅 06/08/2025 🕐 14:00 • Individual
@@ -417,49 +417,53 @@ function PatientDashboard() {
 function TherapistDashboard() {
   const { user } = useAuth();
   const { requestLogout, LogoutConfirmationDialog } = useLogoutConfirmation();
+  const { t } = useTheme();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800">
-      {/* Header */}
-      <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">T</span>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex">
+      {/* Sidebar */}
+      <TherapistSidebar />
+      
+      {/* Main Content Area */}
+      <div className="flex-1 lg:ml-64">
+        {/* Header */}
+        <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow border-b lg:hidden">
+          <div className="px-4 sm:px-6">
+            <div className="flex justify-between h-16">
+              <div className="flex items-center space-x-4">
+                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-teal-500 rounded-full flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">TE</span>
+                </div>
+                <h1 className="text-xl font-semibold text-foreground">
+                  {t("dashboard.therapist.title")}
+                </h1>
               </div>
-              <h1 className="text-xl font-semibold text-foreground">
-                Dashboard do Terapeuta
-              </h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-muted-foreground">
-                Olá, {user?.name}
-              </span>
-              <DebugThemeLanguageToggle />
-              <button
-                onClick={requestLogout}
-                className="text-sm text-primary hover:text-primary/80 flex items-center gap-1"
-                title="Logout"
-              >
-                <LogOut className="h-4 w-4" />
-              </button>
+              <div className="flex items-center space-x-4">
+                <span className="text-sm text-muted-foreground">
+                  {t("dashboard.welcome")}, {user?.name}
+                </span>
+                <DebugThemeLanguageToggle />
+                <button
+                  onClick={requestLogout}
+                  className="text-sm text-primary hover:text-primary/80 flex items-center gap-1"
+                  title={t("nav.logout")}
+                >
+                  <LogOut className="h-4 w-4" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <div className="px-4 py-6 sm:px-0">
+        {/* Main Content */}
+        <div className="p-6">
           {/* Welcome Message */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-foreground mb-2">
-              Bem-vindo de volta, Dr. {user?.name}! 👩‍⚕️
+              {t("dashboard.welcome")}, Dr. {user?.name}! 👩‍⚕️
             </h1>
             <p className="text-muted-foreground">
-              Você tem 4 sessões agendadas para hoje. Aqui está um resumo das
-              suas atividades.
+              {t("dashboard.therapist.subtitle")}
             </p>
           </div>
 
