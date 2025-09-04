@@ -9,9 +9,6 @@ import { Progress } from '@/components/ui/progress'
 import { 
   GraduationCap,
   ClipboardCheck,
-  BarChart3,
-  Users,
-  Shield,
   Download,
   Eye,
   CheckCircle,
@@ -48,7 +45,6 @@ interface EvaluationReport {
 
 export default function AcademicEvaluationTools() {
   const [activeEvaluation, setActiveEvaluation] = useState<string>('criteria')
-  const [evaluationProgress, setEvaluationProgress] = useState(0)
 
   const evaluationCriteria: EvaluationCriteria[] = [
     // User Experience & Interface
@@ -166,7 +162,7 @@ export default function AcademicEvaluationTools() {
     }
   ]
 
-  const [criteria, setCriteria] = useState<EvaluationCriteria[]>(evaluationCriteria)
+  const [criteria] = useState<EvaluationCriteria[]>(evaluationCriteria)
 
   const evaluationReports: EvaluationReport[] = [
     {
