@@ -8,7 +8,12 @@
     "start": "next start",
     "lint": "eslint . --ext .ts,.tsx --cache",
     "lint:fix": "eslint . --ext .ts,.tsx --fix",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "analyze": "cross-env ANALYZE=true npm run build",
+    "azure:prebuild": "chmod +x scripts/prebuild.sh && ./scripts/prebuild.sh",
+    "azure:build": "npm run build",
+    "azure:start": "npm start",
+    "health-check": "curl -f http://localhost:3000/api/health || exit 1"
   },
   "dependencies": {
     "@phosphor-icons/react": "^2.1.7",
