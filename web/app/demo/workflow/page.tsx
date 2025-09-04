@@ -15,7 +15,6 @@ import {
   CheckCircle,
   Clock,
   User,
-  Calendar,
   Video,
   FileText,
   Settings,
@@ -24,7 +23,6 @@ import {
   Monitor,
   Smartphone,
   Users,
-  Brain,
   Shield,
   Award
 } from 'lucide-react'
@@ -54,7 +52,7 @@ interface DemoScenario {
 export default function CompleteDemoWorkflow() {
   const [isRunning, setIsRunning] = useState(false)
   const [currentStep, setCurrentStep] = useState(0)
-  const [activeScenario, setActiveScenario] = useState<string | null>(null)
+  const [, setActiveScenario] = useState<string | null>(null)
   const [demoProgress, setDemoProgress] = useState(0)
 
   const demoSteps: DemoStep[] = [
