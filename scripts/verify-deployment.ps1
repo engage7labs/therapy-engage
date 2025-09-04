@@ -1,11 +1,23 @@
 #!/usr/bin/env pwsh
 
-# Therapy Engage - Post-Deployment Verification Script
-# This script verifies that the application is running correctly after deployment
+# Therapy Engage - Container Apps Deployment Verification Script
+# This script verifies that the Container Apps are running correctly after deployment
 
 param(
     [Parameter(Mandatory=$false)]
-    [string]$AppUrl = "https://therapy-engage-dev.azurewebsites.net",
+    [string]$BackendUrl,
+    
+    [Parameter(Mandatory=$false)]
+    [string]$FrontendUrl,
+    
+    [Parameter(Mandatory=$false)]
+    [string]$ResourceGroup,
+    
+    [Parameter(Mandatory=$false)]
+    [string]$BackendAppName,
+    
+    [Parameter(Mandatory=$false)]
+    [string]$FrontendAppName,
     
     [Parameter(Mandatory=$false)]
     [int]$TimeoutSeconds = 30,
@@ -13,6 +25,213 @@ param(
     [Parameter(Mandatory=$false)]
     [switch]$Verbose
 )
+
+Write-Host "🔍 Therapy Engage - Container Apps Verification" -ForegroundColor Green
+Write-Host "==============================================" -ForegroundColor Green
+
+$tests = @()
+$passed = 0
+$failed = 0
+
+function Test-Endpoint {
+    param(
+        [string]$Name,
+        [string]$Url,
+        [int]$ExpectedStatusCode = 200,
+        [string]$ExpectedContent = $null
+    )
+    
+    Write-Host "🧪 Testing: $Name" -ForegroundColor Yellow
+    
+    try {
+        $response = Invoke-WebRequest -Uri $Url -Method GET -TimeoutSec $TimeoutSeconds -ErrorAction Stop
+        
+        if ($response.StatusCode -eq $ExpectedStatusCode) {
+            if ($ExpectedContent -and $response.Content -notmatch $ExpectedContent) {
+                throw "Content validation failed. Expected content containing: $ExpectedContent"
+            }
+            
+            Write-Host "   ✅ PASS - Status: $($response.StatusCode)" -ForegroundColor Green
+            if ($Verbose) {
+                Write-Host "   📄 Response length: $($response.Content.Length) chars" -ForegroundColor Cyan
+                Write-Host "   📄 Content preview: $($response.Content.Substring(0, [Math]::Min(100, $response.Content.Length)))" -ForegroundColor Cyan
+            }
+            return $true
+        } else {
+            throw "Unexpected status code: $($response.StatusCode)"
+        }
+    } catch {
+        Write-Host "   ❌ FAIL - $($_.Exception.Message)" -ForegroundColor Red
+        return $false
+    }
+}
+
+# Get URLs from Azure CLI if not provided
+if (-not $BackendUrl -or -not $FrontendUrl) {
+    Write-Host "🔍 Retrieving Container App URLs from Azure..." -ForegroundColor Cyan
+    
+    if ($ResourceGroup -and $BackendAppName -and -not $BackendUrl) {
+        try {
+            $BackendUrl = "https://" + (az containerapp show --name $BackendAppName --resource-group $ResourceGroup --query properties.configuration.ingress.fqdn -o tsv)
+            Write-Host "   Backend URL: $BackendUrl" -ForegroundColor Cyan
+        } catch {
+            Write-Host "   ⚠️  Could not retrieve backend URL from Azure" -ForegroundColor Yellow
+        }
+    }
+    
+    if ($ResourceGroup -and $FrontendAppName -and -not $FrontendUrl) {
+        try {
+            $FrontendUrl = "https://" + (az containerapp show --name $FrontendAppName --resource-group $ResourceGroup --query properties.configuration.ingress.fqdn -o tsv)
+            Write-Host "   Frontend URL: $FrontendUrl" -ForegroundColor Cyan
+        } catch {
+            Write-Host "   ⚠️  Could not retrieve frontend URL from Azure" -ForegroundColor Yellow
+        }
+    }
+}
+
+# Test Backend Health
+if ($BackendUrl) {
+    Write-Host ""
+    if (Test-Endpoint -Name "Backend Health Check" -Url "$BackendUrl/health" -ExpectedContent "ok") {
+        $passed++
+    } else {
+        $failed++
+    }
+} else {
+    Write-Host ""
+    Write-Host "⚠️  Backend URL not provided - skipping backend tests" -ForegroundColor Yellow
+}
+
+# Test Frontend Health  
+if ($FrontendUrl) {
+    Write-Host ""
+    if (Test-Endpoint -Name "Frontend Health Check" -Url "$FrontendUrl/api/health" -ExpectedContent "healthy") {
+        $passed++
+    } else {
+        $failed++
+    }
+    
+    # Test Frontend Main Page
+    Write-Host ""
+    if (Test-Endpoint -Name "Frontend Main Page" -Url $FrontendUrl) {
+        $passed++
+    } else {
+        $failed++
+    }
+} else {
+    Write-Host ""
+    Write-Host "⚠️  Frontend URL not provided - skipping frontend tests" -ForegroundColor Yellow
+}
+
+# Container Apps Status Check
+if ($ResourceGroup -and ($BackendAppName -or $FrontendAppName)) {
+    Write-Host ""
+    Write-Host "🐳 Container Apps Status" -ForegroundColor Yellow
+    
+    if ($BackendAppName) {
+        try {
+            $backendStatus = az containerapp show --name $BackendAppName --resource-group $ResourceGroup --query properties.runningStatus -o tsv
+            if ($backendStatus -eq "Running") {
+                Write-Host "   ✅ Backend Container: Running" -ForegroundColor Green
+                $passed++
+            } else {
+                Write-Host "   ❌ Backend Container: $backendStatus" -ForegroundColor Red
+                $failed++
+            }
+        } catch {
+            Write-Host "   ❌ Backend Container: Failed to get status" -ForegroundColor Red
+            $failed++
+        }
+    }
+    
+    if ($FrontendAppName) {
+        try {
+            $frontendStatus = az containerapp show --name $FrontendAppName --resource-group $ResourceGroup --query properties.runningStatus -o tsv
+            if ($frontendStatus -eq "Running") {
+                Write-Host "   ✅ Frontend Container: Running" -ForegroundColor Green
+                $passed++
+            } else {
+                Write-Host "   ❌ Frontend Container: $frontendStatus" -ForegroundColor Red
+                $failed++
+            }
+        } catch {
+            Write-Host "   ❌ Frontend Container: Failed to get status" -ForegroundColor Red
+            $failed++
+        }
+    }
+}
+
+# Response Time Check
+if ($FrontendUrl) {
+    Write-Host ""
+    Write-Host "🧪 Testing: Response Time" -ForegroundColor Yellow
+    try {
+        $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+        $response = Invoke-WebRequest -Uri $FrontendUrl -Method GET -TimeoutSec $TimeoutSeconds
+        $stopwatch.Stop()
+        
+        $responseTime = $stopwatch.ElapsedMilliseconds
+        if ($responseTime -lt 3000) {  # Less than 3 seconds for containers
+            Write-Host "   ✅ PASS - Response time: ${responseTime}ms" -ForegroundColor Green
+            $passed++
+        } else {
+            Write-Host "   ⚠️  WARN - Slow response time: ${responseTime}ms" -ForegroundColor Yellow
+            $passed++
+        }
+    } catch {
+        Write-Host "   ❌ FAIL - Response time test failed: $($_.Exception.Message)" -ForegroundColor Red
+        $failed++
+    }
+}
+
+# Summary
+Write-Host ""
+Write-Host "📊 Test Summary" -ForegroundColor Green
+Write-Host "===============" -ForegroundColor Green
+Write-Host "✅ Passed: $passed" -ForegroundColor Green
+Write-Host "❌ Failed: $failed" -ForegroundColor $(if ($failed -gt 0) { "Red" } else { "Green" })
+Write-Host "Total: $($passed + $failed)" -ForegroundColor Cyan
+
+# Recommendations
+if ($failed -gt 0) {
+    Write-Host ""
+    Write-Host "🔧 Recommendations:" -ForegroundColor Yellow
+    Write-Host "1. Check Azure Container Apps logs: az containerapp logs show --name <app-name> -g <rg>"
+    Write-Host "2. Verify container images are available in GHCR"
+    Write-Host "3. Check environment variables and configuration"
+    Write-Host "4. Review GitHub Actions workflow for deployment issues"
+    Write-Host "5. Verify OIDC authentication is properly configured"
+}
+
+# Generate JSON report
+$report = @{
+    timestamp = (Get-Date).ToString("yyyy-MM-dd HH:mm:ss")
+    backendUrl = $BackendUrl
+    frontendUrl = $FrontendUrl
+    summary = @{
+        passed = $passed
+        failed = $failed
+        total = $passed + $failed
+        success_rate = if (($passed + $failed) -gt 0) { [math]::Round(($passed / ($passed + $failed)) * 100, 2) } else { 0 }
+    }
+    status = if ($failed -eq 0) { "HEALTHY" } else { "UNHEALTHY" }
+}
+
+$reportFile = "container-apps-verification-$(Get-Date -Format 'yyyyMMdd-HHmmss').json"
+$report | ConvertTo-Json -Depth 3 | Out-File $reportFile
+Write-Host ""
+Write-Host "📄 Report saved to: $reportFile" -ForegroundColor Cyan
+
+# Exit with appropriate code
+if ($failed -gt 0) {
+    Write-Host ""
+    Write-Host "💥 Some tests failed. Please investigate." -ForegroundColor Red
+    exit 1
+} else {
+    Write-Host ""
+    Write-Host "🎉 All tests passed! Container Apps are healthy." -ForegroundColor Green
+    exit 0
+}
 
 Write-Host "🔍 Therapy Engage - Post-Deployment Verification" -ForegroundColor Green
 Write-Host "===============================================" -ForegroundColor Green

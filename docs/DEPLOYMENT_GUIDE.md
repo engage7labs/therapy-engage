@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers the complete deployment pipeline for the Therapy Engage Platform using GitHub Actions and Azure App Service (Free Tier).
+This guide covers the complete deployment pipeline for the Therapy Engage Platform using GitHub Actions and Azure Container Apps (ACA) with OIDC authentication.
 
 ## Prerequisites
 
@@ -10,111 +10,114 @@ This guide covers the complete deployment pipeline for the Therapy Engage Platfo
 
 1. **Branch Protection Rules** (Required for production)
    - Go to repository Settings → Branches
-   - Add rule for `main` branch
+   - Add rule for `dev` branch
    - Enable "Require pull request reviews before merging"
    - Enable "Require status checks to pass before merging"
-   - Select required checks: `build-and-test`, `security-scan`
+   - Select required checks: `build-and-push`, `deploy-aca`
 
-### Azure Setup
+### Azure Setup (via Terraform)
 
-1. **Create Azure App Service** (Free Tier)
-   ```bash
-   # Using Azure CLI
-   az webapp create --resource-group your-rg --plan your-plan --name therapy-engage-dev --runtime "NODE|18-lts"
-   ```
-
-2. **Configure Deployment Slots**
-   ```bash
-   # Create staging slot
-   az webapp deployment slot create --resource-group your-rg --name therapy-engage-dev --slot staging
-   ```
+The Azure infrastructure should already be provisioned via Terraform, including:
+- Azure Container Apps Environment
+- Two Container Apps (frontend and backend)
+- Azure Container Registry (or using GitHub Container Registry)
+- Resource Group and networking
 
 ### GitHub Secrets Configuration
 
-Configure the following secrets in your GitHub repository:
+Configure the following secrets in your GitHub repository (Settings → Secrets and variables → Actions):
 
 | Secret Name | Description | How to Get |
 |-------------|-------------|------------|
-| `AZURE_WEBAPP_PUBLISH_PROFILE` | Azure deployment credentials | Download from Azure Portal → App Service → Get publish profile |
-| `AZURE_WEBAPP_NAME` | Your Azure App Service name | From Azure Portal |
-| `SNYK_TOKEN` | Security scanning token | Register at snyk.io and create token |
+| `AZURE_CLIENT_ID` | OIDC Service Principal Client ID | From Azure App Registration |
+| `AZURE_TENANT_ID` | Azure AD Tenant ID | From Azure Portal |
+| `AZURE_SUBSCRIPTION_ID` | Azure Subscription ID | From Azure Portal |
+| `RESOURCE_GROUP` | Resource Group containing ACAs | From Terraform output |
+| `ACA_FRONTEND_NAME` | Frontend Container App name | From Terraform output |
+| `ACA_BACKEND_NAME` | Backend Container App name | From Terraform output |
+
+### OIDC Configuration
+
+Set up the Azure Service Principal with OIDC:
+
+```bash
+# Create the Azure AD application
+az ad app create --display-name "therapy-engage-github-oidc"
+
+# Create service principal
+az ad sp create --id <APP_ID>
+
+# Add federated credentials for GitHub
+az ad app federated-credential create --id <APP_ID> --parameters '{
+  "name": "github-dev-branch",
+  "issuer": "https://token.actions.githubusercontent.com",
+  "subject": "repo:TherapyEngageOrg/therapy-engage:ref:refs/heads/dev",
+  "description": "GitHub Actions Dev Branch",
+  "audiences": ["api://AzureADTokenExchange"]
+}'
+```
 
 ## Deployment Pipeline
 
 ### Workflow Triggers
 
-- **Automatic**: Push to `main` branch
+- **Automatic**: Push to `dev` branch (not main)
 - **Manual**: Workflow dispatch from GitHub Actions tab
-- **Pull Requests**: Build and test only (no deployment)
+- **Pull Requests**: Code review only (no deployment)
 
 ### Pipeline Stages
 
-1. **Build & Test** (`build-and-test`)
-   - Node.js 18 setup
-   - Install dependencies with `npm ci`
-   - Run ESLint checks
-   - Execute TypeScript compilation
-   - Run test suite
-   - Build production bundle
-   - Upload build artifacts
+1. **Build & Push** (`build-and-push`)
+   - Checkout source code
+   - Login to GitHub Container Registry (GHCR)
+   - Build frontend Docker image
+   - Build backend Docker image
+   - Push both images to GHCR with commit SHA tag
 
-2. **Security Scan** (`security-scan`)
-   - NPM audit for vulnerabilities
-   - Snyk security analysis
-   - SARIF report upload to GitHub
+2. **Deploy to ACA** (`deploy-aca`)
+   - Authenticate with Azure using OIDC
+   - Update backend Container App with new image
+   - Update frontend Container App with new image
+   - Set production environment variables
 
-3. **Deploy to Azure** (`deploy-to-azure`)
-   - Deploy to staging slot
-   - Run health checks
-   - Swap to production on success
-
-4. **Health Check** (`health-check`)
-   - Validate application startup
-   - Verify API endpoints
-   - Monitor deployment success
+3. **Health Check** (`health-check`)
+   - Wait for containers to start
+   - Validate backend health endpoint (`/health`)
+   - Validate frontend health endpoint (`/api/health`)
+   - Fail deployment if health checks fail
 
 ### Deployment Flow
 
 ```mermaid
 graph TD
-    A[Push to main] --> B[Build & Test]
-    B --> C[Security Scan]
-    C --> D[Deploy to Staging]
+    A[Push to dev] --> B[Build Images]
+    B --> C[Push to GHCR]
+    C --> D[Deploy to ACA]
     D --> E[Health Check]
     E --> F{Health OK?}
-    F -->|Yes| G[Swap to Production]
-    F -->|No| H[Rollback]
-    G --> I[Production Health Check]
+    F -->|Yes| G[✅ Success]
+    F -->|No| H[❌ Fail & Alert]
 ```
 
 ## Environment Configuration
 
-### Azure App Service Settings
+### Azure Container Apps Settings
 
-Add these application settings in Azure Portal:
+Environment variables are set automatically during deployment:
 
 ```bash
-# Node.js Configuration
+# Production Configuration
 NODE_ENV=production
-WEBSITE_NODE_DEFAULT_VERSION=18.17.0
 
-# Next.js Configuration
-NEXTJS_BUILD_COMMAND=npm run build
-NEXTJS_START_COMMAND=npm start
-
-# Health Check
-WEBSITE_HEALTHCHECK_MAXPINGFAILURES=3
+# Additional variables can be added in the workflow
 ```
 
-### Custom Domain & SSL (Optional)
+### Container Registry
 
-```bash
-# Add custom domain
-az webapp config hostname add --webapp-name therapy-engage-dev --resource-group your-rg --hostname yourdomain.com
-
-# Enable SSL
-az webapp config ssl bind --certificate-thumbprint thumbprint --ssl-type SNI --name therapy-engage-dev --resource-group your-rg
-```
+Using GitHub Container Registry (GHCR):
+- Registry: `ghcr.io`
+- Authentication: GitHub Token (automatic)
+- Images tagged with commit SHA for versioning
 
 ## Local Development
 

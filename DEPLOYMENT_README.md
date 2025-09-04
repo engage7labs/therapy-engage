@@ -2,41 +2,45 @@
 
 ## Quick Start
 
-### 1. Initial Azure Setup
+### 1. Azure Infrastructure Setup (via Terraform)
 
-```powershell
-# Run the setup script
-.\scripts\setup-azure-env.ps1 -ResourceGroupName "therapy-engage-rg" -AppServiceName "therapy-engage-dev"
-```
+The Azure Container Apps infrastructure should already be deployed via Terraform, including:
+- Resource Group
+- Container Apps Environment
+- Frontend Container App
+- Backend Container App
+- Networking and security configurations
 
 ### 2. Configure GitHub Secrets
 
 Go to your GitHub repository → Settings → Secrets and variables → Actions
 
-Add these secrets:
+Add these required secrets:
 
 | Secret | Value | How to Get |
 |--------|--------|------------|
-| `AZURE_WEBAPP_NAME` | `therapy-engage-dev` | From setup script output |
-| `AZURE_WEBAPP_PUBLISH_PROFILE` | XML content | Download from Azure Portal |
-| `SNYK_TOKEN` | Your Snyk token | Register at snyk.io (optional) |
+| `AZURE_CLIENT_ID` | Service Principal Client ID | Azure App Registration |
+| `AZURE_TENANT_ID` | Azure AD Tenant ID | Azure Portal → Azure Active Directory |
+| `AZURE_SUBSCRIPTION_ID` | Your subscription ID | Azure Portal → Subscriptions |
+| `RESOURCE_GROUP` | Resource group name | From Terraform outputs |
+| `ACA_FRONTEND_NAME` | Frontend app name | From Terraform outputs |
+| `ACA_BACKEND_NAME` | Backend app name | From Terraform outputs |
 
 ### 3. Deploy Your First Version
 
 ```bash
-# Create a feature branch
+# Merge changes to dev branch (triggers automatic deployment)
+git checkout dev
+git pull origin dev
+
+# Or create a feature branch and merge via PR
 git checkout -b feature/initial-deployment
-
-# Make some changes (if needed)
-# ...
-
-# Commit and push
 git add .
-git commit -m "feat: initial deployment setup"
+git commit -m "feat: initial container deployment setup"
 git push origin feature/initial-deployment
 
 # Create Pull Request on GitHub
-# After approval, merge to main branch
+# After approval, merge to dev branch
 # Automatic deployment will trigger
 ```
 
@@ -44,33 +48,29 @@ git push origin feature/initial-deployment
 
 ```mermaid
 graph LR
-    A[Push to main] --> B[Build & Test]
-    B --> C[Security Scan]
-    C --> D[Deploy to Azure]
+    A[Push to dev] --> B[Build Images]
+    B --> C[Push to GHCR]
+    C --> D[Update ACAs]
     D --> E[Health Check]
     E --> F[✅ Success]
 ```
 
 ### Pipeline Stages
 
-1. **Build & Test** (2-3 minutes)
-   - Install Node.js dependencies
-   - Run ESLint and TypeScript checks
-   - Build production bundle
-   - Upload artifacts
+1. **Build & Push** (2-3 minutes)
+   - Build frontend Docker image
+   - Build backend Docker image  
+   - Push to GitHub Container Registry
+   - Tag with commit SHA
 
-2. **Security Scan** (1-2 minutes)
-   - NPM audit for vulnerabilities
-   - Snyk security analysis (if token provided)
+2. **Deploy to ACA** (1-2 minutes)
+   - Azure OIDC authentication
+   - Update container apps with new images
+   - Set environment variables
 
-3. **Deploy to Azure** (3-5 minutes)
-   - Deploy to staging slot (if available)
-   - Swap to production
-   - Configure environment variables
-
-4. **Health Check** (30 seconds)
-   - Verify application startup
-   - Test API endpoints
+3. **Health Check** (1 minute)
+   - Verify backend `/health` endpoint
+   - Verify frontend `/api/health` endpoint
 
 ## Environment Structure
 
@@ -278,3 +278,53 @@ az webapp restart --name app-name --resource-group rg-name
 ```
 
 **Remember**: Always use Pull Requests for production deployments! 🚀
+
+## 🔄 Rollback Procedures
+
+### Method 1: Container Apps Revisions
+
+Azure Container Apps automatically creates revisions for each deployment:
+
+```powershell
+# List available revisions
+az containerapp revision list --name <app-name> --resource-group <rg> --output table
+
+# Activate a previous revision
+az containerapp revision activate --name <app-name> --resource-group <rg> --revision <revision-name>
+
+# Set traffic to previous revision
+az containerapp ingress traffic set --name <app-name> --resource-group <rg> --revision-weight <revision-name>=100
+```
+
+### Method 2: Re-deploy Previous Version
+
+```powershell
+# Find the previous commit SHA
+git log --oneline -5
+
+# Trigger deployment with previous commit
+# Method 1: Reset and push
+git reset --hard <previous-commit-sha>
+git push origin dev --force
+
+# Method 2: Create revert commit (safer)
+git revert <bad-commit-sha>
+git push origin dev
+```
+
+### Method 3: Manual Rollback via GitHub Actions
+
+1. Go to GitHub Actions → CI + Deploy DEV workflow
+2. Click "Run workflow"  
+3. Select the `dev` branch
+4. Check out the commit you want to deploy to
+5. Run the workflow manually
+
+### Emergency Rollback Checklist
+
+- [ ] Identify the last known good revision
+- [ ] Check Container Apps logs for errors
+- [ ] Verify health endpoints are responding
+- [ ] Notify team of rollback action
+- [ ] Document the issue for post-mortem
+- [ ] Plan fix for the next deployment

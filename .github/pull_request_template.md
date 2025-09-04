@@ -38,10 +38,21 @@
 
 ## Deployment Notes
 
-- [ ] Requires database migration
-- [ ] Requires environment variable updates
-- [ ] Requires new Azure configuration
-- [ ] No special deployment requirements
+- [ ] No database migration required
+- [ ] No environment variable updates needed
+- [ ] Container images build successfully locally
+- [ ] Health endpoints respond correctly
+- [ ] No special Azure Container Apps configuration needed
+
+## Container Apps Checklist
+
+- [ ] Frontend Dockerfile builds without errors
+- [ ] Backend Dockerfile builds without errors  
+- [ ] Health endpoints implemented and tested:
+  - [ ] Backend: `GET /health` returns `{ "status": "ok" }`
+  - [ ] Frontend: `GET /api/health` returns `{ "status": "healthy" }`
+- [ ] No secrets or sensitive data in container images
+- [ ] Environment variables properly configured for production
 
 ## Checklist
 
