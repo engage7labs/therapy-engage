@@ -1,47 +1,33 @@
-# Auto-iteration instructions for GitHub Copilot Workspace
-auto_continue: true
+# .github/instructions/instructions\_copilot.yml (Updated)
 
-# Maximum iterations before requesting user input
-max_iterations: 15
+This manifest controls where Copilot/Claude applies the instructions.
 
-# Current project objective
-objective: "Therapy platform with functional Docker deployment pipeline - build fixes completed, monitoring remote deployment"
+Keep it minimal and stable. The detailed content lives in the sibling
 
-# Iteration priorities (in order)
-priorities:
-  - "Monitor Docker remote build pipeline success"
-  - "Verify standalone output generation in production"
-  - "Integration of Spark platform features"
-  - "Performance optimization and testing"
-  - "Code quality and documentation improvements"
+file: instructions\_copilot.instructions.md
 
-# Stop conditions (when to pause for user input)
-stop_conditions:
-  - "Major architectural changes required"
-  - "External API configuration needed"
-  - "Database schema modifications"
-  - "Authentication/security updates"
-  - "Breaking changes to existing features"
+applyTo: '\*\*'  # apply repository-wide
 
-# Development context
-context:
-  framework: "Next.js 14 with App Router"
-  language: "TypeScript"
-  styling: "Tailwind CSS + shadcn/ui"
-  current_focus: "Docker deployment pipeline monitoring and Spark feature integration"
-  deployment_status: "Docker build pipeline fixed - standalone output configured and pushed to remote"
-  
-# Recent achievements
-completed:
-  - "✅ Fixed @/ import path issues"
-  - "✅ Resolved TooltipProvider component conflicts"  
-  - "✅ Configured output: 'standalone' for Docker builds"
-  - "✅ Archived complex code to TO_RESTORE_LATER/"
-  - "✅ Created clean Spark-based page.tsx with role authentication"
-  - "✅ Successfully pushed standalone configuration to remote repository"
-  
-# Active monitoring
-monitoring:
-  - "Remote Docker build success with .next/standalone generation"
-  - "Production deployment pipeline functionality"
-  - "Integration opportunities with Spark platform features"
+--- Tech baselines (for quick context; not parsed by tooling) ---
+
+Frontend: Next.js 14 (Node 20), TypeScript 5, Tailwind, shadcn/ui
+
+Backend:  NestJS 11 (GraphQL)
+
+Infra:    Terraform → Azure (DEV=ACA, PROD=AKS)
+
+#
+
+NOTE: Project is pinned to **Next.js 14**. If you find references to 15,
+
+align back to 14 unless explicitly authorized in a dedicated PR.
+
+If you ever need to scope the instructions:
+
+applyTo:
+
+- 'apps/frontend/\*\*'
+
+- 'infra/\*\*'
+
+No additional keys are strictly required by the extension. Extra metadata is kept as comments to avoid schema mismatches.
