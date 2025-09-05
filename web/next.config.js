@@ -5,6 +5,10 @@ const nextConfig = {
   experimental: {
     missingSuspenseWithCSRBailout: false,
   },
+  
+  // Force dynamic rendering - disable static generation
+  trailingSlash: false,
+  skipTrailingSlashRedirect: true,
 
   // Development configuration for complex therapy platform
   // Production build disabled due to complex state serialization
