@@ -11,7 +11,7 @@
 - [ ] Code refactoring
 - [ ] Documentation update
 - [ ] Performance improvement
-- [ ] Other: ___________
+- [ ] Other: \***\*\_\_\_\*\***
 
 ## Detailed Description
 
@@ -41,13 +41,18 @@
 - [ ] No database migration required
 - [ ] No environment variable updates needed
 - [ ] Container images build successfully locally
-- [ ] Health endpoints respond correctly
+- [ ] Health endpoints respond correctly (`/health` and `/api/health`)
 - [ ] No special Azure Container Apps configuration needed
 
-## Container Apps Checklist
+## Azure Container Apps Checklist (DEV)
 
 - [ ] Frontend Dockerfile builds without errors
-- [ ] Backend Dockerfile builds without errors  
+- [ ] Backend Dockerfile builds without errors
+- [ ] `AZURE_CREDENTIALS` secret is properly configured
+- [ ] `RESOURCE_GROUP` secret matches target environment
+- [ ] `ACA_FRONTEND_NAME` and `ACA_BACKEND_NAME` secrets are correct
+- [ ] Images tagged with both SHA and `dev-latest`
+- [ ] Health checks will pass after deployment
 - [ ] Health endpoints implemented and tested:
   - [ ] Backend: `GET /health` returns `{ "status": "ok" }`
   - [ ] Frontend: `GET /api/health` returns `{ "status": "healthy" }`

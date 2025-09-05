@@ -1,29 +1,50 @@
-# Makefile for safe Terraform operations
+# Makefile for Terraform Environment Isolation
 # Therapy Engage Platform - Infrastructure Automation
+# DEV = Azure Container Apps (ACA) | PROD = Azure Kubernetes Service (AKS)
 
-.PHONY: help check-env init plan-dev apply-dev destroy-dev fmt validate deploy-backend-dev deploy-backend-dev-secure
+# Environment-specific Terraform directories
+TF_DIR_DEV=infra/env/dev
+TF_DIR_PROD=infra/env/prod
+
+.PHONY: help check-env fmt fmt-check \
+        init-dev plan-dev apply-dev destroy-dev outputs-dev \
+        init-prod plan-prod apply-prod destroy-prod outputs-prod \
+        clean tree-infra
 
 help:
 	@echo "=== Therapy Engage Platform - Infrastructure ==="
 	@echo ""
-	@echo "Available targets:"
-	@echo "  check-env            - Check environment and Azure login"
-	@echo "  init                 - Initialize Terraform"
-	@echo "  fmt                  - Format Terraform files"
-	@echo "  validate             - Validate Terraform configuration"
-	@echo "  plan-dev             - Plan dev environment (Ireland)"
-	@echo "  apply-dev            - Apply dev environment (Ireland)"
-	@echo "  destroy-dev          - Destroy dev environment (Ireland)"
-	@echo "  deploy-backend-dev   - Deploy backend with test CosmosDB key"
-	@echo "  deploy-backend-dev-secure - Deploy backend with secure CosmosDB key"
+	@echo "Environment Isolation: DEV=ACA • PROD=AKS"
+	@echo ""
+	@echo "DEV Environment (Azure Container Apps):"
+	@echo "  init-dev             - Initialize DEV Terraform"
+	@echo "  plan-dev             - Plan DEV environment changes"
+	@echo "  apply-dev            - Apply DEV environment"
+	@echo "  destroy-dev          - Destroy DEV environment"
+	@echo "  outputs-dev          - Show DEV outputs"
+	@echo ""
+	@echo "PROD Environment (Azure Kubernetes Service):"
+	@echo "  init-prod            - Initialize PROD Terraform"
+	@echo "  plan-prod            - Plan PROD environment changes"
+	@echo "  apply-prod           - Apply PROD environment"
+	@echo "  destroy-prod         - Destroy PROD environment"
+	@echo "  outputs-prod         - Show PROD outputs"
+	@echo ""
+	@echo "Utility:"
+	@echo "  check-env            - Check Azure authentication"
+	@echo "  fmt                  - Format all Terraform files"
+	@echo "  fmt-check            - Check Terraform formatting"
+	@echo "  tree-infra           - Show infrastructure directory structure"
+	@echo "  clean                - Clean Terraform state and cache"
+	@echo ""
+	@echo "State Files: dev.tfstate (DEV) | prod.tfstate (PROD)"
 	@echo ""
 	@echo "Required environment variables:"
 	@echo "  ARM_SUBSCRIPTION_ID - Azure subscription ID"
-	@echo "  COSMOSDB_KEY        - CosmosDB key (for secure deploy)"
 	@echo ""
-	@echo "Example workflow:"
+	@echo "Example workflows:"
 	@echo "  make check-env && make plan-dev && make apply-dev"
-	@echo "  make deploy-backend-dev-secure  # with COSMOSDB_KEY set"
+	@echo "  make outputs-dev  # Get values for GitHub secrets"
 
 # Check environment variables and Azure login
 check-env:
@@ -46,73 +67,91 @@ check-env:
 	echo "[OK] Using subscription: $$ARM_SUBSCRIPTION_ID"
 	@echo "[OK] Environment check complete"
 
-# Initialize Terraform
-init: check-env
-	@echo "Initializing Terraform..."
-	terraform -chdir=infra init
+# ============================================
+# Formatting and Validation
+# ============================================
 
-# Format Terraform files
 fmt:
 	@echo "Formatting Terraform files..."
-	terraform -chdir=infra fmt -recursive
+	terraform -chdir=$(TF_DIR_DEV) fmt -recursive
+	terraform -chdir=$(TF_DIR_PROD) fmt -recursive
+	@echo "[OK] All files formatted"
 
-# Validate Terraform configuration
-validate: fmt
-	@echo "Validating Terraform configuration..."
-	terraform -chdir=infra validate
+fmt-check:
+	@echo "Checking Terraform formatting..."
+	terraform -chdir=$(TF_DIR_DEV) fmt -recursive -check
+	terraform -chdir=$(TF_DIR_PROD) fmt -recursive -check
+	@echo "[OK] All files properly formatted"
 
-# Dev environment commands
-plan-dev: check-env validate
-	@echo "Planning DEV environment (Ireland)..."
-	terraform -chdir=infra plan -var-file=environments/dev-eu-ie.tfvars -var="expected_environment=dev"
+# ============================================
+# DEV Environment (Azure Container Apps)
+# ============================================
 
-apply-dev: check-env
-	@echo "Applying DEV environment (Ireland)..."
-	@read -p "Are you sure you want to apply changes? [y/N] " confirm; \
-	if [ "$$confirm" = "y" ] || [ "$$confirm" = "Y" ]; then \
-		terraform -chdir=infra apply -var-file=environments/dev-eu-ie.tfvars -var="expected_environment=dev"; \
-	else \
-		echo "[CANCELLED] Apply operation cancelled"; \
-	fi
+init-dev: check-env
+	@echo "Initializing DEV environment (ACA)..."
+	terraform -chdir=$(TF_DIR_DEV) init -upgrade
+	@echo "[OK] DEV environment initialized"
 
-destroy-dev: check-env
-	@echo "=== DANGER ZONE ==="
-	@echo "DESTROYING DEV environment (Ireland)..."
-	@echo "This will destroy ALL resources in dev environment!"
-	@echo "Static IPs will be preserved due to prevent_destroy lifecycle"
-	@read -p "Type 'DESTROY' to confirm: " confirm; \
-	if [ "$$confirm" = "DESTROY" ]; then \
-		terraform -chdir=infra destroy -var-file=environments/dev-eu-ie.tfvars -var="expected_environment=dev"; \
-	else \
-		echo "[CANCELLED] Must type exactly 'DESTROY'"; \
-	fi
+plan-dev: init-dev
+	@echo "Planning DEV environment changes..."
+	terraform -chdir=$(TF_DIR_DEV) plan
+	@echo "[OK] DEV plan complete"
 
-# Backend deployment commands
-deploy-backend-dev:
-	@echo "Deploying backend to DEV with test CosmosDB credentials..."
-	@echo "[WARNING] Using test credentials - not for production!"
-	helm upgrade --install backend-app charts/backend-app/ \
-		-f charts/backend-app/values.dev.yaml \
-		--set cosmosdb.key="CHAVE_LOCAL_TESTE" \
-		--namespace default \
-		--create-namespace
+apply-dev: init-dev
+	@echo "Applying DEV environment..."
+	terraform -chdir=$(TF_DIR_DEV) apply -auto-approve
+	@echo "[OK] DEV environment deployed"
 
-deploy-backend-dev-secure:
-	@echo "Deploying backend to DEV with secure CosmosDB credentials..."
-	@if [ -z "$$COSMOSDB_KEY" ]; then \
-		echo "[ERROR] COSMOSDB_KEY environment variable not set"; \
-		echo "Usage: COSMOSDB_KEY=\"your-real-key\" make deploy-backend-dev-secure"; \
-		exit 1; \
-	fi
-	@echo "[OK] COSMOSDB_KEY is set - deploying securely..."
-	helm upgrade --install backend-app charts/backend-app/ \
-		-f charts/backend-app/values.dev.yaml \
-		--set cosmosdb.key="$$COSMOSDB_KEY" \
-		--namespace default \
-		--create-namespace
-	@echo "[SUCCESS] Backend deployed with secure credentials"
+destroy-dev: init-dev
+	@echo "Destroying DEV environment..."
+	terraform -chdir=$(TF_DIR_DEV) destroy -auto-approve
+	@echo "[OK] DEV environment destroyed"
 
-# Helper command to get CosmosDB key from Azure
-get-cosmosdb-key:
-	@echo "Retrieving CosmosDB key from Azure..."
-	@az cosmosdb keys list --name therapyengage-cosmosdb-dev --resource-group rg-therapy-dev --query primaryMasterKey -o tsv
+outputs-dev:
+	@echo "DEV Environment Outputs:"
+	@echo "========================"
+	terraform -chdir=$(TF_DIR_DEV) output
+
+# ============================================
+# PROD Environment (Azure Kubernetes Service)
+# ============================================
+
+init-prod: check-env
+	@echo "Initializing PROD environment (AKS)..."
+	terraform -chdir=$(TF_DIR_PROD) init -upgrade
+	@echo "[OK] PROD environment initialized"
+
+plan-prod: init-prod
+	@echo "Planning PROD environment changes..."
+	terraform -chdir=$(TF_DIR_PROD) plan
+	@echo "[OK] PROD plan complete"
+
+apply-prod: init-prod
+	@echo "Applying PROD environment..."
+	terraform -chdir=$(TF_DIR_PROD) apply -auto-approve
+	@echo "[OK] PROD environment deployed"
+
+destroy-prod: init-prod
+	@echo "Destroying PROD environment..."
+	terraform -chdir=$(TF_DIR_PROD) destroy -auto-approve
+	@echo "[OK] PROD environment destroyed"
+
+outputs-prod:
+	@echo "PROD Environment Outputs:"
+	@echo "========================="
+	terraform -chdir=$(TF_DIR_PROD) output
+
+# ============================================
+# Utility Commands
+# ============================================
+
+tree-infra:
+	@echo "Infrastructure Directory Structure:"
+	@echo "=================================="
+	@ls -la infra/ 2>/dev/null || dir infra
+
+clean:
+	@echo "Cleaning Terraform cache and state..."
+	rm -rf $(TF_DIR_DEV)/.terraform $(TF_DIR_DEV)/.terraform.lock.hcl
+	rm -rf $(TF_DIR_PROD)/.terraform $(TF_DIR_PROD)/.terraform.lock.hcl
+	@echo "[OK] Terraform cache cleaned"

@@ -1,0 +1,26 @@
+# Azure App Service deployment configuration
+# https://docs.microsoft.com/azure/app-service/
+
+# Node.js version
+WEBSITE_NODE_DEFAULT_VERSION=18.17.0
+
+# Build command (runs during deployment)
+PRE_BUILD_SCRIPT_PATH=scripts/prebuild.sh
+BUILD_COMMAND=npm run build
+
+# Startup command
+STARTUP_COMMAND=npm start
+
+# Environment variables
+NODE_ENV=production
+PORT=8080
+
+# Enable Application Insights
+APPINSIGHTS_INSTRUMENTATIONKEY=
+
+# Custom startup script
+WEBSITE_RUN_FROM_PACKAGE=1
+
+# Logging
+WEBSITE_HTTPLOGGING_RETENTION_DAYS=7
+WEBSITE_ENABLE_SYNC_UPDATE_SITE=true

@@ -290,15 +290,15 @@ output "kubernetes_host" {
 output "deployment_summary" {
   description = "High-level summary of the deployed infrastructure"
   value = {
-    environment         = var.tags.environment
-    region             = var.location
-    resource_group     = azurerm_resource_group.rg.name
-    aks_cluster        = module.aks.cluster_name
-    cosmosdb_account   = module.cosmosdb.account_name
-    azure_openai       = module.azure_openai.azure_openai_name
-    api_domain         = module.app_service.api_domain
-    portal_domain      = module.app_service.portal_domain
-    deployment_time    = timestamp()
+    environment      = var.tags.environment
+    region           = var.location
+    resource_group   = azurerm_resource_group.rg.name
+    aks_cluster      = module.aks.cluster_name
+    cosmosdb_account = module.cosmosdb.account_name
+    azure_openai     = module.azure_openai.azure_openai_name
+    api_domain       = module.app_service.api_domain
+    portal_domain    = module.app_service.portal_domain
+    deployment_time  = timestamp()
   }
   sensitive = false
 }
@@ -310,11 +310,77 @@ output "deployment_summary" {
 output "integration_endpoints" {
   description = "Map of all service endpoints for easy reference"
   value = {
-    azure_openai     = module.azure_openai.azure_openai_endpoint
-    cosmosdb         = module.cosmosdb.endpoint
-    api_service      = module.app_service.api_url
-    kubernetes_api   = module.aks.host
+    azure_openai       = module.azure_openai.azure_openai_endpoint
+    cosmosdb           = module.cosmosdb.endpoint
+    api_service        = module.app_service.api_url
+    kubernetes_api     = module.aks.host
     container_registry = module.aks.acr_login_server
   }
   sensitive = false
+}
+
+# ============================================
+# GitHub Actions CI/CD Integration Outputs
+# ============================================
+
+# Azure directory & subscription information
+output "azure_tenant_id" {
+  description = "Azure Active Directory Tenant ID"
+  value       = data.azurerm_client_config.current.tenant_id
+  sensitive   = false
+}
+
+output "azure_subscription_id" {
+  description = "Azure Subscription ID"
+  value       = data.azurerm_client_config.current.subscription_id
+  sensitive   = false
+}
+
+# OIDC App Registration (GitHub Actions identity)
+output "azure_client_id" {
+  description = "Client ID of the AAD App used by GitHub Actions OIDC"
+  value       = module.gha_oidc.app_client_id
+  sensitive   = false
+}
+
+# Resource Group hosting Container Apps
+output "resource_group" {
+  description = "Resource Group name for the ACA environment"
+  value       = azurerm_resource_group.rg.name
+  sensitive   = false
+}
+
+# Container Apps – logical app names used by CI/CD
+output "aca_frontend_name" {
+  description = "Azure Container App name for the frontend"
+  value       = azurerm_container_app.frontend.name
+  sensitive   = false
+}
+
+output "aca_backend_name" {
+  description = "Azure Container App name for the backend"
+  value       = azurerm_container_app.backend.name
+  sensitive   = false
+}
+
+# ============================================
+# Container Apps Additional Information
+# ============================================
+
+output "aca_environment_name" {
+  description = "Container Apps Environment name"
+  value       = azurerm_container_app_environment.dev_env.name
+  sensitive   = false
+}
+
+output "backend_url" {
+  description = "Backend Container App public URL"
+  value       = "https://${azurerm_container_app.backend.latest_revision_fqdn}"
+  sensitive   = false
+}
+
+output "frontend_url" {
+  description = "Frontend Container App public URL"
+  value       = "https://${azurerm_container_app.frontend.latest_revision_fqdn}"
+  sensitive   = false
 }

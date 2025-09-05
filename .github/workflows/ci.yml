@@ -1,4 +1,4 @@
-name: CI + Deploy DEV (Azure Container Apps)
+name: CI DEV - Service Principal Auth (Azure Container Apps)
 
 on:
   push:
@@ -6,116 +6,87 @@ on:
   workflow_dispatch:
 
 permissions:
-  id-token: write
   contents: read
   packages: write
 
 env:
-  REGISTRY_LOGIN_SERVER: ghcr.io
-  IMAGE_TAG: ${{ github.sha }}
-  FRONTEND_IMAGE: ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
-  BACKEND_IMAGE: ghcr.io/${{ github.repository }}/backend:${{ github.sha }}
+  REGISTRY: ghcr.io
+  IMAGE_FRONTEND: ghcr.io/${{ github.repository }}/frontend
+  IMAGE_BACKEND: ghcr.io/${{ github.repository }}/backend
+  TAG: ${{ github.sha }}
 
 jobs:
-  build-and-push:
+  build-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Docker login (GHCR)
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY_LOGIN_SERVER }} -u ${{ github.actor }} --password-stdin
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build frontend image
+      - name: Build & Push Frontend
         run: |
-          docker build -t ${{ env.FRONTEND_IMAGE }} -f web/Dockerfile .
-          
-      - name: Push frontend image
-        run: |
-          docker push ${{ env.FRONTEND_IMAGE }}
+          docker build -f web/Dockerfile -t ${{ env.IMAGE_FRONTEND }}:${{ env.TAG }} .
+          docker tag ${{ env.IMAGE_FRONTEND }}:${{ env.TAG }} ${{ env.IMAGE_FRONTEND }}:dev-latest
+          docker push ${{ env.IMAGE_FRONTEND }}:${{ env.TAG }}
+          docker push ${{ env.IMAGE_FRONTEND }}:dev-latest
 
-      - name: Build backend image
+      - name: Build & Push Backend
         run: |
-          docker build -t ${{ env.BACKEND_IMAGE }} -f backend/apps/gateway/Dockerfile ./backend/apps/gateway
-          
-      - name: Push backend image
-        run: |
-          docker push ${{ env.BACKEND_IMAGE }}
+          docker build -f backend/apps/gateway/Dockerfile -t ${{ env.IMAGE_BACKEND }}:${{ env.TAG }} ./backend/apps/gateway
+          docker tag ${{ env.IMAGE_BACKEND }}:${{ env.TAG }} ${{ env.IMAGE_BACKEND }}:dev-latest
+          docker push ${{ env.IMAGE_BACKEND }}:${{ env.TAG }}
+          docker push ${{ env.IMAGE_BACKEND }}:dev-latest
 
-  deploy-aca:
-    needs: build-and-push
-    runs-on: ubuntu-latest
-    environment: development
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Azure Login (OIDC)
+      - name: Azure Login (Service Principal)
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Update ACA Backend
-        uses: azure/CLI@v2
-        with:
-          inlineScript: |
-            az containerapp update \
-              --name ${{ secrets.ACA_BACKEND_NAME }} \
-              --resource-group ${{ secrets.RESOURCE_GROUP }} \
-              --image ${{ env.BACKEND_IMAGE }} \
-              --set-env-vars NODE_ENV=production
-
-      - name: Update ACA Frontend
-        uses: azure/CLI@v2
-        with:
-          inlineScript: |
-            az containerapp update \
-              --name ${{ secrets.ACA_FRONTEND_NAME }} \
-              --resource-group ${{ secrets.RESOURCE_GROUP }} \
-              --image ${{ env.FRONTEND_IMAGE }} \
-              --set-env-vars NODE_ENV=production
-
-  health-check:
-    needs: deploy-aca
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Azure Login (OIDC)
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Wait for deployment
-        run: sleep 60
-        
-      - name: Backend health check
+      - name: Azure CLI (Install extension)
         run: |
-          BACKEND_URL=$(az containerapp show --name ${{ secrets.ACA_BACKEND_NAME }} --resource-group ${{ secrets.RESOURCE_GROUP }} --query properties.configuration.ingress.fqdn -o tsv)
-          for i in {1..5}; do
-            if curl -f -s "https://$BACKEND_URL/health"; then
-              echo "Backend health check passed"
-              break
-            fi
-            echo "Backend health check attempt $i failed, retrying..."
-            sleep 10
-          done
-          
-      - name: Frontend health check  
+          az extension add --name containerapp --yes || az extension update --name containerapp
+
+      - name: Resolve Infra Variables
+        id: vars
         run: |
-          FRONTEND_URL=$(az containerapp show --name ${{ secrets.ACA_FRONTEND_NAME }} --resource-group ${{ secrets.RESOURCE_GROUP }} --query properties.configuration.ingress.fqdn -o tsv)
-          for i in {1..5}; do
-            if curl -f -s "https://$FRONTEND_URL/api/health"; then
-              echo "Frontend health check passed"
-              exit 0
-            fi
-            echo "Frontend health check attempt $i failed, retrying..."
-            sleep 10
-          done
-          echo "Health check failed after 5 attempts"
-          exit 1
+          echo "RG=${{ secrets.RESOURCE_GROUP }}" >> $GITHUB_OUTPUT
+          echo "ACA_F=${{ secrets.ACA_FRONTEND_NAME }}" >> $GITHUB_OUTPUT
+          echo "ACA_B=${{ secrets.ACA_BACKEND_NAME }}" >> $GITHUB_OUTPUT
+
+      - name: Deploy Backend to ACA
+        run: |
+          az containerapp update \
+            --name "${{ steps.vars.outputs.ACA_B }}" \
+            --resource-group "${{ steps.vars.outputs.RG }}" \
+            --image "${{ env.IMAGE_BACKEND }}:${{ env.TAG }}"
+
+      - name: Deploy Frontend to ACA
+        run: |
+          az containerapp update \
+            --name "${{ steps.vars.outputs.ACA_F }}" \
+            --resource-group "${{ steps.vars.outputs.RG }}" \
+            --image "${{ env.IMAGE_FRONTEND }}:${{ env.TAG }}"
+
+      - name: Wait for Revisions Ready
+        run: |
+          sleep 10
+          az containerapp revision list \
+            --name "${{ steps.vars.outputs.ACA_B }}" \
+            --resource-group "${{ steps.vars.outputs.RG }}" \
+            --query "[0].name"
+
+      - name: Health Check Backend
+        run: |
+          BACKEND_URL=$(az containerapp show -n "${{ steps.vars.outputs.ACA_B }}" -g "${{ steps.vars.outputs.RG }}" --query "properties.configuration.ingress.fqdn" -o tsv)
+          curl -fS "https://$BACKEND_URL/health" | jq .
+
+      - name: Health Check Frontend
+        run: |
+          FRONTEND_URL=$(az containerapp show -n "${{ steps.vars.outputs.ACA_F }}" -g "${{ steps.vars.outputs.RG }}" --query "properties.configuration.ingress.fqdn" -o tsv)
+          curl -fS "https://$FRONTEND_URL/api/health"

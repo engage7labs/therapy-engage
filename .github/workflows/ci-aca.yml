@@ -1,0 +1,121 @@
+name: CI + Deploy DEV (Azure Container Apps)
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+  packages: write
+
+env:
+  REGISTRY_LOGIN_SERVER: ghcr.io
+  IMAGE_TAG: ${{ github.sha }}
+  FRONTEND_IMAGE: ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
+  BACKEND_IMAGE: ghcr.io/${{ github.repository }}/backend:${{ github.sha }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Docker login (GHCR)
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ${{ env.REGISTRY_LOGIN_SERVER }} -u ${{ github.actor }} --password-stdin
+
+      - name: Build frontend image
+        run: |
+          docker build -t ${{ env.FRONTEND_IMAGE }} -f web/Dockerfile .
+
+      - name: Push frontend image
+        run: |
+          docker push ${{ env.FRONTEND_IMAGE }}
+
+      - name: Build backend image
+        run: |
+          docker build -t ${{ env.BACKEND_IMAGE }} -f backend/Dockerfile .
+
+      - name: Push backend image
+        run: |
+          docker push ${{ env.BACKEND_IMAGE }}
+
+  deploy-aca:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    environment: development
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Update ACA Backend
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az containerapp update \
+              --name ${{ secrets.ACA_BACKEND_NAME }} \
+              --resource-group ${{ secrets.RESOURCE_GROUP }} \
+              --image ${{ env.BACKEND_IMAGE }} \
+              --set-env-vars NODE_ENV=production
+
+      - name: Update ACA Frontend
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az containerapp update \
+              --name ${{ secrets.ACA_FRONTEND_NAME }} \
+              --resource-group ${{ secrets.RESOURCE_GROUP }} \
+              --image ${{ env.FRONTEND_IMAGE }} \
+              --set-env-vars NODE_ENV=production
+
+  health-check:
+    needs: deploy-aca
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Wait for deployment
+        run: sleep 60
+
+      - name: Backend health check
+        run: |
+          BACKEND_URL=$(az containerapp show --name ${{ secrets.ACA_BACKEND_NAME }} --resource-group ${{ secrets.RESOURCE_GROUP }} --query properties.configuration.ingress.fqdn -o tsv)
+          for i in {1..5}; do
+            if curl -f -s "https://$BACKEND_URL/health"; then
+              echo "Backend health check passed"
+              break
+            fi
+            echo "Backend health check attempt $i failed, retrying..."
+            sleep 10
+          done
+
+      - name: Frontend health check
+        run: |
+          FRONTEND_URL=$(az containerapp show --name ${{ secrets.ACA_FRONTEND_NAME }} --resource-group ${{ secrets.RESOURCE_GROUP }} --query properties.configuration.ingress.fqdn -o tsv)
+          for i in {1..5}; do
+            if curl -f -s "https://$FRONTEND_URL/api/health"; then
+              echo "Frontend health check passed"
+              exit 0
+            fi
+            echo "Frontend health check attempt $i failed, retrying..."
+            sleep 10
+          done
+          echo "Health check failed after 5 attempts"
+          exit 1
